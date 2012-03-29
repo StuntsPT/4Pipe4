@@ -18,6 +18,7 @@ import subprocess
 import os
 import sys
 import shutil
+import time
 import configparser
 import DiscoveryTCS as TCS
 import SNPgrabber as SNPg
@@ -77,10 +78,10 @@ def Usage():
 want to give your results;
     "configfile" is optional and is the full path to your configuration file.
 If none is provided, the program will look in the current working directory and 
-then to ~/.config/4Pipe4rc (in this order) for one. If none is found the 
+then in ~/.config/4Pipe4rc (in this order) for one. If none is found the 
 program will stop;
     The list after "-n" must be given inside square brackets, and each number 
-must be separated with a ",". The numbers are the pipeline steps the should NOT 
+must be separated with a ",". The numbers are the pipeline steps that will NOT 
 be run. This is an optional argument. The numbers, from 1 to 9 represent the 
 following steps:
     1 - SFF extraction
@@ -94,7 +95,7 @@ following steps:
     9 - 7zip the report
     The idea here is that to resume an analysis that was interrupted for 
 example after the assembling process you should issue "-n [1,2,3]". Note that 
-some steps depend on the output of previous steps, so using some combinations 
+some steps depend on the output of previous steps, thus, using some combinations 
 of exceptions can cause errors.
 
     The arguments can be given in any order.\n''')
@@ -109,23 +110,29 @@ def SysPrep(basefile):
         print("\nThe directory path used for the basefile does not exist.\n")
         quit(Usage())
 
-def RunProgram(cli):
+def RunProgram(cli, requires_output):
+    #Function for running external programs and dealing with their output.
+    program_stdout = []
     try:
-        program = subprocess.Popen(cli, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        program = subprocess.Popen(cli, bufsize=64,shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        for lines in program.stdout:
+            lines = lines.decode("utf-8").strip()
+            print(lines)
+            program_stdout.append(lines)
     except:
         quit("\nERROR:Program not found... exiting. Check your configuration file.\n")
-    program_stdout = (program.stdout.readlines())
-    return program_stdout
+    if requires_output == 1:
+        return program_stdout
+    time.sleep(5)
 
 def SffExtract(sff, clip):
     #Function for using the sff_extract program. The function returns the 'clip' value recommended by sff_extract. If run sequentially, the recommendations should be added.
     cli = [config.get('Program paths','sff_extract_path'), '-c', '--min_left_clip=' + str(clip), '-o', basefile, sff]
     print("\nRunning sff_extract using the folowing command:")
     print(' '.join(cli))
-    sff_extract_stdout = RunProgram(cli)
+    sff_extract_stdout = RunProgram(cli,1)
     if len(sff_extract_stdout) == 20:
         for lines in sff_extract_stdout:
-            print(lines.decode("utf-8").strip())
             if "Probably" in str(lines): 
                 warning = str(lines)
                 number = ''
@@ -159,16 +166,12 @@ def SeqClean(basefile):
     cli = [config.get('Program paths','seqclean_path'), basefile + '.fasta', '-r', basefile + '.clean.rpt', '-l', config.get('Variables','min_len'), '-o', basefile + '.clean.fasta', '-c', config.get('Variables','seqcores'), '-v', config.get('Program paths','UniVecDB_path')]
     print("\nRunning Seqclean using the folowing command:")
     print(' '.join(cli))
-    seq_clean_stdout = RunProgram(cli)
-    for lines in seq_clean_stdout:
-        print(lines.decode("utf-8").strip())
+    RunProgram(cli,0)
     #cln2qual
     cli = [config.get('Program paths','cln2qual_path'), basefile + '.clean.rpt', basefile + '.fasta.qual']
     print("\nRunning cln2qual using the folowing command:")
     print(' '.join(cli))
-    cln2_qual_stdout = RunProgram(cli)
-    for lines in cln2_qual_stdout:
-        print(lines.decode("utf-8").strip())
+    RunProgram(cli,0)
     shutil.move(basefile + '.fasta.qual.clean', basefile + '.clean.fasta.qual')
 
 def MiraRun(basefile):
@@ -184,9 +187,7 @@ def MiraRun(basefile):
         cli.append(items)
     print("\nRunning Mira using the following command:")
     print(' '.join(cli))
-    mira_run_Stdout = RunProgram(cli)
-    for lines in mira_run_Stdout:
-        print(lines.decode("utf-8").strip())
+    RunProgram(cli,0)
     os.unlink(basefile + '_in.454.fasta')
     os.unlink(basefile + '_in.454.fasta.qual')
 
@@ -209,9 +210,7 @@ def ORFliner(basefile):
     cli = [config.get('Program paths','GetORF_path'), '-sequence', basefile + '.SNPs.fasta', '-outseq', basefile + '.allORFs.fasta', '-find', '3']
     print("\nRunning EMBOSS 'getorf' using the folowing command:")
     print(' '.join(cli))
-    getorf_run_Stdout = RunProgram(cli)
-    for lines in getorf_run_Stdout:
-        print(lines.decode("utf-8").strip())
+    RunProgram(cli,0)
     #After this we go to ORFmaker.py:
     print("\nRunning ORFmaker module...")
     ORFmaker.RunModule(basefile + '.allORFs.fasta')
@@ -219,9 +218,7 @@ def ORFliner(basefile):
     cli = [config.get('Program paths','BLAST_path'), '-p', 'blastx', '-d', config.get('Program paths','BLASTdb_path'), '-i', basefile + '.BestORF.fasta', '-H', 'T', '-a', config.get('Variables','seqcores'), '-o', basefile + '.ORFblast.html']
     print("\nRunning NCBI 'blastx' using the folowing command:")
     print(' '.join(cli))
-    blast_run_Stdout = RunProgram(cli)
-    for lines in blast_run_Stdout:
-        print(lines.decode("utf-8").strip())
+    RunProgram(cli,0)
     #Then we write the metrics report:
     print("\nRunning the metrics calculator module...")
     seqclean_log_path =  os.path.split(basefile)[0] + "/seqcl_" + miraproject + ".fasta.log" 
@@ -237,17 +234,13 @@ def B2G(basefile):
     cli = [config.get('Program paths','BLAST_path'), '-p', 'blastx', '-d', config.get('Program paths','BLASTdb_path'), '-i', basefile + '.SNPs.fasta', '-m', '7', '-a', config.get('Variables','seqcores'), '-o', basefile + '.shortlistblast.xml']
     print("\nRunning NCBI 'blastx' using the folowing command:")
     print(' '.join(cli))
-    blast_run_Stdout = RunProgram(cli)
-    for lines in blast_run_Stdout:
-        print(lines.decode("utf-8").strip())
+    RunProgram(cli,0)
     #After 'blasting' we run b2g4pipe:
     if os.path.isfile(config.get('Program paths','Blast2go_path')):
         cli = ['java', '-jar', config.get('Program paths','Blast2go_path'), '-in', basefile + '.shortlistblast.xml', '-prop', os.path.split(config.get('Program paths','Blast2go_path'))[0] + '/b2gPipe.properties', '-out', basefile + '.b2g', '-a']
         print("\nRunning b2g4pipe using the folowing command:")
         print(' '.join(cli))
-        b2g_run_Stdout = RunProgram(cli)
-        for lines in b2g_run_Stdout:
-            print(lines.decode("utf-8").strip())
+        RunProgram(cli,0)
     else:
         quit("\nERROR:Program not found... exiting. Check your configuration file.\n")
 
@@ -296,11 +289,10 @@ def TidyUP(basefile):
     cli = [config.get('Program paths','7z_path'), 'a', '-y', '-bd', basefile + '.report.7z', 'Report']
     print("\n7ziping the Report folder for sending using the folowing command:")
     print(' '.join(cli))
-    zip_run_Stdout = RunProgram(cli)
-    for lines in zip_run_Stdout:
-        print(lines.decode("utf-8").strip())
+    RunProgram(cli,0)
 
 def RunMe(run_list):
+    #Function to parse which parts of 4Pipe4 will run.
     if 1 in run_list:
         MinClip(basefile)
     if 2 in run_list:
