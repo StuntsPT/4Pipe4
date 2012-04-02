@@ -26,27 +26,22 @@ import ORFmaker
 import Reporter
 import ssr
 import Metrics
+import argparse
+from argparse import RawTextHelpFormatter
+
+##### ARGUMENT LIST ######
+parser = argparse.ArgumentParser(description="",epilog="The idea here is that to resume an analysis that was interrupted for example after the assembling process you should issue '-n [1,2,3]'. Note that some steps depend on the output of previous steps, thus, using some combinations of exceptions can cause errors.",prog="4Pipe4",formatter_class=RawTextHelpFormatter)
+parser.add_argument("-i",dest="infile",nargs=1,required=True,help="Provide the full path to your target sff file\n",metavar="sff_file")
+parser.add_argument("-o",dest="outfile",nargs=1,required=True,help="Provide the full path to your results directory, plus the name you want to give your results\n",metavar="basefile")
+parser.add_argument("-c",dest="configFile",nargs=1,help="Provide the full path to your configuration file. If none is provided, the program will look in the current working directory and  then in ~/.config/4Pipe4rc (in this order) for one. If none is found the  program will stop\n",metavar="configfile")
+parser.add_argument("-n",dest="run_list",nargs="?",default="1 2 3 4 5 6 7 8 9",choices="12345678",help="Pleave specify the numbers corresponding to the pipeline steps that will NOT be run. This is an optional argument. The numbers, from 1 to 9 represent the following steps:\n\t1 - SFF extraction\n\t2 - SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR finder\n\t9 - 7zip the report")
+arg = parser.parse_args()
 
 def StartUp():
-    arguments = {}
-    for args in range(1,len(sys.argv),2):
-        try:
-            if sys.argv[args].startswith('-'):
-                arguments[sys.argv[args]] = sys.argv[args + 1]
-            else:
-                print("\nERROR:Bad arguments\n")
-                quit(Usage())
-        except:
-            print("\nERROR:Bad arguments\n")
-            quit(Usage())
-    if '-i' not in arguments or '-o' not in arguments:
-        print("\nERROR:Missing agruments\n")
-        quit(Usage())
-
-    basefile = arguments['-o']
-    sff = arguments['-i']
-    if '-c' in arguments:
-        rcfile = arguments['-c']
+	baseline = "".join(arg.outfile)
+	
+    if arg.configFile != "":
+        rcfile = arg.configFile
     elif os.path.isfile('4Pipe4rc'):
         rcfile = '4Pipe4rc'
         print("No config file provided, falling back to current working dir 4Pipe4rc")
@@ -56,52 +51,11 @@ def StartUp():
     else:
         print("\nERROR:No config file provided.\n")
         quit(Usage())
-    run_list = [1,2,3,4,5,6,7,8,9]
-    if '-n' in arguments:
-        exclude = eval(arguments['-n'])
-        run_list = list(x for x in run_list if x not in exclude)
-    try:
-        config = configparser.ConfigParser()
-        config.read(rcfile)
-    except:
-        print("\nERROR: Invalid configuration file\n")
-        quit(Usage())
-
-    return basefile,sff,config,run_list
-
-def Usage():
-    print('''Program usage:
-    "python3 4Pipe4.py -i sff_file -o basefile [-c configfile] [-n [1,2,...,8,9]]"
-    Where:
-    "sff_file" is the full path to your target sff file;
-    "basefile" is the full path to your results directory, plus the name you 
-want to give your results;
-    "configfile" is optional and is the full path to your configuration file.
-If none is provided, the program will look in the current working directory and 
-then in ~/.config/4Pipe4rc (in this order) for one. If none is found the 
-program will stop;
-    The list after "-n" must be given inside square brackets, and each number 
-must be separated with a ",". The numbers are the pipeline steps that will NOT 
-be run. This is an optional argument. The numbers, from 1 to 9 represent the 
-following steps:
-    1 - SFF extraction
-    2 - SeqClean
-    3 - Mira
-    4 - DiscoveryTCS
-    5 - SNP grabber
-    6 - ORF finder
-    7 - Blast2go
-    8 - SSR finder
-    9 - 7zip the report
-    The idea here is that to resume an analysis that was interrupted for 
-example after the assembling process you should issue "-n [1,2,3]". Note that 
-some steps depend on the output of previous steps, thus, using some combinations 
-of exceptions can cause errors.
-
-    The arguments can be given in any order.\n''')
+    return config 
 
 def SysPrep(basefile):
     #Function for prepairing the system for the pipeline.
+    basefine="".join(basefile)
     basepath=os.path.split(basefile)
     if os.path.isdir(basepath[0]):
         os.chdir(basepath[0])
