@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with 4Pipe4.  If not, see <http://www.gnu.org/licenses/>.
 
+COCO!
+
 import subprocess
 import os
 import sys
