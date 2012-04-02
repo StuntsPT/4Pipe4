@@ -38,8 +38,8 @@ parser.add_argument("-n",dest="run_list",nargs="?",default="1 2 3 4 5 6 7 8 9",c
 arg = parser.parse_args()
 
 def StartUp():
-	baseline = "".join(arg.outfile)
-	
+	basefile = "".join(arg.outfile)
+	sff = "".join(arg.infile)
     if arg.configFile != "":
         rcfile = arg.configFile
     elif os.path.isfile('4Pipe4rc'):
@@ -51,11 +51,10 @@ def StartUp():
     else:
         print("\nERROR:No config file provided.\n")
         quit(Usage())
-    return config 
+    return basefile,sff,config 
 
 def SysPrep(basefile):
     #Function for prepairing the system for the pipeline.
-    basefine="".join(basefile)
     basepath=os.path.split(basefile)
     if os.path.isdir(basepath[0]):
         os.chdir(basepath[0])
@@ -245,7 +244,7 @@ def TidyUP(basefile):
     print(' '.join(cli))
     RunProgram(cli,0)
 
-def RunMe(run_list):
+def RunMe(arg.run_list):
     #Function to parse which parts of 4Pipe4 will run.
     if 1 in run_list:
         MinClip(basefile)
@@ -266,6 +265,6 @@ def RunMe(run_list):
     if 9 in run_list:
         TidyUP(basefile)
     print("\nPipeline finished.\n")
-basefile,sff,config,run_list = StartUp()
+basefile,sff,config = StartUp()
 miraproject = SysPrep(basefile)
 RunMe(run_list)
