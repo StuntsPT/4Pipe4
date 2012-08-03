@@ -64,21 +64,13 @@ be run. This is an optional argument. The numbers, from 1 to 9 represent the
 following steps:
 
 1 - SFF extraction
-    
 2 - SeqClean
-    
 3 - Mira
-    
 4 - DiscoveryTCS
-    
 5 - SNP grabber
-    
 6 - Report Maker
-    
 7 - Blast2go
-    
 8 - SSR finder
-    
 9 - 7zip the report
     
     The idea here is that to resume an analysis that was interrupted for 
