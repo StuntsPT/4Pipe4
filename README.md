@@ -30,14 +30,14 @@ As time progresses and 4Pipe4 sees new development, this list will be updated.
 4Pipe4 is written in python 3. Therefore an installation of python 3 is required to run 4Pipe4. If you are using linux you can get python 3 from you distribution's package manager (sudo apt-get install python3 for Ubuntu) or get it from the website (http://python.org/download/)
 Not exactly required, but recommended are the external program that 4Pipe4 uses in it's process. By default, these are:
 
-*ssf_extract (http://bioinf.comav.upv.es/sff_extract/)
-*seqclean (http://compbio.dfci.harvard.edu/tgi/software/)
-*mira (http://mira-assembler.sourceforge.net/)
-*getorf (http://emboss.sourceforge.net/apps/cvs/emboss/apps/getorf.html)
-*blast (ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
-*blast2go4pipe (http://bioinfo.cipf.es/aconesa/software.html)
-*etandem (http://helixweb.nih.gov/emboss/html/etandem.html)
-*7zip (http://www.7-zip.org/)
+* ssf_extract (http://bioinf.comav.upv.es/sff_extract/)
+* seqclean (http://compbio.dfci.harvard.edu/tgi/software/)
+* mira (http://mira-assembler.sourceforge.net/)
+* getorf (http://emboss.sourceforge.net/apps/cvs/emboss/apps/getorf.html)
+* blast (ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
+* blast2go4pipe (http://bioinfo.cipf.es/aconesa/software.html)
+* etandem (http://helixweb.nih.gov/emboss/html/etandem.html)
+* 7zip (http://www.7-zip.org/)
 
 You should also have a local database of NCBI's Univec (http://www.ncbi.nlm.nih.gov/VecScreen/UniVec.html) and nr (ftp://ftp.ncbi.nlm.nih.gov/blast/db/) or equivalent.
 Once again, if you are in linux keep in mind that some of these programs are likely in your distribution's repositories (such as 7zip or blast).
@@ -62,23 +62,23 @@ must be separated with a ",". The numbers are the pipeline steps the should NOT
 be run. This is an optional argument. The numbers, from 1 to 9 represent the 
 following steps:
 
-1 - SFF extraction
+1. SFF extraction
     
-2 - SeqClean
+2. SeqClean
     
-3 - Mira
+3. Mira
     
-4 - DiscoveryTCS
+4. DiscoveryTCS
     
-5 - SNP grabber
+5. SNP grabber
     
-6 - Report Maker
+6. Report Maker
     
-7 - Blast2go
+7. Blast2go
     
-8 - SSR finder
+8. SSR finder
     
-9 - 7zip the report
+9. 7zip the report
     
     The idea here is that to resume an analysis that was interrupted for 
 example after the assembling process you should issue "-n [1,2,3]". Note that 
