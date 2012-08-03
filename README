@@ -20,7 +20,7 @@ ORFmaker.py - Module for finding ORFs;
 README - This file;
 Reporter.py - Module for generating putative SNP reports;
 SNPgrabber.py - Module for organizing SNP information;
-ssr.py - Module for finding SSRs;
+SSRfinder.py - Module for finding SSRs;
 Templates/Report.html - Template for report "front page"
 
 As time progresses and 4Pipe4 sees new development, this list will be updated.
@@ -66,7 +66,7 @@ following steps:
     3 - Mira
     4 - DiscoveryTCS
     5 - SNP grabber
-    6 - ORF finder
+    6 - Report Maker
     7 - Blast2go
     8 - SSR finder
     9 - 7zip the report

@@ -24,7 +24,7 @@ import DiscoveryTCS as TCS
 import SNPgrabber as SNPg
 import ORFmaker
 import Reporter
-import ssr
+import SSRfinder as ssr
 import Metrics
 
 def StartUp():
@@ -89,7 +89,7 @@ following steps:
     3 - Mira
     4 - DiscoveryTCS
     5 - SNP grabber
-    6 - ORF finder
+    6 - Report maker
     7 - Blast2go
     8 - SSR finder
     9 - 7zip the report
