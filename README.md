@@ -11,17 +11,17 @@ First of all, thank for downloading CoBiG² 4Pipe4 analysis pipeline. We hope yo
 
 4Pipe4 contains the following files (in alphabetical order):
 
-4Pipe4.py - Main file: this is the script you want to run;
-4Pipe4rc - Configuration file;
-DiscoveryTCS.py - Module for SNP discovery in TCS files;
-LICENSE - License file;
-Metrics.py - Module for generating dataset metrics;
-ORFmaker.py - Module for finding ORFs;
-README - This file;
-Reporter.py - Module for generating putative SNP reports;
-SNPgrabber.py - Module for organizing SNP information;
-SSRfinder.py - Module for finding SSRs;
-Templates/Report.html - Template for report "front page"
+* 4Pipe4.py - Main file: this is the script you want to run;
+* 4Pipe4rc - Configuration file;
+* DiscoveryTCS.py - Module for SNP discovery in TCS files;
+* LICENSE - License file;
+* Metrics.py - Module for generating dataset metrics;
+* ORFmaker.py - Module for finding ORFs;
+* README.md - This file;
+* Reporter.py - Module for generating putative SNP reports;
+* SNPgrabber.py - Module for organizing SNP information;
+* SSRfinder.py - Module for finding SSRs;
+* Templates/Report.html - Template for report "front page"
 
 As time progresses and 4Pipe4 sees new development, this list will be updated.
 
