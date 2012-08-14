@@ -118,6 +118,6 @@ those options to reflect your own system and SNP detection preferences.
 ### CONTACT
 
 If you have questions or feedback you can contact the author by email:
-f.pinamartina@gmail.com
+f.pinamartins@gmail.com
 For other programs, also please be sure to check out our group's website:
 http://cobig2.fc.ul.pt
