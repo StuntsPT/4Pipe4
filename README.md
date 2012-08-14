@@ -66,20 +66,20 @@ the following help message:
 
 ```
 
-    Program usage:
-        "python3 4Pipe4.py -i sff_file -o basefile [-c configfile] [-n [1,2,...,8,9]]"
-        Where:
-        "sff_file" is the full path to your target sff file;
-        "basefile" is the full path to your results directory, plus the name you 
-    want to give your results;
-        "configfile" is optional and is the full path to your configuration file.
-    If none is provided, the program will look in the current working directory and 
-    then to ~/.config/4Pipe4rc (in this order) for one. If none is found the 
-    program will stop;
-        The list after "-n" must be given inside square brackets, and each number 
-    must be separated with a ",". The numbers are the pipeline steps the should NOT 
-    be run. This is an optional argument. The numbers, from 1 to 9 represent the 
-    following steps:
+Program usage:
+    "python3 4Pipe4.py -i sff_file -o basefile [-c configfile] [-n [1,2,...,8,9]]"
+Where:
+    "sff_file" is the full path to your target sff file;
+    "basefile" is the full path to your results directory, plus the name you 
+want to give your results;
+    "configfile" is optional and is the full path to your configuration file.
+If none is provided, the program will look in the current working directory and 
+then to ~/.config/4Pipe4rc (in this order) for one. If none is found the 
+program will stop;
+The list after "-n" must be given inside square brackets, and each number 
+must be separated with a ",". The numbers are the pipeline steps the should NOT 
+be run. This is an optional argument. The numbers, from 1 to 9 represent the 
+following steps:
     
     1 - SFF extraction
     2 - SeqClean
@@ -91,11 +91,11 @@ the following help message:
     8 - SSR finder
     9 - 7zip the report
         
-        The idea here is that to resume an analysis that was interrupted for 
-    example after the assembling process you should issue "-n [1,2,3]". Note that 
-    some steps depend on the output of previous steps, so using some combinations 
-    of exceptions can cause errors.
-        The arguments can be given in any order.
+The idea here is that to resume an analysis that was interrupted for 
+example after the assembling process you should issue "-n [1,2,3]". Note that 
+some steps depend on the output of previous steps, so using some combinations 
+of exceptions can cause errors.
+The arguments can be given in any order.
         
 ```
 
