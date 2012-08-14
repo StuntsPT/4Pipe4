@@ -1,11 +1,19 @@
 ### INTRODUCTION
 
-First of all, thank for downloading CoBiG² 4Pipe4 analysis pipeline. We hope you find it useful.
-4Pipe4 allows you to automate NGS data analysis process into a simple script run. It is designed to be as simple to use as possible. 
+First of all, thank for downloading CoBiG² 4Pipe4 analysis pipeline. We hope you
+find it useful. 4Pipe4 allows you to automate NGS data analysis process into a
+simple script run. It is designed to be as simple to use as possible. 
 
 ### INSTALLING
 
-4Pipe4 currently contains no installing system. It is simply a set of scripts that you can run from anywhere you want. Although it is recommended (for simplicity's sake) that you copy them into somewhere in your $PATH.
+4Pipe4 currently has no installing system. It is simply a set of scripts that
+you can run from anywhere you want. Although it is recommended
+(for simplicity's sake) that you either copy them into somewhere in your $PATH
+or add 4Pipe4's directory to your $PATH.
+
+```
+PATH=/path/to/4Pipe4/:$PATH
+```
 
 ### FILES
 
@@ -27,8 +35,12 @@ As time progresses and 4Pipe4 sees new development, this list will be updated.
 
 ### REQUIREMENTS
 
-4Pipe4 is written in python 3. Therefore an installation of python 3 is required to run 4Pipe4. If you are using linux you can get python 3 from you distribution's package manager (sudo apt-get install python3 for Ubuntu) or get it from the website (http://python.org/download/)
-Not exactly required, but recommended are the external program that 4Pipe4 uses in it's process. By default, these are:
+4Pipe4 is written in python 3. Therefore an installation of python 3 is required
+to run 4Pipe4. If you are using linux you can get python 3 from you
+distribution's package manager (sudo apt-get install python3 for Ubuntu) or get
+it from the website (http://python.org/download/).
+Not strictly required, but highly recommended to for best results are the
+external programs that 4Pipe4 uses in it's processes. By default, these are:
 
 * ssf_extract (http://bioinf.comav.upv.es/sff_extract/)
 * seqclean (http://compbio.dfci.harvard.edu/tgi/software/)
@@ -39,15 +51,21 @@ Not exactly required, but recommended are the external program that 4Pipe4 uses 
 * etandem (http://helixweb.nih.gov/emboss/html/etandem.html)
 * 7zip (http://www.7-zip.org/)
 
-You should also have a local database of NCBI's Univec (http://www.ncbi.nlm.nih.gov/VecScreen/UniVec.html) and nr (ftp://ftp.ncbi.nlm.nih.gov/blast/db/) or equivalent.
-Once again, if you are in linux keep in mind that some of these programs are likely in your distribution's repositories (such as 7zip or blast).
+You should also have a local database of NCBI's
+Univec (http://www.ncbi.nlm.nih.gov/VecScreen/UniVec.html)
+and nr (ftp://ftp.ncbi.nlm.nih.gov/blast/db/) or equivalent.
+Once again, if you are using linux remember that some of these programs are
+likely in your distribution's repositories (such as 7zip or blast).
 
 ### USAGE
 
-Using 4Pipe4 should be relatively simple. Simply calling 4Pipe4.py should print the following help message:
+Using 4Pipe4 should be relatively simple. Simply calling 4Pipe4.py should print
+the following help message:
 
 --------------------------------------------
+
 ```
+
     Program usage:
         "python3 4Pipe4.py -i sff_file -o basefile [-c configfile] [-n [1,2,...,8,9]]"
         Where:
@@ -78,19 +96,28 @@ Using 4Pipe4 should be relatively simple. Simply calling 4Pipe4.py should print 
     some steps depend on the output of previous steps, so using some combinations 
     of exceptions can cause errors.
         The arguments can be given in any order.
+        
 ```
 
 --------------------------------------------
 
-If you wish to run the entire pipeline, just issue something like "4Pipe4rc.py -i /path/to/file.sff -o /path/to/results/basefilename -c /path/to/4Pipe4rc".
-Use the -n option to exclude any steps you do not wish to run from the analysis.
-Most of 4Pipe4's options are defined in the 4Pipe4rc file; check below for details.
+If you wish to run the entire pipeline, just issue something like
+
+```
+python3 4Pipe4.py -i /path/to/file.sff -o /path/to/results/basefilename
+```
+
+Use the -n option to exclude any steps you do not wish to run from the analysis
+and the -c option to point 4Pipe4 to a specific configuration file.
 
 ### CONFIGURATION
 
-The configuration file contains information on every option. You should change those options to reflect your own system.
+The configuration file contains information on every option. You should change
+those options to reflect your own system and SNP detection preferences.
 
 ### CONTACT
 
-If you have questions or feedback you can contact the author by email: f.pinamartina@gmail.com
-For other programs, also please be sure to check out our group's website: http://cobig2.fc.ul.pt
+If you have questions or feedback you can contact the author by email:
+f.pinamartina@gmail.com
+For other programs, also please be sure to check out our group's website:
+http://cobig2.fc.ul.pt
