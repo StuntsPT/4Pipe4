@@ -41,12 +41,12 @@ seqcores = 10
 mincov = 15
 #Minimum average base quality to accept as a putative SNP:
 minqual = 70
-#Minimum contig qual to accept SSR:
+#Minimum contig quality to accept SSR:
 min_ssr_qual = 70
 
 [Mira Parameters]
 ##Parameters to pass to mira:
-##Example for ESTs (look for SNPs):
+##Example for ESTs (to search for SNPs):
 # --job=denovo,est,normal,454 -CO:asir=yes 454_SETTINGS -AL:mrs=95 -AL:egp=yes:egpl=reject_codongaps:megpp=100 -CO:rodirs=9 -LR:mxti=no
 ##Example for Genome Assembly:
 # --job=denovo,genome,normal,454
