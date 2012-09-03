@@ -2,7 +2,7 @@
 
 First of all, thank for downloading CoBiG² 4Pipe4 analysis pipeline. We hope you
 find it useful. 4Pipe4 allows you to automate NGS data analysis process into a
-simple script run. It is designed to be as simple to use as possible. 
+simple script run. It is designed to be as simple to use as possible.
 
 ### INSTALLING
 
@@ -70,17 +70,17 @@ Program usage:
     "python3 4Pipe4.py -i sff_file -o basefile [-c configfile] [-n [1,2,...,8,9]]"
 Where:
     "sff_file" is the full path to your target sff file;
-    "basefile" is the full path to your results directory, plus the name you 
+    "basefile" is the full path to your results directory, plus the name you
 want to give your results;
     "configfile" is optional and is the full path to your configuration file.
-If none is provided, the program will look in the current working directory and 
-then to ~/.config/4Pipe4rc (in this order) for one. If none is found the 
+If none is provided, the program will look in the current working directory and
+then to ~/.config/4Pipe4rc (in this order) for one. If none is found the
 program will stop;
-The list after "-n" must be given inside square brackets, and each number 
-must be separated with a ",". The numbers are the pipeline steps the should NOT 
-be run. This is an optional argument. The numbers, from 1 to 9 represent the 
+The list after "-n" must be given inside square brackets, and each number
+must be separated with a ",". The numbers are the pipeline steps the should NOT
+be run. This is an optional argument. The numbers, from 1 to 9 represent the
 following steps:
-    
+
     1 - SFF extraction
     2 - SeqClean
     3 - Mira
@@ -90,13 +90,13 @@ following steps:
     7 - Blast2go
     8 - SSR finder
     9 - 7zip the report
-        
-The idea here is that to resume an analysis that was interrupted for 
-example after the assembling process you should issue "-n [1,2,3]". Note that 
-some steps depend on the output of previous steps, so using some combinations 
+
+The idea here is that to resume an analysis that was interrupted for
+example after the assembling process you should issue "-n [1,2,3]". Note that
+some steps depend on the output of previous steps, so using some combinations
 of exceptions can cause errors.
 The arguments can be given in any order.
-        
+
 ```
 
 --------------------------------------------
@@ -109,6 +109,9 @@ python3 4Pipe4.py -i /path/to/file.sff -o /path/to/results/basefilename
 
 Use the -n option to exclude any steps you do not wish to run from the analysis
 and the -c option to point 4Pipe4 to a specific configuration file.
+
+In the directory "Testdata" you will find an example sff file for testing
+purposes, as well as documentation on how to do an example run of 4Pipe4.
 
 ### CONFIGURATION
 
