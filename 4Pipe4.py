@@ -127,7 +127,7 @@ def RunProgram(cli, requires_output):
 
 def SffExtract(sff, clip):
     #Function for using the sff_extract program. The function returns the 'clip' value recommended by sff_extract. If run sequentially, the recommendations should be added.
-    cli = [config.get('Program paths','sff_extract_path'), '-c', '--min_left_clip=' + str(clip), '-o', basefile, sff]
+    cli = [config.get('Program paths','sff_extract_path'), '-c', '--min_left_clip=' + str(clip), '--min_frequency=30', '-o', basefile, sff]
     print("\nRunning sff_extract using the folowing command:")
     print(' '.join(cli))
     sff_extract_stdout = RunProgram(cli,1)
