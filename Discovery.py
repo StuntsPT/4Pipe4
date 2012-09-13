@@ -74,7 +74,10 @@ def cafParse(infile_name):
 				datatype = 32
 				contigs[contigname].append(contigseq)
 				contigqual = []
-				skip = 1
+				if len(contigseq) % 60 != 0:
+					skip = 1
+				else:
+					skip = 2
 		elif datatype == 32:
 			#This is in fact faster than a list comprehension...
 			for x in lines.strip().split():
@@ -82,11 +85,19 @@ def cafParse(infile_name):
 			if lines.startswith("\n"):
 				contigs[contigname].append(contigqual)
 				skip = 1
-			
+
 	return(reads, quals, contigs)
 
 def FindSNPs(reads, quals, contigs):
-	
+	for k,v in contigs.items():
+		contig_reads = contigs[k][0]
+		contig_seq = contigs[k][1]
+		contig_qual = contigs[k][2]
+		#for items in contig_reads:
+			#print(items + " " + str(contig_reads[items]))
+		
+		
 
 infile_name = "/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.caf" #Hardcoded for now
-cafParse(infile_name)
+reads, quals, contigs = cafParse(infile_name)
+FindSNPs(reads, quals, contigs)
