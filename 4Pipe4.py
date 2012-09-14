@@ -24,7 +24,7 @@ import DiscoveryTCS as TCS
 import SNPgrabber as SNPg
 import ORFmaker
 import Reporter
-import ssr
+import SSRfinder as ssr
 import Metrics
 import argparse
 from argparse import RawTextHelpFormatter
@@ -80,7 +80,7 @@ def RunProgram(cli, requires_output):
 
 def SffExtract(sff, clip):
     #Function for using the sff_extract program. The function returns the 'clip' value recommended by sff_extract. If run sequentially, the recommendations should be added.
-    cli = [config.get('Program paths','sff_extract_path'), '-c', '--min_left_clip=' + str(clip), '-o', basefile, sff]
+    cli = [config.get('Program paths','sff_extract_path'), '-c', '--min_left_clip=' + str(clip), '--min_frequency=30', '-o', basefile, sff]
     print("\nRunning sff_extract using the folowing command:")
     print(' '.join(cli))
     sff_extract_stdout = RunProgram(cli,1)
@@ -182,7 +182,7 @@ def ORFliner(basefile):
 
 def B2G(basefile):
     #This will make all necessary runs to get a B2go anottation ready for the GUI aplication. Bummer...
-    #We start by blasting all the contigs against the NCBI's 'nr'.
+    #We start by blasting all the contigs with SNPs against the NCBI's 'nr'.
     os.chdir(os.path.split(basefile)[0])
     cli = [config.get('Program paths','BLAST_path'), '-p', 'blastx', '-d', config.get('Program paths','BLASTdb_path'), '-i', basefile + '.SNPs.fasta', '-m', '7', '-a', config.get('Variables','seqcores'), '-o', basefile + '.shortlistblast.xml']
     print("\nRunning NCBI 'blastx' using the folowing command:")
