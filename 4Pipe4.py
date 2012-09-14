@@ -39,7 +39,7 @@ parser.add_argument("-n",dest="run_list",nargs="?",default="1 2 3 4 5 6 7 8 9",h
 arg = parser.parse_args()
 
 def loading (current_state,size,prefix,width):
-	""" Function that prints the loading progress of the script """
+	""" Function that prints the loading progress of the script! """
 	percentage = int(((current_state+1)/size)*100)
 	complete = int(width*percentage*0.01)
 	if percentage == 100:
