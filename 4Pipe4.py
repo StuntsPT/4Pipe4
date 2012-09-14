@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with 4Pipe4.  If not, see <http://www.gnu.org/licenses/>.
 
+
 import subprocess
 import os
 import sys
@@ -26,27 +27,32 @@ import ORFmaker
 import Reporter
 import SSRfinder as ssr
 import Metrics
+import argparse
+from argparse import RawTextHelpFormatter
+
+##### ARGUMENT LIST ######
+parser = argparse.ArgumentParser(description="",epilog="The idea here is that to resume an analysis that was interrupted for example after the assembling process you should issue '-n [1,2,3]'. Note that some steps depend on the output of previous steps, thus, using some combinations of exceptions can cause errors.",prog="4Pipe4",formatter_class=RawTextHelpFormatter)
+parser.add_argument("-i",dest="infile",nargs=1,required=True,help="Provide the full path to your target sff file\n",metavar="sff_file")
+parser.add_argument("-o",dest="outfile",nargs=1,required=True,help="Provide the full path to your results directory, plus the name you want to give your results\n",metavar="basefile")
+parser.add_argument("-c",dest="configFile",nargs=1,help="Provide the full path to your configuration file. If none is provided, the program will look in the current working directory and  then in ~/.config/4Pipe4rc (in this order) for one. If none is found the  program will stop\n",metavar="configfile")
+parser.add_argument("-n",dest="run_list",nargs="?",default="1 2 3 4 5 6 7 8 9",help="Pleave specify the numbers corresponding to the pipeline steps that will be run. This is an optional argument. The numbers, from 1 to 9 represent the following steps:\n\t1 - SFF extraction\n\t2 - SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR finder\n\t9 - 7zip the report")
+arg = parser.parse_args()
+
+def loading (current_state,size,prefix,width):
+	""" Function that prints the loading progress of the script """
+	percentage = int(((current_state+1)/size)*100)
+	complete = int(width*percentage*0.01)
+	if percentage == 100:
+		sys.stdout.write("\r%s [%s%s] %s%% -- Done!\n" % (prefix,"#"*complete,"."*(width-complete),percentage))
+	else:
+		sys.stdout.write("\r%s [%s%s] %s%%" % (prefix,"#"*complete,"."*(width-complete),percentage))
+	sys.stdout.flush()
 
 def StartUp():
-    arguments = {}
-    for args in range(1,len(sys.argv),2):
-        try:
-            if sys.argv[args].startswith('-'):
-                arguments[sys.argv[args]] = sys.argv[args + 1]
-            else:
-                print("\nERROR:Bad arguments\n")
-                quit(Usage())
-        except:
-            print("\nERROR:Bad arguments\n")
-            quit(Usage())
-    if '-i' not in arguments or '-o' not in arguments:
-        print("\nERROR:Missing agruments\n")
-        quit(Usage())
-
-    basefile = arguments['-o']
-    sff = arguments['-i']
-    if '-c' in arguments:
-        rcfile = arguments['-c']
+    basefile = "".join(arg.outfile)
+    sff = "".join(arg.infile)
+    if arg.configFile != "":
+        rcfile = arg.configFile
     elif os.path.isfile('4Pipe4rc'):
         rcfile = '4Pipe4rc'
         print("No config file provided, falling back to current working dir 4Pipe4rc")
@@ -56,49 +62,13 @@ def StartUp():
     else:
         print("\nERROR:No config file provided.\n")
         quit(Usage())
-    run_list = [1,2,3,4,5,6,7,8,9]
-    if '-n' in arguments:
-        exclude = eval(arguments['-n'])
-        run_list = list(x for x in run_list if x not in exclude)
     try:
         config = configparser.ConfigParser()
         config.read(rcfile)
     except:
         print("\nERROR: Invalid configuration file\n")
         quit(Usage())
-
-    return basefile,sff,config,run_list
-
-def Usage():
-    print('''Program usage:
-    "python3 4Pipe4.py -i sff_file -o basefile [-c configfile] [-n [1,2,...,8,9]]"
-    Where:
-    "sff_file" is the full path to your target sff file;
-    "basefile" is the full path to your results directory, plus the name you 
-want to give your results;
-    "configfile" is optional and is the full path to your configuration file.
-If none is provided, the program will look in the current working directory and 
-then in ~/.config/4Pipe4rc (in this order) for one. If none is found the 
-program will stop;
-    The list after "-n" must be given inside square brackets, and each number 
-must be separated with a ",". The numbers are the pipeline steps that will NOT 
-be run. This is an optional argument. The numbers, from 1 to 9 represent the 
-following steps:
-    1 - SFF extraction
-    2 - SeqClean
-    3 - Mira
-    4 - DiscoveryTCS
-    5 - SNP grabber
-    6 - Report maker
-    7 - Blast2go
-    8 - SSR finder
-    9 - 7zip the report
-    The idea here is that to resume an analysis that was interrupted for 
-example after the assembling process you should issue "-n [1,2,3]". Note that 
-some steps depend on the output of previous steps, thus, using some combinations 
-of exceptions can cause errors.
-
-    The arguments can be given in any order.\n''')
+    return basefile,sff,config 
 
 def SysPrep(basefile):
     #Function for prepairing the system for the pipeline.
@@ -127,7 +97,7 @@ def RunProgram(cli, requires_output):
 
 def SffExtract(sff, clip):
     #Function for using the sff_extract program. The function returns the 'clip' value recommended by sff_extract. If run sequentially, the recommendations should be added.
-    cli = [config.get('Program paths','sff_extract_path'), '-c', '--min_left_clip=' + str(clip), '--min_frequency=30', '-o', basefile, sff]
+    cli = [config.get('Program paths','sff_extract_path'), '-c', '--min_left_clip=' + str(clip), '--min_frequency=30', '-o', basefile, "-A", sff]
     print("\nRunning sff_extract using the folowing command:")
     print(' '.join(cli))
     sff_extract_stdout = RunProgram(cli,1)
@@ -177,7 +147,13 @@ def SeqClean(basefile):
 def MiraRun(basefile):
     #Assemble the sequences
     mira_dir = os.path.split(config.get('Program paths','mira_path'))[0] + '/'
+    if os.path.exists(basefile + '_in.454.fasta'):
+        os.unlink(basefile + '_in.454.fasta')
+        print ("\nWARNING: Old links were found and removed\n")
     os.symlink(basefile + '.clean.fasta', basefile + '_in.454.fasta')
+    if os.path.exists(basefile + '_in.454.fasta.qual'):
+        os.unlink(basefile + '_in.454.fasta.qual')
+        print ("\nWARNING: Old links were found and removed\n")
     os.symlink(basefile + '.clean.fasta.qual', basefile + '_in.454.fasta.qual')
     #Keep these 2 lines in case 4Pipe4 is used in windows (no symlink support).
     #shutil.copy(basefile + '.clean.fasta', basefile + '_in.454.fasta')
@@ -291,27 +267,28 @@ def TidyUP(basefile):
     print(' '.join(cli))
     RunProgram(cli,0)
 
-def RunMe(run_list):
+def RunMe(arguments):
     #Function to parse which parts of 4Pipe4 will run.
-    if 1 in run_list:
-        MinClip(basefile)
-    if 2 in run_list:
-        SeqClean(basefile)
-    if 3 in run_list:
-        MiraRun(basefile)
-    if 4 in run_list:
-        DiscoveryTCS(basefile)
-    if 5 in run_list:
-        SNPgrabber(basefile)
-    if 6 in run_list:
-        ORFliner(basefile)
-    if 7 in run_list:
-        B2G(basefile)
-    if 8 in run_list:
-        SSRfinder(basefile)
-    if 9 in run_list:
-        TidyUP(basefile)
+    for option,number in zip(list(arguments),range(len(arguments))):
+        if option == "1":
+            MinClip(basefile)
+        if option == "2":
+            SeqClean(basefile)
+        if option == "3":
+            MiraRun(basefile)
+        if option == "4":
+            DiscoveryTCS(basefile)
+        if option == "5":
+            SNPgrabber(basefile)
+        if option == "6":
+            ORFliner(basefile)
+        if option == "7":
+            B2G(basefile)
+        if option == "8":
+            SSRfinder(basefile)
+        if option == "9":
+            TidyUP(basefile)
     print("\nPipeline finished.\n")
-basefile,sff,config,run_list = StartUp()
+basefile,sff,config = StartUp()
 miraproject = SysPrep(basefile)
-RunMe(run_list)
+RunMe(arg.run_list)
