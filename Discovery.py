@@ -19,8 +19,7 @@ def cafParse(infile_name):
 	textfile = open(infile_name,'r')
 	datatype = 0
 	skip = 0
-	reads = {}
-	quals = {}
+	contigreads = {}
 	contigs = {}
 	
 	for lines in textfile:
@@ -33,39 +32,40 @@ def cafParse(infile_name):
 		if lines.startswith("DNA"):
 			datatype = 1
 			readname = lines[lines.rindex(" "):].strip()
-			reads[readname] = ""
+			contigreads[readname] = ["",[],""]
 			continue
 		elif lines.startswith("BaseQuality"):
 			datatype = 2
 			readname = lines[lines.rindex(" "):].strip()
-			quals[readname] = []
 			continue
 		elif lines.startswith("Sequence"):
 			datatype = 3
 			contigname = lines[lines.rindex(" "):].strip()
 			contigs[contigname] = []
-			mapping = {}
+			#contigreads = {}
 			skip = 2
 			continue
 
 		#Define how to parse each different kind of data
 		if datatype == 1:
-			reads[readname] += lines.strip()
+			contigreads[readname][0] += lines.strip()
 			if lines.startswith("\n"):
 				datatype = 0
 		elif datatype == 2:
 			for x in lines.strip().split():
-				quals[readname].append(x)
+				contigreads[readname][1].append(x)
 			if lines.startswith("\n"):
 				datatype = 0
 				skip = 2
 		elif datatype == 3:
 			if lines.startswith("Assembled"):
 				assembly_info = lines.strip().split(" ")
-				mapping[assembly_info[1]] = min(int(assembly_info[2]), int(assembly_info[3]))
+				#This is uglier, but faster than a "map" approach
+				contigreads[assembly_info[1]][2] = min(int(assembly_info[2]), int(assembly_info[3]))
 			elif lines.startswith("\n"):
 				datatype = 31
-				contigs[contigname].append(mapping)
+				contigs[contigname].append(contigreads)
+				contigreads = {}
 				contigseq = ""
 				skip = 1
 		elif datatype == 31:
@@ -85,19 +85,24 @@ def cafParse(infile_name):
 			if lines.startswith("\n"):
 				contigs[contigname].append(contigqual)
 				skip = 1
+	#We return the following dictionary:
+	#{contig_name:[{read_name:[sequence, [qualities], position]}, contig_seq, [contig quals]]}
+	return contigs
 
-	return(reads, quals, contigs)
-
-def FindSNPs(reads, quals, contigs):
+def FindSNPs(contigs):
 	for k,v in contigs.items():
-		contig_reads = contigs[k][0]
-		contig_seq = contigs[k][1]
-		contig_qual = contigs[k][2]
+		contig_name = k
+		contig_reads = v[0]
+		contig_seq = v[1]
+		contig_qual = v[2]
 		#for items in contig_reads:
 			#print(items + " " + str(contig_reads[items]))
-		
+
+	#print(contig_name)
+	#print(contig_reads)
+	
 		
 
 infile_name = "/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.caf" #Hardcoded for now
-reads, quals, contigs = cafParse(infile_name)
-FindSNPs(reads, quals, contigs)
+contigs = cafParse(infile_name)
+FindSNPs(contigs)
