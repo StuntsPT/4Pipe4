@@ -20,12 +20,10 @@ def FASTAtoDict(fasta):
     #This converts the fasta file into a dict like: "name":"seq" and returns it
     Dict={}
     for lines in fasta:
-        if lines.startswith('>'):
-            lines=lines.replace('>','')
-            name=lines.replace('\n','')
-            Dict[name]= '' 
+        if lines.strip().startswith('>'):
+            Dict[line[1:-1]]= '' 
         else:
-            Dict[name] += lines.upper()
+            Dict[name[1:-1]] += lines.upper()
     fasta.close()
     return(Dict)
 
@@ -65,7 +63,7 @@ def Dataset_gather(seqclean_report_file,origin_fasta_file,clean_fasta_file,origi
     for lines in clean_report:
         if lines.startswith("*****"):
             marker = 1
-        if lines.startswith("              by 'UniVec'"):
+        if lines.strip().startswith("by 'UniVec'"):
             text.append(lines)
             break
         if marker == 1:
@@ -92,23 +90,23 @@ def Contig_gather(mira_report):
     for lines in report:
         if lines.startswith("Num. reads assembled:"):
             reads_assembled = re.search('\d*$',lines).group()
-        if lines.startswith("  Avg. total coverage:"):
+        if lines.strip().startswith("Avg. total coverage:"):
             total_cov = re.search('\d.*$',lines).group()
-        if lines.startswith("  Number of contigs:"):
+        if lines.strip().startswith("Number of contigs:"):
             total_contigs.append(re.search('\d.*$',lines).group())
-        if lines.startswith("  Total consensus:"):
+        if lines.strip().startswith("Total consensus:"):
             total_consensus.append(re.search('\d*$',lines).group())
-        if lines.startswith("  Largest contig:"):
+        if lines.strip().startswith("Largest contig:"):
             largest_contig = re.search('\d.*$',lines).group()
-        if lines.startswith("  N50 contig size:"):
+        if lines.strip().startswith("N50 contig size:"):
             N50.append(re.search('\d*$',lines).group())
-        if lines.startswith("  N90 contig size:"):
+        if lines.strip().startswith("N90 contig size:"):
             N90.append(re.search('\d*$',lines).group())
-        if lines.startswith("  N95 contig size:"):
+        if lines.strip().startswith("N95 contig size:"):
             N95.append(re.search('\d*$',lines).group())
-        if lines.startswith("  Max coverage (total):"):
+        if lines.strip().startswith("Max coverage (total):"):
             max_coverage.append(re.search('\d*$',lines).group())
-        if lines.startswith("  Average consensus quality:"):
+        if lines.strip().startswith("Average consensus quality:"):
             avg_qual.append(re.search('\d*$',lines).group())
 
     report.close()
@@ -209,4 +207,3 @@ def Run_module(seqclean_log_file, original_fasta_file, clean_fasta_file, origina
     contig_info = Contig_gather(info_assembly_file)
     snp_info = SNP_gather(snps_fasta_file, bestorf_fasta_file)
     Metrics_writer(dataset_info, contig_info, snp_info, metrics_file)
-
