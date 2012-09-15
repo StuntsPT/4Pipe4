@@ -21,13 +21,13 @@ def cafParse(infile_name):
 	skip = 0
 	contigreads = {}
 	contigs = {}
-	
+
 	for lines in textfile:
 		#Define lines to skip
 		if skip > 0:
 			skip -= 1
 			continue
-			
+
 		#Datatypes: 0=nothing;1=sequence;2=quality;3=contig;31=contig seq, etc..
 		if lines.startswith("DNA"):
 			datatype = 1
@@ -61,7 +61,11 @@ def cafParse(infile_name):
 			if lines.startswith("Assembled"):
 				assembly_info = lines.strip().split(" ")
 				#This is uglier, but faster than a "map" approach
-				contigreads[assembly_info[1]][2] = min(int(assembly_info[2]), int(assembly_info[3]))
+				if int(assembly_info[2]) < int(assembly_info[3]):
+					contigreads[assembly_info[1]][2] = int(assembly_info[2])
+				else:
+					contigreads[assembly_info[1]][2] = int(assembly_info[3])
+					contigreads[assembly_info[1]][0] = RevComp(contigreads[assembly_info[1]][0])
 			elif lines.startswith("\n"):
 				datatype = 31
 				contigs[contigname].append(contigreads)
@@ -92,16 +96,28 @@ def cafParse(infile_name):
 def FindSNPs(contigs):
 	for k,v in contigs.items():
 		contig_name = k
-		contig_reads = v[0]
+		contig_map = v[0]
 		contig_seq = v[1]
 		contig_qual = v[2]
+		for names,reads in contig_map.items():
+			print(names)
+			print(reads[2])
+			variation = StringCompare(contig_seq.upper(), reads[0], reads[2])
 		#for items in contig_reads:
 			#print(items + " " + str(contig_reads[items]))
 
 	#print(contig_name)
 	#print(contig_reads)
-	
-		
+
+def StringCompare(contig, sequence, position):
+	print([len(sequence), len(contig), len(sequence) + position])
+	var = [i for i in range(len(sequence)) if contig[i + position -1] != sequence[i]]
+	return var
+
+def RevComp(sequence):
+	comp_table = str.maketrans("ACGT","TGCA")
+	rc_seq = str.translate(sequence,comp_table)[::-1]
+	return rc_seq
 
 infile_name = "/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.caf" #Hardcoded for now
 contigs = cafParse(infile_name)
