@@ -60,7 +60,6 @@ def cafParse(infile_name):
 		elif datatype == 3:
 			if lines.startswith("Assembled"):
 				assembly_info = lines.strip().split(" ")
-				#This is uglier, but faster than a "map" approach
 				if int(assembly_info[2]) < int(assembly_info[3]):
 					contigreads[assembly_info[1]][2] = int(assembly_info[2])
 				else:
