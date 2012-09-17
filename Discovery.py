@@ -101,12 +101,18 @@ def FindSNPs(contigs):
 		contig_map = v[0]
 		contig_seq = v[1]
 		contig_qual = v[2]
+		variants = {}
 		for names,reads in contig_map.items():
 			unpadded_var, padded_var = StringCompare(contig_seq.upper(), reads[0], reads[2])
 			for position in padded_var:
-				print(position)
+				if reads[2] <= position and reads[2] + len(reads[0]) >= position:
+					if position in variants:
+						variants[position] += reads[0][position]
+					else:
+						variants[position] = reads[0][position]
 
 def StringCompare(contig, read, position):
+	#Compares the contig and read sequence and returns the variant positions
 	pad_var = (i for i in range(len(read)) if contig[i + position -1] != read[i])
 	unpad_var = []
 	for i in pad_var:
@@ -115,6 +121,7 @@ def StringCompare(contig, read, position):
 	return pad_var, unpad_var
 
 def RevComp(sequence):
+	#Reverses and complements a DNA sequence
 	comp_table = str.maketrans("ACGT","TGCA")
 	rc_seq = str.translate(sequence,comp_table)[::-1]
 	return rc_seq
