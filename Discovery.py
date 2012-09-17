@@ -60,6 +60,8 @@ def cafParse(infile_name):
 		elif datatype == 3:
 			if lines.startswith("Assembled"):
 				assembly_info = lines.strip().split(" ")
+				#Slice the read according the what the assembler did (messy)
+				contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4])-1:int(assembly_info[5])-1]
 				if int(assembly_info[2]) < int(assembly_info[3]):
 					contigreads[assembly_info[1]][2] = int(assembly_info[2])
 				else:
@@ -90,6 +92,7 @@ def cafParse(infile_name):
 				skip = 1
 	#We return the following dictionary:
 	#{contig_name:[{read_name:[sequence, [qualities], position]}, contig_seq, [contig quals]]}
+	#The sequences are already returned in R&C position if necessary.
 	return contigs
 
 def FindSNPs(contigs):
