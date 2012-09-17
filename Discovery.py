@@ -102,19 +102,17 @@ def FindSNPs(contigs):
 		contig_seq = v[1]
 		contig_qual = v[2]
 		for names,reads in contig_map.items():
-			print(names)
-			print(reads[2])
-			variation = StringCompare(contig_seq.upper(), reads[0], reads[2])
-		#for items in contig_reads:
-			#print(items + " " + str(contig_reads[items]))
+			unpadded_var, padded_var = StringCompare(contig_seq.upper(), reads[0], reads[2])
+			for position in padded_var:
+				print(position)
 
-	#print(contig_name)
-	#print(contig_reads)
-
-def StringCompare(contig, sequence, position):
-	print([len(sequence), len(contig), len(sequence) + position])
-	var = [i for i in range(len(sequence)) if contig[i + position -1] != sequence[i]]
-	return var
+def StringCompare(contig, read, position):
+	pad_var = (i for i in range(len(read)) if contig[i + position -1] != read[i])
+	unpad_var = []
+	for i in pad_var:
+		j = read.count("-",0,i)
+		unpad_var.append(i-j)
+	return pad_var, unpad_var
 
 def RevComp(sequence):
 	comp_table = str.maketrans("ACGT","TGCA")
