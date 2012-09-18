@@ -60,8 +60,8 @@ def cafParse(infile_name):
 		elif datatype == 3:
 			if lines.startswith("Assembled"):
 				assembly_info = lines.strip().split(" ")
-				#Slice the read according the what the assembler did (messy)
-				contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4])-1:int(assembly_info[5])-1]
+				#Slice the read according the assembly (what a mess)
+				contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4])-1:int(assembly_info[5])]
 				if int(assembly_info[2]) < int(assembly_info[3]):
 					contigreads[assembly_info[1]][2] = int(assembly_info[2])
 				else:
@@ -101,19 +101,32 @@ def FindSNPs(contigs):
 		contig_map = v[0]
 		contig_seq = v[1]
 		contig_qual = v[2]
-		variants = {}
-		for names,reads in contig_map.items():
-			unpadded_var, padded_var = StringCompare(contig_seq.upper(), reads[0], reads[2])
-			for position in padded_var:
-				if reads[2] <= position and reads[2] + len(reads[0]) >= position:
-					if position in variants:
-						variants[position] += reads[0][position]
-					else:
-						variants[position] = reads[0][position]
-
+		padded_var = set()
+		unpadded_var = set()
+		contig_variants = {}
+		#print(contig_name)
+		for names,read_info in contig_map.items():
+			padded, unpadded = StringCompare(contig_seq.upper(), read_info[0], read_info[2])
+			for i,j in zip(padded, unpadded):
+				padded_var.add(i)
+				unpadded_var.add(j)
+			if contig_name.endswith("_c35"):
+				print(names)
+				print(padded_var)
+				print(contig_seq[read_info[2]-1:])
+				print(read_info[0])
+		#print(padded_var)
+			#for position in padded_var:
+				#if reads[2] <= position and reads[2] + len(reads[0]) >= position:
+					#contig_variants[position] = {"A":[],"C":[],"G":[],"T":[],"-":[]}
+					#if position in variants:
+						#contig_variants[position] = 
+					#else:
+						#variants[position] = reads[0][position]
+	
 def StringCompare(contig, read, position):
 	#Compares the contig and read sequence and returns the variant positions
-	pad_var = (i for i in range(len(read)) if contig[i + position -1] != read[i])
+	pad_var = [i + position for i in range(len(read)) if contig[i + position -1] != read[i]]
 	unpad_var = []
 	for i in pad_var:
 		j = read.count("-",0,i)
