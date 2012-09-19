@@ -129,9 +129,11 @@ def FindSNPs(contigs):
 					except:
 						print("WARNING: Your READS have ambiguities - in this case an \"%s\" in the contig %s in position %s.\n" % (read_info[0][base_pos], contig_name, base_pos))
 
-		sorted_unpadded = list(unpadded_var).sort()
-		var_info[contig_name] = [contig_variants, sorted_unpadded]
-		
+		sorted_unpadded = sorted(list(unpadded_var))
+		var_info[contig_name] = [contig_variants, contig_seq, contig_qual, sorted_unpadded]
+
+	#The returned dictionary is something like this:
+	#{Contig_name:[{variant_position:{"A":[quals],"C":[quals],"G":[quals],"T":[quals],"-":[quals]}},[unpaded_variation_values]]}
 	return var_info
 	
 def StringCompare(contig, read, position):
@@ -152,14 +154,40 @@ def RevComp(sequence):
 
 def TCSwriter(infile_name, variation):
 	#Writes the bases with variation to a new TCS file
-	infile_name = infile_name[:infile_name.rindex(".")] + ".short1.tcs"
+	#infile_name = infile_name[:infile_name.rindex(".")] + ".short1.tcs"
+	#Temporarily write to /tmp to speed things up during testing
+	infile_name = "/tmp/" + infile_name[infile_name.rindex("/"):infile_name.rindex(".")] + ".short1.tcs"
 	outfile = open(infile_name,'w')
-	outfile.write("#TCS V1.0")
-	outfile.write("#")
-	outfile.write("# contig name			padPos	upadPos| B  Q |	tcov covA covC covG covT cov* | qA qC qG qT q* |  S |	Tags")
-	outfile.write("#")
+	outfile.write("#TCS V1.0\n")
+	outfile.write("#\n")
+	outfile.write("# contig name			padPos	upadPos| B  Q |	tcov covA covC covG covT cov* | qA qC qG qT q* |  S |	Tags\n")
+	outfile.write("#\n")
+	
+	name_lens = max(map(len,variation.keys()))
+
 	for k,v in variation.items():
-		print(k)
+		stretch_name = k + (" " * (name_lens - len(k) + 1))
+		sorted_variants = list(v[0].keys())
+		sorted_variants.sort()
+		
+		for variants in sorted_variants:
+			print(v[variants]["A"])
+			tcov = str(sum(len(variants["A"]),len(variants["C"]),len(variants["G"]),len(variants["T"]),len(variants["-"])))
+			outfile.write(stretch_name)
+			outfile.write(" " * (6 - len(str(variants))))
+			outfile.write(str(variants))
+			#Unpaded variation is not implemented yet. This is a placeholder.
+			outfile.write(" " * (6 - len(str(variants))))
+			outfile.write(str(variants))
+			#End placeholder
+			outfile.write(" | ")
+			outfile.write(v[1][variants].upper().replace("-","*"))
+			outfile.write(" " * (3 - len(str(v[2][variants]))))
+			outfile.write(str(v[2][variants]))
+			outfile.write(" | ")
+			outfile.write(" " * (6 - len(tcov)))
+			outfile.write(tcov)
+			outfile.write("\n")
 
 	outfile.close()
 
