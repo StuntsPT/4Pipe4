@@ -133,7 +133,7 @@ def FindSNPs(contigs):
 		var_info[contig_name] = [contig_variants, contig_seq, contig_qual, sorted_unpadded]
 
 	#The returned dictionary is something like this:
-	#{Contig_name:[{variant_position:{"A":[quals],"C":[quals],"G":[quals],"T":[quals],"-":[quals]}},[unpaded_variation_values]]}
+	#{Contig_name:[{variant_position:{"A":[quals],"C":[quals],"G":[quals],"T":[quals],"-":[quals]}}, contug_seq, [contig_qual], [unpaded_variation_values]]}
 	return var_info
 	
 def StringCompare(contig, read, position):
