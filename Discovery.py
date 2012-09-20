@@ -66,6 +66,7 @@ def cafParse(infile_name):
 				else:
 					contigreads[assembly_info[1]][2] = int(assembly_info[3])
 					contigreads[assembly_info[1]][0] = RevComp(contigreads[assembly_info[1]][0])
+					contigreads[assembly_info[1]][1].reverse()
 			elif lines.startswith("\n"):
 				datatype = 31
 				contigs[contigname].append(contigreads)
@@ -100,50 +101,50 @@ def cafParse(infile_name):
 def FindSNPs(contigs):
 	#Finds tha variation present in the dict that resulted from the parsing of
 	#the .caf file.
-	#It looks nasty, but wroks well and relatively fast.
+	#It looks nasty, but wroks well and is relatively fast.
 	var_info = {}
 	for k,v in contigs.items():
 		contig_name = k
 		contig_map = v[0]
 		contig_seq = v[1]
 		contig_qual = v[2]
-		padded_var = set()
-		unpadded_var = set()
 		contig_variants = {}
 		
-		for read_info in contig_map.values():
-			padded, unpadded = StringCompare(contig_seq.upper(), read_info[0], read_info[2])
-			for i,j in zip(padded, unpadded):
-				padded_var.add(i)
-				unpadded_var.add(j)
-
-		contig_variants = contig_variants.fromkeys(padded_var, {"A":[],"C":[],"G":[],"T":[],"-":[]})
+		for n,read_info in contig_map.items():
+			padded = StringCompare(contig_seq.upper(), read_info[0], read_info[2])
+			for i in padded: contig_variants[i] = {"A":[],"C":[],"G":[],"T":[],"-":[]}
 
 		for read_info in contig_map.values():
 			#Yes, we are looping through the same as before, but I don't see an
 			#alternative
-			for base_pos in range(read_info[2],len(read_info[0])):
-				if base_pos in contig_variants:
+			
+			for base_pos in range(len(read_info[0])):
+				if (base_pos + read_info[2]) in contig_variants.keys():
+					if read_info[0][base_pos] == "-" and read_info[1][base_pos] != str(1):
+						print(k)
+						print(n)
+						print(read_info[0])
+						print(base_pos + int(read_info[2]))
+						print(read_info[0][base_pos])
+						print(base_pos)
+						print("QUAL: " + read_info[1][base_pos])
 					try:
-						contig_variants[base_pos][read_info[0][base_pos]].append(read_info[1][base_pos])
+						contig_variants[base_pos + read_info[2]][read_info[0][base_pos]].append(read_info[1][base_pos])
+		
 					except:
-						print("WARNING: Your READS have ambiguities - in this case an \"%s\" in the contig %s in position %s.\n" % (read_info[0][base_pos], contig_name, base_pos))
+						
+						print("WARNING: Your READS have ambiguities - in this case an \"%s\" in the contig %s in position %s.\n" % (read_info[0][base_pos], contig_name, (base_pos + read_info[2])))
 
-		sorted_unpadded = sorted(list(unpadded_var))
-		var_info[contig_name] = [contig_variants, contig_seq, contig_qual, sorted_unpadded]
+		var_info[contig_name] = [contig_variants, contig_seq, contig_qual]
 
 	#The returned dictionary is something like this:
-	#{Contig_name:[{variant_position:{"A":[quals],"C":[quals],"G":[quals],"T":[quals],"-":[quals]}}, contug_seq, [contig_qual], [unpaded_variation_values]]}
+	#{Contig_name:[{variant_position:{"A":[quals],"C":[quals],"G":[quals],"T":[quals],"-":[quals]}}, contig_seq, [contig_qual]]}
 	return var_info
 	
 def StringCompare(contig, read, position):
 	#Compares the contig and read sequence and returns the variant positions
 	pad_var = [i + position for i in range(len(read)) if contig[i + position -1] != read[i]]
-	unpad_var = []
-	for i in pad_var:
-		j = read.count("-",0,i)
-		unpad_var.append(i-j)
-	return pad_var, unpad_var
+	return pad_var
 
 def RevComp(sequence):
 	#Reverses and complements a DNA sequence. IUPAC codes are NOT considered,
@@ -171,8 +172,7 @@ def TCSwriter(infile_name, variation):
 		sorted_variants.sort()
 		
 		for variants in sorted_variants:
-			print(v[variants]["A"])
-			tcov = str(sum(len(variants["A"]),len(variants["C"]),len(variants["G"]),len(variants["T"]),len(variants["-"])))
+			tcov = str(len(v[0][variants]["A"]) + len(v[0][variants]["C"]) + len(v[0][variants]["G"]) + len(v[0][variants]["T"]) + len(v[0][variants]["-"]))
 			outfile.write(stretch_name)
 			outfile.write(" " * (6 - len(str(variants))))
 			outfile.write(str(variants))
@@ -188,6 +188,10 @@ def TCSwriter(infile_name, variation):
 			outfile.write(" " * (6 - len(tcov)))
 			outfile.write(tcov)
 			outfile.write("\n")
+
+	print(variation["TestData_c1"][0][320])
+	print(variation["TestData_c1"][0][1089])
+	#print(variation["TestData_c48"][0][58])
 
 	outfile.close()
 
