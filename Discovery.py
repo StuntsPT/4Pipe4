@@ -59,14 +59,18 @@ def cafParse(infile_name):
 		elif datatype == 3:
 			if lines.startswith("Assembled"):
 				assembly_info = lines.strip().split(" ")
-				#Slice the read according the assembly (what a mess)
-				contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4])-1:int(assembly_info[5])]
+				#RevComp the sequences if required (and quals too)
 				if int(assembly_info[2]) < int(assembly_info[3]):
 					contigreads[assembly_info[1]][2] = int(assembly_info[2])
 				else:
 					contigreads[assembly_info[1]][2] = int(assembly_info[3])
 					contigreads[assembly_info[1]][0] = RevComp(contigreads[assembly_info[1]][0])
 					contigreads[assembly_info[1]][1].reverse()
+					
+				#Slice the read according the assembly (what a mess)	
+				contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4])-1:int(assembly_info[5])]
+				contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][int(assembly_info[4])-1:int(assembly_info[5])]
+				
 			elif lines.startswith("\n"):
 				datatype = 31
 				contigs[contigname].append(contigreads)
@@ -96,6 +100,10 @@ def cafParse(infile_name):
 	#We return the following dictionary:
 	#{contig_name:[{read_name:[sequence, [qualities], position]}, contig_seq, [contig quals]]}
 	#The sequences are already returned in R&C position if necessary.
+
+	print(contigs["TestData_c1"][0]["GXGT5DO01A883I"][0])
+	print(contigs["TestData_c1"][0]["GXGT5DO01A883I"][1])
+	
 	return contigs
 
 def FindSNPs(contigs):
@@ -110,29 +118,19 @@ def FindSNPs(contigs):
 		contig_qual = v[2]
 		contig_variants = {}
 		
-		for n,read_info in contig_map.items():
+		for read_info in contig_map.values():
 			padded = StringCompare(contig_seq.upper(), read_info[0], read_info[2])
 			for i in padded: contig_variants[i] = {"A":[],"C":[],"G":[],"T":[],"-":[]}
 
-		for read_info in contig_map.values():
+		for n,read_info in contig_map.items():
 			#Yes, we are looping through the same as before, but I don't see an
 			#alternative
 			
 			for base_pos in range(len(read_info[0])):
 				if (base_pos + read_info[2]) in contig_variants.keys():
-					if read_info[0][base_pos] == "-" and read_info[1][base_pos] != str(1):
-						print(k)
-						print(n)
-						print(read_info[0])
-						print(base_pos + int(read_info[2]))
-						print(read_info[0][base_pos])
-						print(base_pos)
-						print("QUAL: " + read_info[1][base_pos])
 					try:
 						contig_variants[base_pos + read_info[2]][read_info[0][base_pos]].append(read_info[1][base_pos])
-		
 					except:
-						
 						print("WARNING: Your READS have ambiguities - in this case an \"%s\" in the contig %s in position %s.\n" % (read_info[0][base_pos], contig_name, (base_pos + read_info[2])))
 
 		var_info[contig_name] = [contig_variants, contig_seq, contig_qual]
@@ -181,17 +179,13 @@ def TCSwriter(infile_name, variation):
 			outfile.write(str(variants))
 			#End placeholder
 			outfile.write(" | ")
-			outfile.write(v[1][variants].upper().replace("-","*"))
+			outfile.write(v[1][variants - 1].upper().replace("-","*"))
 			outfile.write(" " * (3 - len(str(v[2][variants]))))
-			outfile.write(str(v[2][variants]))
+			outfile.write(str(v[2][variants - 1]))
 			outfile.write(" | ")
 			outfile.write(" " * (6 - len(tcov)))
 			outfile.write(tcov)
 			outfile.write("\n")
-
-	print(variation["TestData_c1"][0][320])
-	print(variation["TestData_c1"][0][1089])
-	#print(variation["TestData_c48"][0][58])
 
 	outfile.close()
 
