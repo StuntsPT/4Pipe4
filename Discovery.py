@@ -103,7 +103,6 @@ def cafParse(infile_name):
 	#We return the following dictionary:
 	#{contig_name:[{read_name:[sequence, [qualities], position]}, contig_seq, [contig quals]]}
 	#The sequences are already returned in R&C position if necessary.
-
 	return contigs
 
 def FindSNPs(contigs):
@@ -231,7 +230,6 @@ def QualityCalc(quals):
 	#Return the already formatted string
 	return (" " * (2 - (len(str(qual))))) + str(qual) + " "
 	
-
 def natural_sort(l):
 	#Sort values in a 'natural' way taken form stack overflow
 	#http://stackoverflow.com/questions/4836710
