@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with 4Pipe4.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+
 def cafParse(infile_name):
 	#Parses the .caf file and returns the information we are looking for.
 	caffile = open(infile_name,'r')
@@ -52,7 +54,7 @@ def cafParse(infile_name):
 				datatype = 0
 		elif datatype == 2:
 			for x in lines.strip().split():
-				contigreads[readname][1].append(x)
+				contigreads[readname][1].append(int(x))
 			if lines.startswith("\n"):
 				datatype = 0
 				skip = 2
@@ -66,6 +68,7 @@ def cafParse(infile_name):
 					contigreads[assembly_info[1]][2] = int(assembly_info[3])
 					contigreads[assembly_info[1]][0] = RevComp(contigreads[assembly_info[1]][0])
 					contigreads[assembly_info[1]][1].reverse()
+					contigreads[assembly_info[1]][1][:] = [-1 * i for i in contigreads[assembly_info[1]][1]]
 					
 				#Slice the read according the assembly (what a mess)	
 				contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4])-1:int(assembly_info[5])]
@@ -101,9 +104,6 @@ def cafParse(infile_name):
 	#{contig_name:[{read_name:[sequence, [qualities], position]}, contig_seq, [contig quals]]}
 	#The sequences are already returned in R&C position if necessary.
 
-	print(contigs["TestData_c1"][0]["GXGT5DO01A883I"][0])
-	print(contigs["TestData_c1"][0]["GXGT5DO01A883I"][1])
-	
 	return contigs
 
 def FindSNPs(contigs):
@@ -161,33 +161,85 @@ def TCSwriter(infile_name, variation):
 	outfile.write("#\n")
 	outfile.write("# contig name			padPos	upadPos| B  Q |	tcov covA covC covG covT cov* | qA qC qG qT q* |  S |	Tags\n")
 	outfile.write("#\n")
-	
-	name_lens = max(map(len,variation.keys()))
 
-	for k,v in variation.items():
-		stretch_name = k + (" " * (name_lens - len(k) + 1))
-		sorted_variants = list(v[0].keys())
-		sorted_variants.sort()
+	#Use a natural sort on the dictionary. Really ugly!
+	sorted_keys = natural_sort(variation.keys())
+	sorted_values = []
+	for i in sorted_keys:
+		sorted_values.append(variation[i])
+	
+	for k,v in zip(sorted_keys, sorted_values):
+	#for k,v in sorted(variation.items()):
+		stretch_name = k + (" " * (24 - len(k) + 1))
 		
-		for variants in sorted_variants:
+		for variants in sorted(v[0].keys()):
 			tcov = str(len(v[0][variants]["A"]) + len(v[0][variants]["C"]) + len(v[0][variants]["G"]) + len(v[0][variants]["T"]) + len(v[0][variants]["-"]))
 			outfile.write(stretch_name)
-			outfile.write(" " * (6 - len(str(variants))))
+			outfile.write(" " * (5 - len(str(variants))))
 			outfile.write(str(variants))
 			#Unpaded variation is not implemented yet. This is a placeholder.
-			outfile.write(" " * (6 - len(str(variants))))
+			outfile.write(" " * (8 - len(str(variants))))
 			outfile.write(str(variants))
 			#End placeholder
 			outfile.write(" | ")
 			outfile.write(v[1][variants - 1].upper().replace("-","*"))
-			outfile.write(" " * (3 - len(str(v[2][variants]))))
+			outfile.write(" " * (3 - len(str(v[2][variants-1]))))
 			outfile.write(str(v[2][variants - 1]))
+			#Write coverages
 			outfile.write(" | ")
-			outfile.write(" " * (6 - len(tcov)))
+			outfile.write(" " * (4 - len(tcov)))
 			outfile.write(tcov)
+			outfile.write(" " * (5 - len(str(len(v[0][variants]["A"])))))
+			outfile.write(str(len(v[0][variants]["A"])))
+			outfile.write(" " * (5 - len(str(len(v[0][variants]["C"])))))
+			outfile.write(str(len(v[0][variants]["C"])))
+			outfile.write(" " * (5 - len(str(len(v[0][variants]["G"])))))
+			outfile.write(str(len(v[0][variants]["G"])))
+			outfile.write(" " * (5 - len(str(len(v[0][variants]["T"])))))
+			outfile.write(str(len(v[0][variants]["T"])))
+			outfile.write(" " * (5 - len(str(len(v[0][variants]["-"])))))
+			outfile.write(str(len(v[0][variants]["-"])))
+			outfile.write(" | ")
+			#Write base quals
+			for base in ["A", "C", "G", "T", "-"]:
+				if v[0][variants][base] == []:
+					outfile.write("-- ")
+				elif base != "-":
+					outfile.write(QualityCalc(v[0][variants][base]))
+				else:
+					outfile.write(" 1 ")
+			outfile.write("|  : |")
 			outfile.write("\n")
-
+	
 	outfile.close()
+
+def QualityCalc(quals):
+	#Calculate individual bases qualities, just like mira does it
+	quals.sort()
+	min1 = quals[0]
+	if min1 > 0: min1 = 0
+	max1 = quals[-1]
+	if max1 < 0: max1 = 0
+	if len(quals) > 1:
+		max2 = quals[-2]
+		if max2 < 0: max2 = 0
+		min2 = quals[1]
+		if min2 > 0: min2 = 0
+	else:
+		max2 = 0
+		min2 = 0
+
+	qual = (max1 + round(max2 * 0.1)) - (min1 + round(min2 * 0.1))
+	#Return the already formatted string
+	return (" " * (2 - (len(str(qual))))) + str(qual) + " "
+	
+
+def natural_sort(l):
+	#Sort values in a 'natural' way
+    convert = lambda text: int(text) if text.isdigit() else text.lower() 
+    alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
+    return sorted(l, key = alphanum_key)
+  
 
 infile_name = "/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.caf" #Hardcoded for now
 contigs = cafParse(infile_name)
