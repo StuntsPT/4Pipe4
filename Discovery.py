@@ -153,9 +153,8 @@ def RevComp(sequence):
 
 def TCSwriter(infile_name, variation):
 	#Writes the bases with variation to a new TCS file
-	#infile_name = infile_name[:infile_name.rindex(".")] + ".short1.tcs"
-	#Temporarily write to /tmp to speed things up during testing
-	infile_name = "/tmp/" + infile_name[infile_name.rindex("/"):infile_name.rindex(".")] + ".short1.tcs"
+	infile_name = infile_name[:infile_name.rindex(".")] + ".tcs"
+
 	outfile = open(infile_name,'w')
 	outfile.write("#TCS V1.0\n")
 	outfile.write("#\n")
@@ -234,14 +233,15 @@ def QualityCalc(quals):
 	
 
 def natural_sort(l):
-	#Sort values in a 'natural' way
+	#Sort values in a 'natural' way taken form stack overflow
+	#http://stackoverflow.com/questions/4836710
+	#does-python-have-a-built-in-function-for-string-natural-sort?
     convert = lambda text: int(text) if text.isdigit() else text.lower() 
     alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
     return sorted(l, key = alphanum_key)
-  
-
-infile_name = "/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.caf" #Hardcoded for now
-contigs = cafParse(infile_name)
-variation = FindSNPs(contigs)
-TCSwriter(infile_name, variation)
-
+ 
+def RunModule(infile_name,minqual,mincov):
+	#Run the necessary module functions
+	contigs = cafParse(infile_name)
+	variation = FindSNPs(contigs)
+	TCSwriter(infile_name, variation)
