@@ -16,10 +16,12 @@
 
 import re
 
-def TCSParser(infile):
-    #Parses the TCS file and returns a short list of interesting sites
+def TCSParser(infile_name):
+    #Parses the TCS file
+    infile = open(infile_name,'r')
     if infile.readline().startswith("#TCS"):
         shortlist = []
+        i
         TCS = tuple(infile.readlines()[3:])
         infile.close()
         count = 0
@@ -76,7 +78,7 @@ def ListWriter(infile_name,detlists):
         outfile.close()
 
 def RunModule(infile_name,minqual,mincov):
-    infile = open(infile_name,'r')
-    SNPList = TCSParser(infile)
+    
+    SNPList = TCSParser(infile_name)
     ShortList = ListParser(SNPList,minqual,mincov)
     ListWriter(infile_name,ShortList)
