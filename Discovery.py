@@ -175,30 +175,27 @@ def TCSwriter(infile_name, variation):
 		for variants in sorted(v[0].keys()):
 			tcov = str(len(v[0][variants]["A"]) + len(v[0][variants]["C"]) + len(v[0][variants]["G"]) + len(v[0][variants]["T"]) + len(v[0][variants]["-"]))
 			outfile.write(stretch_name)
+			#Padded variation
 			outfile.write(" " * (5 - len(str(variants))))
-			outfile.write(str(variants))
-			#Unpaded variation is not implemented yet. This is a placeholder.
-			outfile.write(" " * (8 - len(str(variants))))
-			outfile.write(str(variants))
-			#End placeholder
+			outfile.write(str(variants - 1))
+			#Unpaded variation
+			if v[1][variants - 1] == "-":
+				outfile.write("      -1")
+			else:
+				outfile.write(" " * (8 - len(str(variants - v[1][:variants + 1].count("-")))))
+				outfile.write(str(variants - v[1][:variants + 1].count("-") - 1))
+			#Contig info
 			outfile.write(" | ")
 			outfile.write(v[1][variants - 1].upper().replace("-","*"))
 			outfile.write(" " * (3 - len(str(v[2][variants-1]))))
 			outfile.write(str(v[2][variants - 1]))
-			#Write coverages
+			#Individual (and total) coverages
 			outfile.write(" | ")
 			outfile.write(" " * (4 - len(tcov)))
 			outfile.write(tcov)
-			outfile.write(" " * (5 - len(str(len(v[0][variants]["A"])))))
-			outfile.write(str(len(v[0][variants]["A"])))
-			outfile.write(" " * (5 - len(str(len(v[0][variants]["C"])))))
-			outfile.write(str(len(v[0][variants]["C"])))
-			outfile.write(" " * (5 - len(str(len(v[0][variants]["G"])))))
-			outfile.write(str(len(v[0][variants]["G"])))
-			outfile.write(" " * (5 - len(str(len(v[0][variants]["T"])))))
-			outfile.write(str(len(v[0][variants]["T"])))
-			outfile.write(" " * (5 - len(str(len(v[0][variants]["-"])))))
-			outfile.write(str(len(v[0][variants]["-"])))
+			for base in ["A", "C", "G", "T", "-"]:
+				outfile.write(" " * (5 - len(str(len(v[0][variants][base])))))
+				outfile.write(str(len(v[0][variants][base])))
 			outfile.write(" | ")
 			#Write base quals
 			for base in ["A", "C", "G", "T", "-"]:
@@ -208,13 +205,15 @@ def TCSwriter(infile_name, variation):
 					outfile.write(QualityCalc(v[0][variants][base]))
 				else:
 					outfile.write(" 1 ")
+			#All tags are discarded. They are not necessary for 4Pipe4 anyway
 			outfile.write("|  : |")
 			outfile.write("\n")
 	
 	outfile.close()
 
 def QualityCalc(quals):
-	#Calculate individual bases qualities, just like mira does it
+	#Calculate individual bases qualities, just like mira does, as seen here:
+	#http://www.freelists.org/post/mira_talk/Quality-Values,4
 	quals.sort()
 	min1 = quals[0]
 	if min1 > 0: min1 = 0
