@@ -136,6 +136,7 @@ def FindSNPs(contigs):
 
 	#The returned dictionary is something like this:
 	#{Contig_name:[{variant_position:{"A":[quals],"C":[quals],"G":[quals],"T":[quals],"-":[quals]}}, contig_seq, [contig_qual]]}
+	print(var_info["TestData_c2"][0][265])
 	return var_info
 	
 def StringCompare(contig, read, position):
@@ -167,7 +168,6 @@ def TCSwriter(infile_name, variation):
 		sorted_values.append(variation[i])
 	
 	for k,v in zip(sorted_keys, sorted_values):
-	#for k,v in sorted(variation.items()):
 		stretch_name = k + (" " * (24 - len(k) + 1))
 		
 		for variants in sorted(v[0].keys()):
