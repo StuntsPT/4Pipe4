@@ -117,14 +117,18 @@ def FindSNPs(contigs):
 		contig_qual = v[2]
 		contig_variants = {}
 		
-		for read_info in contig_map.values():
+		for n,read_info in contig_map.items():
+			if k == "TestData_c2":
+				if read_info[2] <= 265 and read_info[2] + len(read_info[0]) >= 256:
+					print(n)
+					print(v[0][n][0][265 - read_info[2]])
 			padded = StringCompare(contig_seq.upper(), read_info[0], read_info[2])
 			for i in padded: contig_variants[i] = {"A":[],"C":[],"G":[],"T":[],"-":[]}
 
 		for read_info in contig_map.values():
 			#Yes, we are looping through the same as before, but I don't see an
 			#alternative
-			
+	
 			for base_pos in range(len(read_info[0])):
 				if (base_pos + read_info[2]) in contig_variants.keys():
 					try:
