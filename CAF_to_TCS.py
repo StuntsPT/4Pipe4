@@ -69,6 +69,11 @@ def cafParse(infile_name):
 					contigreads[assembly_info[1]][0] = RevComp(contigreads[assembly_info[1]][0])
 					contigreads[assembly_info[1]][1].reverse()
 					contigreads[assembly_info[1]][1][:] = [-1 * i for i in contigreads[assembly_info[1]][1]]
+					#This line will remove "N"s from the start of a sequence.
+					#Apparently they are silently removed from the .caf file...
+					if contigreads[assembly_info[1]][0].startswith("N"):
+						contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][1:]
+						contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][1:]
 					
 				#Slice the read according the assembly (what a mess)	
 				contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4])-1:int(assembly_info[5])]
@@ -99,7 +104,7 @@ def cafParse(infile_name):
 				skip = 1
 
 	caffile.close()
-	
+
 	#We return the following dictionary:
 	#{contig_name:[{read_name:[sequence, [qualities], position]}, contig_seq, [contig quals]]}
 	#The sequences are already returned in R&C position if necessary.
@@ -117,24 +122,21 @@ def FindSNPs(contigs):
 		contig_qual = v[2]
 		contig_variants = {}
 		
-		for n,read_info in contig_map.items():
-			if k == "TestData_c2":
-				if read_info[2] <= 265 and read_info[2] + len(read_info[0]) >= 256:
-					print(n)
-					print(v[0][n][0][265 - read_info[2]])
+		for read_info in contig_map.values():
 			padded = StringCompare(contig_seq.upper(), read_info[0], read_info[2])
 			for i in padded: contig_variants[i] = {"A":[],"C":[],"G":[],"T":[],"-":[]}
 
-		for read_info in contig_map.values():
+		for n,read_info in contig_map.items():
 			#Yes, we are looping through the same as before, but I don't see an
 			#alternative
-	
+					
 			for base_pos in range(len(read_info[0])):
 				if (base_pos + read_info[2]) in contig_variants.keys():
 					try:
 						contig_variants[base_pos + read_info[2]][read_info[0][base_pos]].append(read_info[1][base_pos])
 					except:
-						print("WARNING: Your READS have ambiguities - in this case an \"%s\" in the contig %s in position %s.\n" % (read_info[0][base_pos], contig_name, (base_pos + read_info[2])))
+						#print("WARNING: Your READS have ambiguities - in this case an \"%s\" in the contig %s in position %s.\n" % (read_info[0][base_pos], contig_name, (base_pos + read_info[2])))
+						""
 
 		var_info[contig_name] = [contig_variants, contig_seq, contig_qual]
 
