@@ -14,71 +14,60 @@
 # You should have received a copy of the GNU General Public License
 # along with 4Pipe4.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
+from math import ceil
 
 def TCSParser(infile_name):
     #Parses the TCS file
     infile = open(infile_name,'r')
-    if infile.readline().startswith("#TCS"):
-        shortlist = []
-        i
-        TCS = tuple(infile.readlines()[3:])
-        infile.close()
-        count = 0
-        for lines in TCS:
-            line=lines.split('|')
-            if "!" in line[-2]:
-                shortlist.append(lines)
-            else:
-                count += 1
-        print("Skipped " + str(count) + " lines that were not interesting for SNP detection.")
-        return shortlist
-    else:
+    if infile.readline().startswith("#TCS") == False:
         quit("Invalid input file. Use a TCS file as input.")
+    else:
+        TCS = []
+        for i in range(3): infile.readline() #Skip header
+    
+        for lines in infile:
+            TCS.append(lines)
 
-def ListParser(shortlist,minqual,mincov):
-    #Turns the short lists into shorter lists, discarding everything below mincov
-    hiqual = []
-    lowqual = []
-    for lines in shortlist:
+    infile.close()
+    return TCS
+
+def ListParser(TCS,minqual,mincov):
+    #Discards every line in the TCS file with a coverage below mincov and a qual
+    #below minqual
+    passed = []
+    for lines in TCS:
         line = lines.split('|')
-        coverage=re.split("\D*",line[2])
-        del coverage[0:2]
-        del coverage[-1]
-        intcoverage=list(map(int, coverage))
-        if sum(intcoverage) >= mincov: #Discard positions with less then mincov
-            try:
-                quals = line[3].replace('--','0')
-            except:
-                quals = line[3]
-            qualgroup = re.split(" +",quals)
-            del qualgroup[0]
-            del qualgroup[-1]
-            intquals=list(map(int, qualgroup))
-            intquals.sort()
-            if intquals[-2] >= minqual:#Toss overall low quality positions to lowqual; this will also force gaps into lowquals
-                hiqual.append(lines)
-            else:
-                lowqual.append(lines)
-    detlists = [hiqual, lowqual]
-    return detlists
+        tcov = int(line[2][:5])
+        covs = line[2][5:].strip().split()
+        covs = sorted(list(map(int, covs)))
+        if tcov < mincov: #Discard positions with less then mincov
+            pass
+        elif covs[-2] < (ceil(mincov*0.2)):
+            pass
+        else:
+            quals = line[3].replace('--','0')
+            quallist = quals.strip().split()
+            quallist = sorted(list(map(int, quallist)))
+            if quallist[-2] >= minqual: #Filter by quality
+                passed.append(lines)
+                
+    return passed
 
-def ListWriter(infile_name,detlists):
+def ListWriter(infile_name,passed):
     #Write the selected list into a file.
-    round = 0
-    for detlist in detlists:
-        round = round + 1
-        outfile = open((infile_name[0:-4] + '.short' + str(round) + '.tcs'),'w')
-        outfile.write("#TCS V1.0\n")
-        outfile.write("#\n")
-        outfile.write("# contig name\t\t\tpadPos\tupadPos| B  Q |\ttcov covA covC covG covT cov* | qA qC qG qT q* |  S |\tTags\n")
-        outfile.write("#\n")
-        for lines in detlist:
-            outfile.write(lines)
-        outfile.close()
+    outfile = open((infile_name[0:-4] + '.short.tcs'),'w')
+    outfile.write("#TCS V1.0\n")
+    outfile.write("#\n")
+    outfile.write("# contig name\t\t\tpadPos\tupadPos| B  Q |\ttcov covA covC covG covT cov* | qA qC qG qT q* |  S |\tTags\n")
+    outfile.write("#\n")
+    for lines in passed:
+        outfile.write(lines)
+    outfile.close()
 
 def RunModule(infile_name,minqual,mincov):
     
-    SNPList = TCSParser(infile_name)
-    ShortList = ListParser(SNPList,minqual,mincov)
+    TCS = TCSParser(infile_name)
+    ShortList = ListParser(TCS,minqual,mincov)
     ListWriter(infile_name,ShortList)
+
+RunModule("/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.tcs", 70, 15)

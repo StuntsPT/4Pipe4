@@ -60,7 +60,7 @@ def cafParse(infile_name):
 				skip = 2
 		elif datatype == 3:
 			if lines.startswith("Assembled"):
-				assembly_info = lines.strip().split(" ")
+				assembly_info = lines.strip().split()
 				#RevComp the sequences if required (and quals too)
 				if int(assembly_info[2]) < int(assembly_info[3]):
 					contigreads[assembly_info[1]][2] = int(assembly_info[2])
@@ -121,7 +121,7 @@ def FindSNPs(contigs):
 			padded = StringCompare(contig_seq.upper(), read_info[0], read_info[2])
 			for i in padded: contig_variants[i] = {"A":[],"C":[],"G":[],"T":[],"-":[]}
 
-		for n,read_info in contig_map.items():
+		for read_info in contig_map.values():
 			#Yes, we are looping through the same as before, but I don't see an
 			#alternative
 			
@@ -238,8 +238,10 @@ def natural_sort(l):
     alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
     return sorted(l, key = alphanum_key)
  
-def RunModule(infile_name,minqual,mincov):
+def RunModule(infile_name):
 	#Run the necessary module functions
 	contigs = cafParse(infile_name)
 	variation = FindSNPs(contigs)
 	TCSwriter(infile_name, variation)
+
+RunModule("/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.caf")
