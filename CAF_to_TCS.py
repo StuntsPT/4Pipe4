@@ -248,4 +248,4 @@ def RunModule(infile_name):
 	variation = FindSNPs(contigs)
 	TCSwriter(infile_name, variation)
 
-RunModule("/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.caf")
+#RunModule("/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.caf")

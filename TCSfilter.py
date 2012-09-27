@@ -70,4 +70,4 @@ def RunModule(infile_name,minqual,mincov):
     ShortList = ListParser(TCS,minqual,mincov)
     ListWriter(infile_name,ShortList)
 
-RunModule("/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.tcs", 70, 15)
+#RunModule("/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.tcs", 70, 15)
