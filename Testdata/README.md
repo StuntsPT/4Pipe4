@@ -34,12 +34,12 @@ Using this test file with 4Pipe4 is rather simple. Just follow these steps
     - ~/4PipeTest/test01.report.7z
 
 This will run the whole pipeline. If you wish to skip some steps you can do so
-with with the "-n" option.
+with with the "-s" option.
 
 ### Expected results
 
 If running 4Pipe4 with it's default settings you should expect to find around
-16 different SNPs with different characteristics.
+25 SNPs with different characteristics.
 
 Changing the parameters in the used 4Pipe4 configuration file will result in a
 different amount of SNPs being found.
