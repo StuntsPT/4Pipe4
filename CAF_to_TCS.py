@@ -126,7 +126,7 @@ def FindSNPs(contigs):
 			padded = StringCompare(contig_seq.upper(), read_info[0], read_info[2])
 			for i in padded: contig_variants[i] = {"A":[],"C":[],"G":[],"T":[],"-":[]}
 
-		for n,read_info in contig_map.items():
+		for read_info in contig_map.values():
 			#Yes, we are looping through the same as before, but I don't see an
 			#alternative
 					
@@ -135,8 +135,7 @@ def FindSNPs(contigs):
 					try:
 						contig_variants[base_pos + read_info[2]][read_info[0][base_pos]].append(read_info[1][base_pos])
 					except:
-						#print("WARNING: Your READS have ambiguities - in this case an \"%s\" in the contig %s in position %s.\n" % (read_info[0][base_pos], contig_name, (base_pos + read_info[2])))
-						""
+						print("WARNING: Your READS have ambiguities - in this case an \"%s\" in the contig %s in position %s.\n" % (read_info[0][base_pos], contig_name, (base_pos + read_info[2])))
 
 		var_info[contig_name] = [contig_variants, contig_seq, contig_qual]
 
@@ -179,14 +178,14 @@ def TCSwriter(infile_name, variation):
 			tcov = str(len(v[0][variants]["A"]) + len(v[0][variants]["C"]) + len(v[0][variants]["G"]) + len(v[0][variants]["T"]) + len(v[0][variants]["-"]))
 			outfile.write(stretch_name)
 			#Padded variation
-			outfile.write(" " * (5 - len(str(variants))))
+			outfile.write(" " * (5 - len(str(variants - 1))))
 			outfile.write(str(variants - 1))
 			#Unpaded variation
 			if v[1][variants - 1] == "-":
 				outfile.write("      -1")
 			else:
-				outfile.write(" " * (8 - len(str(variants - v[1][:variants + 1].count("-")))))
-				outfile.write(str(variants - v[1][:variants + 1].count("-") - 1))
+				outfile.write(" " * (8 - len(str(variants - v[1][:variants].count("-") - 1))))
+				outfile.write(str(variants - v[1][:variants].count("-") - 1))
 			#Contig info
 			outfile.write(" | ")
 			outfile.write(v[1][variants - 1].upper().replace("-","*"))
