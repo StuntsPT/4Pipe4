@@ -69,18 +69,14 @@ the following help message:
 
 ```
 
-usage: "4Pipe4 [-h] -i sff_file -o basefile [-c configfile] [-n [RUN_LIST]]"
+usage: 4Pipe4 [-h] -i sff_file -o basefile [-c configfile] [-s [RUN_LIST]]
 
-  -h, --help     show this help message and exit 
-  -i sff_file    Provide the full path to your target sff file  
-  -o basefile    Provide the full path to your results directory, plus the name you want to give your results  
-  -c configfile  Provide the full path to your configuration file. If none is provided, the program will look 
-                 in the current working directory and  then in ~/.config/4Pipe4rc (in this order) for one. If 
-                 none is found the  program will stop 
-  -n [RUN_LIST]  Pleave specify the numbers corresponding to the pipeline steps that will be run. The string 
-                 after "-n" must be given inside quotation marks, and numbers can be joined together or separated 
-                 by any symbol. The numbers are the pipeline steps the should be run. This is an optional argument. 
-                 This is an optional argument. The numbers, from 1 to 9 represent the following steps:  
+optional arguments:
+  -h, --help     show this help message and exit
+  -i sff_file    Provide the full path to your target sff file
+  -o basefile    Provide the full path to your results directory, plus the name you want to give your results
+  -c configfile  Provide the full path to your configuration file. If none is provided, the program will look in the current working directory and  then in ~/.config/4Pipe4rc (in this order) for one. If none is found the  program will stop
+  -s [RUN_LIST]  Specify the numbers corresponding to the pipeline steps that will be run. The string after -s must be given inside quotation marks, and numbers can be joined together or separated by any symbol. The numbers are the pipeline steps that should be run. This is an optional argument and it's omission will run all steps by default'. The numbers, from 1 to 9 represent the following steps:
                         1 - SFF extraction
                         2 - SeqClean
                         3 - Mira
@@ -91,9 +87,7 @@ usage: "4Pipe4 [-h] -i sff_file -o basefile [-c configfile] [-n [RUN_LIST]]"
                         8 - SSR finder
                         9 - 7zip the report
 
-The idea here is that to resume an analysis that was interrupted for example after the assembling process you 
-should issue -n '1,2,3' or -n '123'. Note that some steps depend on the output of previous steps, so using some 
-combinations can cause errors. The arguments can be given in any order but the running order is the same.
+The idea here is that to resume an analysis that was interrupted for example after the assembling process you should issue -s '4,5,6,7,8,9' or -s '456789'. Note that some steps depend on the output of previous steps, so using some combinations can cause errors. The arguments can be given in any order.
 ```
 
 --------------------------------------------
