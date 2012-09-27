@@ -21,7 +21,8 @@ PATH=/path/to/4Pipe4/:$PATH
 
 * 4Pipe4.py - Main file: this is the script you want to run;
 * 4Pipe4rc - Configuration file;
-* DiscoveryTCS.py - Module for SNP discovery in TCS files;
+* CAF_to_TCS.py - Module for locating variation in .caf files. Outputs a TCS.
+* TCSfilter.py - Module for SNP filtering in TCS files;
 * LICENSE - License file;
 * Metrics.py - Module for generating dataset metrics;
 * ORFmaker.py - Module for finding ORFs;
@@ -29,7 +30,9 @@ PATH=/path/to/4Pipe4/:$PATH
 * Reporter.py - Module for generating putative SNP reports;
 * SNPgrabber.py - Module for organizing SNP information;
 * SSRfinder.py - Module for finding SSRs;
-* Templates/Report.html - Template for report "front page"
+* Templates/Report.html - Template for report "front page";
+* Testdata/4Pipe4_test.sff - Test data file;
+* Testdata/README.md - Documentation on the test data;
 
 As time progresses and 4Pipe4 sees new development, this list will be updated.
 
