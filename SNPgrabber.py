@@ -20,7 +20,7 @@ def TCStoDict(tcs_file):
     #Turns the TCS short list into a Dictionary with names:positionsBases
     tcs=open(tcs_file,'r')
     names = {}
-    for i in range(3): tcs.readline() #Skip header
+    for i in range(4): tcs.readline() #Skip header
     
     for lines in tcs:
         name = re.match('^\w*',lines).group(0) #Contig name
