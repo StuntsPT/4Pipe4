@@ -16,11 +16,13 @@
 
 import re
 
-def TCStoDict(tcs):
+def TCStoDict(tcs_file):
     #Turns the TCS short list into a Dictionary with names:positionsBases
+    tcs=open(tcs_file,'r')
     names = {}
-    TCS=tcs.readlines()[4:]
-    for lines in TCS:
+    for i in range(3): infile.readline() #Skip header
+    
+    for lines in tcs:
         name = re.match('^\w*',lines).group(0) #Contig name
         #quals = re.search('\|.{16}\|', lines).group(0)[2:-2].split(' ')
         quals = re.split(' *', re.search('\|.{16}\|', lines).group(0)[2:-2].strip())
@@ -35,10 +37,14 @@ def TCStoDict(tcs):
             names[name]=str(int(re.search('\d{1,5} [|]', lines).group(0)[:-2]) + 1) + SNP #makes it look like - Contig : position
         else:
             names[name]=names[name] + '#' + str(int(re.search('\d{1,5} [|]', lines).group(0)[:-2]) + 1) + SNP # add another SNP to the contig
+
+    tcs.close()
+
     return(names)
 
-def FASTAtoDict(fasta):
+def FASTAtoDict(fasta_file):
     #This will convert the fasta file into a dict like: "name":"seq" and return it
+    fasta=open(fasta_file,'r')
     Dict={}
     for lines in fasta:
         if lines.startswith('>'):
@@ -66,8 +72,6 @@ def ShortListFASTA(names,fasta,tcs_file):
 
 def RunModule(tcs_file,fasta_file):
     #Function to run the whole module:
-    tcs=open(tcs_file,'r')
-    fasta=open(fasta_file,'r')
-    Names=TCStoDict(tcs)
-    Sequences=FASTAtoDict(fasta)
+    Names=TCStoDict(tcs_file)
+    Sequences=FASTAtoDict(fasta_file)
     ShortListFASTA(Names,Sequences,tcs_file)

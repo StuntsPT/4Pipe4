@@ -21,12 +21,13 @@ import sys
 import shutil
 import time
 import configparser
-import DiscoveryTCS as TCS
+import TCSfilter as TCS
 import SNPgrabber as SNPg
 import ORFmaker
 import Reporter
 import SSRfinder as ssr
 import Metrics
+import CAF_to_TCS
 import argparse
 from argparse import RawTextHelpFormatter
 
@@ -171,14 +172,15 @@ def DiscoveryTCS(basefile):
     #Discovers SNPs in the TCS output file of Mira. Use only if trying to find SNPs. Output in TCS format.
     os.chdir(os.path.split(basefile)[0])
     print("\nRunning SNP Discovery tool module...")
+    CAF_to_TCS.RunModule(basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.caf')
     TCS.RunModule(basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.tcs',int(config.get('Variables','minqual')),int(config.get('Variables','mincov')))
 
 def SNPgrabber(basefile):
     #Grabs suitable SNPs in the short TCS output DiscoveryTCS and outputs a fasta with only the relevant contigs, tagged with SNP info.
     os.chdir(os.path.split(basefile)[0])
     print("\nRunning SNP Grabber tool module...")
-    SNPg.RunModule(basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.short1.tcs',basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.unpadded.fasta')
-    shutil.move(miraproject + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.short1.fasta', basefile + '.SNPs.fasta')
+    SNPg.RunModule(basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.short.tcs',basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.unpadded.fasta')
+    shutil.move(miraproject + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.short.fasta', basefile + '.SNPs.fasta')
 
 def ORFliner(basefile):
     #This will run EMBOSS 'getorf' and use 2 scripts to filter the results and write a report. The paramters for 'getorf' are changed here.
