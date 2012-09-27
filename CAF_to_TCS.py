@@ -101,7 +101,7 @@ def cafParse(infile_name):
 				contigqual.append(x)
 			if lines.startswith("\n"):
 				contigs[contigname].append(contigqual)
-				if len(contigqual) % 25 =! 0:
+				if len(contigqual) % 25 != 0:
 					skip = 1
 				else:
 					skip = 2
