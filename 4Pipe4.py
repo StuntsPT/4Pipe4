@@ -52,7 +52,7 @@ def loading (current_state,size,prefix,width):
 def StartUp():
     basefile = "".join(arg.outfile)
     sff = "".join(arg.infile)
-    if arg.configFile != "":
+    if arg.configFile is not None:
         rcfile = arg.configFile
     elif os.path.isfile('4Pipe4rc'):
         rcfile = '4Pipe4rc'
@@ -62,13 +62,13 @@ def StartUp():
         print("No config file provided, falling back to ~/.config/4Pipe4rc")
     else:
         print("\nERROR:No config file provided.\n")
-        quit(Usage())
+        quit("Please run 4Pipe4.py -h for help with running the pipeline.")
     try:
         config = configparser.ConfigParser()
         config.read(rcfile)
     except:
         print("\nERROR: Invalid configuration file\n")
-        quit(Usage())
+        quit("Please run 4Pipe4.py -h for help with running the pipeline.")
     return basefile,sff,config 
 
 def SysPrep(basefile):
@@ -79,7 +79,7 @@ def SysPrep(basefile):
         return basepath[1]
     else:
         print("\nThe directory path used for the basefile does not exist.\n")
-        quit(Usage())
+        quit("Please run 4Pipe4.py -h for help with running the pipeline.")
 
 def RunProgram(cli, requires_output):
     #Function for running external programs and dealing with their output.
