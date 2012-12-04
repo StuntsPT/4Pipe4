@@ -47,12 +47,22 @@ external programs that 4Pipe4 uses in it's processes. By default, these are:
 
 * ssf_extract (http://bioinf.comav.upv.es/sff_extract/)
 * seqclean (http://compbio.dfci.harvard.edu/tgi/software/)
-* mira (http://mira-assembler.sourceforge.net/)
+* mira 3.4.x series (http://mira-assembler.sourceforge.net/) 
 * getorf (http://emboss.sourceforge.net/apps/cvs/emboss/apps/getorf.html)
 * blast (ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
 * blast2go4pipe (http://bioinfo.cipf.es/aconesa/software.html)
 * etandem (http://helixweb.nih.gov/emboss/html/etandem.html)
 * 7zip (http://www.7-zip.org/)
+
+These programs are mentioned as "optinal" since you can have for example an
+already assembled dataset and just want to run the SNP detection routines,
+starting the pipeline from step #4. This would not require sff_extract, seqclean
+nor mira to be installed.
+All of these programs aer required if you wish to run all the steps in 4Pipe4.
+Beware the 4Pipe4 currentlly relies on the stable version of mira, and not the
+development version. When the current development branch (3.9.x series at the
+time of writing) sees a stable release 4Pipe4 will be updated to work with this
+new version, which radically changes the user interface.
 
 You should also have a local database of NCBI's
 Univec (http://www.ncbi.nlm.nih.gov/VecScreen/UniVec.html)
@@ -62,8 +72,8 @@ likely in your distribution's repositories (such as 7zip or blast).
 
 ### USAGE
 
-Using 4Pipe4 should be relatively simple. Simply calling "4Pipe4.py -h" or "4Pipe4.py --help" should print
-the following help message:
+Using 4Pipe4 should be relatively simple. Simply calling "4Pipe4.py -h" or
+"4Pipe4.py --help" should printthe following help message:
 
 --------------------------------------------
 

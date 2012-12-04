@@ -4,7 +4,8 @@
 ### Description
 
 The test dataset is an sff file, which was created from a controlled subset of
-an original sff file obtained from a pool of Quercus individuals.
+an original sff file with transcriptomic data obtained from a pool of Quercus
+individuals.
 
 The original dataset was obtained via 454 Titanium technology.
 

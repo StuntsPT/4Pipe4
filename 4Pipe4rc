@@ -13,7 +13,7 @@ sff_extract_path =
 seqclean_path = 
 #Path to cln2qual:
 cln2qual_path = 
-#Path to univec database:
+#Path to univec database (file of filenames):
 UniVecDB_path = 
 #Path to mira:
 mira_path = 
@@ -46,7 +46,7 @@ min_ssr_qual = 70
 
 [Mira Parameters]
 ##Parameters to pass to mira:
-##Example for ESTs (to search for SNPs):
+##Example to search for SNPs in EST data:
 # --job=denovo,est,normal,454 -CO:asir=yes 454_SETTINGS -AL:mrs=95 -AL:egp=yes:egpl=reject_codongaps:megpp=100 -CO:rodirs=9 -LR:mxti=no
 ##Example for Genome Assembly:
 # --job=denovo,genome,normal,454
