@@ -53,7 +53,8 @@ def StartUp():
     basefile = os.path.abspath("".join(arg.outfile))
     sff = os.path.abspath("".join(arg.infile))
     if arg.configFile is not None:
-        rcfile = os.path.abspath(arg.configFile)
+        rcfile = arg.configFile
+        rcfile = os.path.abspath(rcfile)
     elif os.path.isfile('4Pipe4rc'):
         rcfile = '4Pipe4rc'
         print("No config file provided, falling back to current working dir 4Pipe4rc")
