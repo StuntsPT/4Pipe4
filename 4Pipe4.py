@@ -50,10 +50,10 @@ def loading (current_state,size,prefix,width):
 	sys.stdout.flush()
 
 def StartUp():
-    basefile = "".join(arg.outfile)
-    sff = "".join(arg.infile)
+    basefile = os.path.abspath("".join(arg.outfile))
+    sff = os.path.abspath("".join(arg.infile))
     if arg.configFile is not None:
-        rcfile = arg.configFile
+        rcfile = os.path.abspath(arg.configFile)
     elif os.path.isfile('4Pipe4rc'):
         rcfile = '4Pipe4rc'
         print("No config file provided, falling back to current working dir 4Pipe4rc")
