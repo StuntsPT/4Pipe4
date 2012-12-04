@@ -6,6 +6,9 @@
 ##differ from system to system. Here is where we steup the paths
 ##to each of the required programs.
 
+#Please use the FULL PROGRAM PATHS!
+#eg. "/home/user/software/sff_extract" instead of "~/software/sff_extract"
+
 [Program paths]
 #Path to sff_extract:
 sff_extract_path = 
