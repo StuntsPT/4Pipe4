@@ -61,7 +61,7 @@ def StartUp():
         rcfile = os.path.abspath(os.path.expanduser('~/.config/4Pipe4rc'))
         print("No config file provided, falling back to ~/.config/4Pipe4rc")
     else:
-        print("\nERROR:No config file provided and no config file found in current dir.\n")
+        print("\nERROR:No config file provided nor found in the standard locations.\n")
         quit("Please run 4Pipe4.py -h for help with running the pipeline.")
     try:
         config = configparser.ConfigParser()
