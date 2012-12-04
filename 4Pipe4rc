@@ -36,6 +36,8 @@ Templates_path =
 7z_path = 
 
 [Variables]
+#Maximum percent of reads allowed so start with the same bases:
+max_equality = 30
 #Minimum length of sequences not to be discarded by seqclean:
 min_len = 50
 #Number of CPU cores to be used by seqclean and BLAST:
