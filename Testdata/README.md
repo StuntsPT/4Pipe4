@@ -15,6 +15,9 @@ but rather a quick and simple way to demonstrate the use of 4Pipe4.
 It contains approximately 2600 reads which is more than enough to work as an
 example and results in a very quick analysis process.
 
+In this same directory you will find a file named TestData.report.7z with an
+example report of a full 4Pipe4 run with default settings.
+
 ### Example usage
 
 Using this test file with 4Pipe4 is rather simple. Just follow these steps
