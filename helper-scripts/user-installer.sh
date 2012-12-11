@@ -39,7 +39,6 @@ echo "Downloading programs from their respective websites... Please wait."
 wget $sff_extract_url -O $workdir/sff_extract/sff_extract
 wget $seqclean_url -O $workdir/seqclean.tar.gz
 wget $mira_url -O $workdir/mira.tar.bz2
-wget $emboss_url -O $workdir/emboss.gz #TODO
 wget $blast_url -O $workdir/blast.tar.gz
 wget $p7zip_url -O $workdir/p7z.tar.bz2
 
