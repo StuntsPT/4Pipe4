@@ -59,8 +59,10 @@ do
 tar xfj $dldir/$i -C $workdir
 done
 
-echo "If no errors accurred, (dead links, etc..) all of the software required\
-run 4Pipe4 is now installed in userspace. (except Blast2GO and emboss) Please\
-add the correct paths to your 4Pipe4rc file."
-echo "You may now run emboss-user-installer.sh to download, compile and install\
-the requeired emboss programs."
+echo ""
+echo "If no errors accurred, (dead links, etc..) all of the software required \
+to run 4Pipe4 is now installed in userspace (except Blast2GO and emboss). \
+Please add the correct paths to your 4Pipe4rc file."
+echo "You may now run emboss-user-installer.sh to download, compile and \
+install the requeired emboss programs."
+echo ""
