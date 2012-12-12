@@ -21,5 +21,35 @@
 #parameters!
 
 workdir=~/Software
-
+echo "$workdir"
 echo "Looking for your programs..."
+#sff_extract
+sff_extract=$(find $workdir -executable -name sff_extract -type f);echo "."
+#seqclean
+seqclean=$(find $workdir -executable -name seqclean -type f);echo "."
+#clean2qual
+cln2qual=$(find $workdir -executable -name cln2qual -type f);echo "."
+#mira
+mira=$(find $workdir -executable -name mira -type f);echo "."
+#etandem
+etandem=$(find $workdir/emboss -executable -name etandem -type f);echo "."
+#getorf
+getorf=$(find $workdir/emboss -executable -name getorf -type f);echo "."
+#blast
+blastx=$(find $workdir -executable -name blastx -type f);echo "."
+#7zip
+_7z=$(find $workdir -executable -name 7z -type f);echo "."
+
+echo "Done!"
+echo "You may add these lines to your 4Pipe4rc file:"
+echo "sff_extract_path = $sff_extract"
+echo "seqclean_path = $seqclean"
+echo "cln2qual_path = $cln2qual"
+echo "mira_path = $mira"
+echo "GetORF_path = $getorf"
+echo "Etandem_path = $etandem"
+echo "BLAST_path = $blastx"
+echo "7z_path = $_7z"
+echo ""
+echo "Don't forget to fill in the rest of the variables in your 4Pipe4rc file!!"
+echo ""

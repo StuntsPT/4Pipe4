@@ -44,7 +44,7 @@ cp emboss/getorf $workdir/emboss/
 cp emboss/etandem $workdir/emboss/
 
 echo ""
-echo "If no errors accurred, (dead links, failed compilation, etc..) all of \
+echo "If no errors occurred, (dead links, failed compilation, etc..) all of \
 the software required run 4Pipe4 is now installed in userspace \
 (except Blast2GO)."
 echo "You may now run rc-generator.sh to get a template for your 4Pipe4rc file."
