@@ -54,7 +54,7 @@ do
 tar xfz $dldir/$i -C $workdir
 done
 #Bzipped
-for i in $(ls $workdir |grep .bz2)
+for i in $(ls $dldir |grep .bz2)
 do
 tar xfj $dldir/$i -C $workdir
 done
