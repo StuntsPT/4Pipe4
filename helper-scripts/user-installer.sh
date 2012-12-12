@@ -31,32 +31,33 @@ p7zip_url="http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1
 
 #Create a dir for your new programs (change this to your preference):
 workdir=~/Software
+dldir=$workdir/compressed
 
 mkdir -p $workdir/sff_extract
+mkdir -p $dldir
 
 #Download the programs form the web
 echo "Downloading programs from their respective websites... Please wait."
-wget $sff_extract_url -O $workdir/sff_extract/sff_extract
-wget $seqclean_url -O $workdir/seqclean.tar.gz
-wget $mira_url -O $workdir/mira.tar.bz2
-wget $blast_url -O $workdir/blast.tar.gz
-wget $p7zip_url -O $workdir/p7z.tar.bz2
+wget -c $sff_extract_url -O $dldir/sff_extract/sff_extract
+wget -c $seqclean_url -O $dldir/seqclean-x86_64.tgz
+wget -c $mira_url -O $dldir/mira_3.4.1.1_prod_linux-gnu_x86_64_static.tar.bz2
+wget -c $blast_url -P $dldir/
+wget -c $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2/
 
 #Extract and prepare the downloaded programs:
 #sff_extract
 chmod 755 $workdir/sff_extract/sff_extract
 echo "Extracting and locally installing the downloaded programs... Please wait."
 #Gzipped:
-for i in $(ls $workdir |grep .gz)
+for i in $(ls $dldir |grep .gz)
 do
-tar xfz $workdir/$i -C $workdir
+tar xfz $dldir/$i -C $workdir
 done
 #Bzipped
 for i in $(ls $workdir |grep .bz2)
 do
-tar xfj $workdir/$i -C $workdir
+tar xfj $dldir/$i -C $workdir
 done
-
 
 echo "If no errors accurred, (dead links, etc..) all of the software required\
 run 4Pipe4 is now installed in userspace. (except Blast2GO and emboss) Please\

@@ -25,19 +25,24 @@ emboss_url="ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.5.7.tar.gz"
 workdir=~/Software
 
 mkdir -p $workdir/emboss
+mkdir -p $workdir/compressed
 
 #Download emboss form the web
 echo "Downloading emboss it's respective website... Please wait."
-wget $emboss_url -O $workdir/emboss.tar.gz
+wget -c $emboss_url -O $workdir/emboss.tar.gz
 
 #Extract the source:
 tar xfz $workdir/emboss.tar.gz -C $workdir
+mv $workdir/emboss.tar.gz $workdir/compressed
 
 #Build the program:
 cd $workdir
-cd $(ls |grep -i EMBOSS)
+cd $(ls |grep EMBOSS)
 ./configure --without-x
 make
 cp emboss/getorf $workdir/emboss/
 cp emboss/etandem $workdir/emboss/
 
+echo "If no errors accurred, (dead links, failed compilation, etc..) all of the\
+software required run 4Pipe4 is now installed in userspace (except Blast2GO)."
+echo "You may now run rc-generator.sh to get a template for your 4Pipe4rc file."
