@@ -42,7 +42,7 @@ wget -c $sff_extract_url -O $dldir/sff_extract/sff_extract
 wget -c $seqclean_url -O $dldir/seqclean-x86_64.tgz
 wget -c $mira_url -O $dldir/mira_3.4.1.1_prod_linux-gnu_x86_64_static.tar.bz2
 wget -c $blast_url -P $dldir/
-wget -c $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2/
+wget -c $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2
 
 #Extract and prepare the downloaded programs:
 #sff_extract
