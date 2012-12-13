@@ -212,7 +212,10 @@ def B2G(basefile):
     #This will make all necessary runs to get a B2go anottation ready for the GUI aplication. Bummer...
     #We start by blasting all the contigs with SNPs against the NCBI's 'nr'.
     os.chdir(os.path.split(basefile)[0])
-    cli = [config.get('Program paths','BLAST_path'), '-p', 'blastx', '-d', config.get('Program paths','BLASTdb_path'), '-i', basefile + '.SNPs.fasta', '-m', '7', '-a', config.get('Variables','seqcores'), '-o', basefile + '.shortlistblast.xml']
+    if config.get('Program paths','BLAST_path').endswith('blast2'):
+        cli = [config.get('Program paths','BLAST_path'), '-p', 'blastx', '-d', config.get('Program paths','BLASTdb_path'), '-i', basefile + '.BestORF.fasta', '-H', 'T', '-a', config.get('Variables','seqcores'), '-o', basefile + '.ORFblast.html']
+    else:
+        cli = [config.get('Program paths','BLAST_path'), '-db', config.get('Program paths','BLASTdb_path'), '-query', basefile + '.BestORF.fasta', '-html', '-num_threads', config.get('Variables','seqcores'), '-out', basefile + '.ORFblast.html']
     print("\nRunning NCBI 'blastx' using the following command:")
     print(' '.join(cli))
     RunProgram(cli,0)
