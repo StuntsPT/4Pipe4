@@ -50,18 +50,18 @@ def loading (current_state,size,prefix,width):
 	sys.stdout.flush()
 
 def StartUp():
-    basefile = "".join(arg.outfile)
-    sff = "".join(arg.infile)
+    basefile = os.path.abspath("".join(arg.outfile))
+    sff = os.path.abspath("".join(arg.infile))
     if arg.configFile is not None:
-        rcfile = arg.configFile
+        rcfile = os.path.abspath("".join(arg.configFile))
     elif os.path.isfile('4Pipe4rc'):
-        rcfile = '4Pipe4rc'
+        rcfile = os.path.abspath('4Pipe4rc')
         print("No config file provided, falling back to current working dir 4Pipe4rc")
-    elif os.path.isfile('~/.config/4Pipe4rc'):
-        rcfile = '~/.config/4Pipe4rc'
+    elif os.path.isfile(os.path.expanduser('~/.config/4Pipe4rc')):
+        rcfile = os.path.abspath(os.path.expanduser('~/.config/4Pipe4rc'))
         print("No config file provided, falling back to ~/.config/4Pipe4rc")
     else:
-        print("\nERROR:No config file provided.\n")
+        print("\nERROR:No config file provided nor found in the standard locations.\n")
         quit("Please run 4Pipe4.py -h for help with running the pipeline.")
     try:
         config = configparser.ConfigParser()
@@ -101,8 +101,8 @@ def RunProgram(cli, requires_output):
 
 def SffExtract(sff, clip):
     #Function for using the sff_extract program. The function returns the 'clip' value recommended by sff_extract. If run sequentially, the recommendations should be added.
-    cli = [config.get('Program paths','sff_extract_path'), '-c', '--min_left_clip=' + str(clip), '--min_frequency=30', '-o', basefile, "-A", sff]
-    print("\nRunning sff_extract using the folowing command:")
+    cli = [config.get('Program paths','sff_extract_path'), '-c', '--min_left_clip=' + str(clip), '--min_frequency=' + config.get('Variables','max_equality'), '-o', basefile, "-A", sff]
+    print("\nRunning sff_extract using the following command:")
     print(' '.join(cli))
     sff_extract_stdout = RunProgram(cli,1)
     if len(sff_extract_stdout) == 20:
@@ -138,12 +138,12 @@ def SeqClean(basefile):
     #Function for using seqclean and clean2qual.
     #seqclean
     cli = [config.get('Program paths','seqclean_path'), basefile + '.fasta', '-r', basefile + '.clean.rpt', '-l', config.get('Variables','min_len'), '-o', basefile + '.clean.fasta', '-c', config.get('Variables','seqcores'), '-v', config.get('Program paths','UniVecDB_path')]
-    print("\nRunning Seqclean using the folowing command:")
+    print("\nRunning Seqclean using the following command:")
     print(' '.join(cli))
     RunProgram(cli,0)
     #cln2qual
     cli = [config.get('Program paths','cln2qual_path'), basefile + '.clean.rpt', basefile + '.fasta.qual']
-    print("\nRunning cln2qual using the folowing command:")
+    print("\nRunning cln2qual using the following command:")
     print(' '.join(cli))
     RunProgram(cli,0)
     shutil.move(basefile + '.fasta.qual.clean', basefile + '.clean.fasta.qual')
@@ -189,15 +189,18 @@ def ORFliner(basefile):
     #This will run EMBOSS 'getorf' and use 2 scripts to filter the results and write a report. The paramters for 'getorf' are changed here.
     os.chdir(os.path.split(basefile)[0])
     cli = [config.get('Program paths','GetORF_path'), '-sequence', basefile + '.SNPs.fasta', '-outseq', basefile + '.allORFs.fasta', '-find', '3']
-    print("\nRunning EMBOSS 'getorf' using the folowing command:")
+    print("\nRunning EMBOSS 'getorf' using the following command:")
     print(' '.join(cli))
     RunProgram(cli,0)
     #After this we go to ORFmaker.py:
     print("\nRunning ORFmaker module...")
     ORFmaker.RunModule(basefile + '.allORFs.fasta')
     #Next we BLAST the resulting ORFs against the local 'nr' database:
-    cli = [config.get('Program paths','BLAST_path'), '-p', 'blastx', '-d', config.get('Program paths','BLASTdb_path'), '-i', basefile + '.BestORF.fasta', '-H', 'T', '-a', config.get('Variables','seqcores'), '-o', basefile + '.ORFblast.html']
-    print("\nRunning NCBI 'blastx' using the folowing command:")
+    if config.get('Program paths','BLAST_path').endswith('blast2'):
+        cli = [config.get('Program paths','BLAST_path'), '-p', 'blastx', '-d', config.get('Program paths','BLASTdb_path'), '-i', basefile + '.BestORF.fasta', '-H', 'T', '-a', config.get('Variables','seqcores'), '-o', basefile + '.ORFblast.html']
+    else:
+        cli = [config.get('Program paths','BLAST_path'), '-db', config.get('Program paths','BLASTdb_path'), '-query', basefile + '.BestORF.fasta', '-html', '-num_threads', config.get('Variables','seqcores'), '-out', basefile + '.ORFblast.html']
+    print("\nRunning NCBI 'blastx' using the following command:")
     print(' '.join(cli))
     RunProgram(cli,0)
     #Then we write the metrics report:
@@ -212,14 +215,17 @@ def B2G(basefile):
     #This will make all necessary runs to get a B2go anottation ready for the GUI aplication. Bummer...
     #We start by blasting all the contigs with SNPs against the NCBI's 'nr'.
     os.chdir(os.path.split(basefile)[0])
-    cli = [config.get('Program paths','BLAST_path'), '-p', 'blastx', '-d', config.get('Program paths','BLASTdb_path'), '-i', basefile + '.SNPs.fasta', '-m', '7', '-a', config.get('Variables','seqcores'), '-o', basefile + '.shortlistblast.xml']
-    print("\nRunning NCBI 'blastx' using the folowing command:")
+    if config.get('Program paths','BLAST_path').endswith('blast2'):
+        cli = [config.get('Program paths','BLAST_path'), '-p', 'blastx', '-d', config.get('Program paths','BLASTdb_path'), '-i', basefile + '.BestORF.fasta', '-H', 'T', '-a', config.get('Variables','seqcores'), '-o', basefile + '.ORFblast.html']
+    else:
+        cli = [config.get('Program paths','BLAST_path'), '-db', config.get('Program paths','BLASTdb_path'), '-query', basefile + '.BestORF.fasta', '-html', '-num_threads', config.get('Variables','seqcores'), '-out', basefile + '.ORFblast.html']
+    print("\nRunning NCBI 'blastx' using the following command:")
     print(' '.join(cli))
     RunProgram(cli,0)
     #After 'blasting' we run b2g4pipe:
     if os.path.isfile(config.get('Program paths','Blast2go_path')):
         cli = ['java', '-jar', config.get('Program paths','Blast2go_path'), '-in', basefile + '.shortlistblast.xml', '-prop', os.path.split(config.get('Program paths','Blast2go_path'))[0] + '/b2gPipe.properties', '-out', basefile + '.b2g', '-a']
-        print("\nRunning b2g4pipe using the folowing command:")
+        print("\nRunning b2g4pipe using the following command:")
         print(' '.join(cli))
         RunProgram(cli,0)
     else:
@@ -268,7 +274,7 @@ def TidyUP(basefile):
     shutil.copy(config.get('Program paths','Templates_path') + '/Report.html', 'Report/Report.html')
     #7zip it
     cli = [config.get('Program paths','7z_path'), 'a', '-y', '-bd', basefile + '.report.7z', 'Report']
-    print("\n7ziping the Report folder for sending using the folowing command:")
+    print("\n7ziping the Report folder for sending using the following command:")
     print(' '.join(cli))
     RunProgram(cli,0)
 

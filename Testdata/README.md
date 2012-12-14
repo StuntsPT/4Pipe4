@@ -4,7 +4,8 @@
 ### Description
 
 The test dataset is an sff file, which was created from a controlled subset of
-an original sff file obtained from a pool of Quercus individuals.
+an original sff file with transcriptomic data obtained from a pool of Quercus
+individuals.
 
 The original dataset was obtained via 454 Titanium technology.
 
@@ -13,6 +14,9 @@ but rather a quick and simple way to demonstrate the use of 4Pipe4.
 
 It contains approximately 2600 reads which is more than enough to work as an
 example and results in a very quick analysis process.
+
+In this same directory you will find a file named TestData.report.7z with an
+example report of a full 4Pipe4 run with default settings.
 
 ### Example usage
 
