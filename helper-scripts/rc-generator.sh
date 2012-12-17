@@ -21,7 +21,8 @@
 #parameters!
 
 workdir=~/Software
-echo "$workdir"
+datadir=~/Databases
+
 echo "Looking for your programs..."
 #sff_extract
 sff_extract=$(find $workdir -executable -name sff_extract -type f);echo "."
@@ -39,6 +40,10 @@ getorf=$(find $workdir/emboss -executable -name getorf -type f);echo "."
 blastx=$(find $workdir -executable -name blastx -type f);echo "."
 #7zip
 _7z=$(find $workdir -executable -name 7z -type f);echo "."
+#Univec
+univec=$(find $datadir -name Univec -type f); echo "."
+#nr
+nr=$(find $datadir -name nr -type f); echo "."
 
 echo "Done!"
 echo "You may add these lines to your 4Pipe4rc file:"
@@ -50,6 +55,8 @@ echo "GetORF_path = $getorf"
 echo "Etandem_path = $etandem"
 echo "BLAST_path = $blastx"
 echo "7z_path = $_7z"
+echo "UniVecDB_path = $univec"
+echo "BLASTdb_path = $nr"
 echo ""
 echo "Don't forget to fill in the rest of the variables in your 4Pipe4rc file!!"
 echo ""
