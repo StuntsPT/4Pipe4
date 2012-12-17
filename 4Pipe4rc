@@ -11,29 +11,29 @@
 
 [Program paths]
 #Path to sff_extract:
-sff_extract_path = 
-#Path to seqclean: 
-seqclean_path = 
+sff_extract_path =
+#Path to seqclean:
+seqclean_path =
 #Path to cln2qual:
-cln2qual_path = 
+cln2qual_path =
 #Path to univec database (file of filenames):
-UniVecDB_path = 
+UniVecDB_path =
 #Path to mira:
-mira_path = 
+mira_path =
 #Path to EMBOSS getorf:
-GetORF_path = 
+GetORF_path =
 #Path to EMBOSS etandem:
-Etandem_path = 
-#Path to BLAST:
-BLAST_path = 
-#Path to BLAST database:
-BLASTdb_path = 
+Etandem_path =
+#Path to BLAST (works with blast2 and blastx):
+BLAST_path =
+#Path to BLAST database (file of filenames):
+BLASTdb_path =
 #Path to Blast2go4pipe:
-Blast2go_path = 
+Blast2go_path =
 #Path to 4Pipe4's templates directory:
-Templates_path = 
+Templates_path =
 #Path to 7zip:
-7z_path = 
+7z_path =
 
 [Variables]
 #Maximum percent of reads allowed so start with the same bases:
@@ -55,4 +55,4 @@ min_ssr_qual = 70
 # --job=denovo,est,normal,454 -CO:asir=yes 454_SETTINGS -AL:mrs=95 -AL:egp=yes:egpl=reject_codongaps:megpp=100 -CO:rodirs=9 -LR:mxti=no
 ##Example for Genome Assembly:
 # --job=denovo,genome,normal,454
-miraparms = 
+miraparms =

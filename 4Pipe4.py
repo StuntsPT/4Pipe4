@@ -69,10 +69,13 @@ def StartUp():
     except:
         print("\nERROR: Invalid configuration file\n")
         quit("Please run 4Pipe4.py -h for help with running the pipeline.")
-    return basefile,sff,config 
+    return basefile,sff,config
 
 def SysPrep(basefile):
     #Function for prepairing the system for the pipeline.
+    if os.path.isdir(basefile):
+		print("\nThe path used for the basefile points to a directory! Please use a file.\n")
+		quit("Please run 4Pipe4.py -h for help with running the pipeline.")
     basepath=os.path.split(basefile)
     if os.path.isdir(basepath[0]):
         os.chdir(basepath[0])
@@ -104,7 +107,7 @@ def SffExtract(sff, clip):
     sff_extract_stdout = RunProgram(cli,1)
     if len(sff_extract_stdout) == 20:
         for lines in sff_extract_stdout:
-            if "Probably" in str(lines): 
+            if "Probably" in str(lines):
                 warning = str(lines)
                 number = ''
                 for letters in warning:
@@ -202,7 +205,7 @@ def ORFliner(basefile):
     RunProgram(cli,0)
     #Then we write the metrics report:
     print("\nRunning the metrics calculator module...")
-    seqclean_log_path =  os.path.split(basefile)[0] + "/seqcl_" + miraproject + ".fasta.log" 
+    seqclean_log_path =  os.path.split(basefile)[0] + "/seqcl_" + miraproject + ".fasta.log"
     Metrics.Run_module(seqclean_log_path, basefile + '.fasta', basefile + '.clean.fasta', basefile + '.fasta.qual', basefile + '.clean.fasta.qual', basefile + '_assembly/' + miraproject + '_d_info/' + miraproject + '_info_assembly.txt', basefile + '.SNPs.fasta', basefile + '.BestORF.fasta', basefile + '.Metrics.html')
     #Finally we write down our report using the data gathered so far:
     print("\nRunning Reporter module...")
@@ -256,7 +259,7 @@ def TidyUP(basefile):
         os.rename(basefile + '.Report.html','Report/SNPs.html')
     except:
         print(basefile + '.Report.html does not exist')
-    try:    
+    try:
         os.rename(basefile + '.b2g.annot','Report/B2g.annot')
     except:
         print(basefile + '.b2g.annot does not exist')
