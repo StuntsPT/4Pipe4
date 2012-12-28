@@ -70,6 +70,32 @@ and nr (ftp://ftp.ncbi.nlm.nih.gov/blast/db/) or equivalent.
 Once again, if you are using linux remember that some of these programs are
 likely in your distribution's repositories (such as 7zip or blast).
 
+### HELPER SCRIPTS
+
+Inside the directory "helper-scripts" you will find 4 shell scripts:
+
+* user-installer.sh
+* emboss-user-installer.sh
+* database-downloader.sh
+* rc-generator.sh
+
+If they are run in the order they are shown here, they will:
+
+1. Download and locally install the programs: "sff_extract", "seqclean", "mira",
+"blast" and "p7zip".
+2. Download, compile and locally install emboss' "getorf" and "etandem". (This
+script requires build tools such as "make" and "gcc". They should be readily
+available on any *nix machine you have access to but don't have root access.)
+3. Download local copies of NCBI's "Univec" and "nr" databases.
+4. Generate pre-configured entries for all of the above ready to be copied &
+pasted into 4Pipe4rc.
+
+These scripts should significantlly speed up the instalation process of these
+external 4Pipe4 programs.
+
+By default these scripts will install all the software to "~/Software", but this
+can be easily changed in the scripts themselves.
+
 ### USAGE
 
 Using 4Pipe4 should be relatively simple. Simply calling "4Pipe4.py -h" or
