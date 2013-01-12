@@ -40,14 +40,14 @@ parser.add_argument("-s",dest="run_list",nargs="?",default="1 2 3 4 5 6 7 8 9",h
 arg = parser.parse_args()
 
 def loading (current_state,size,prefix,width):
-	""" Function that prints the loading progress of the script! """
-	percentage = int(((current_state+1)/size)*100)
-	complete = int(width*percentage*0.01)
-	if percentage == 100:
-		sys.stdout.write("\r%s [%s%s] %s%% -- Done!\n" % (prefix,"#"*complete,"."*(width-complete),percentage))
-	else:
-		sys.stdout.write("\r%s [%s%s] %s%%" % (prefix,"#"*complete,"."*(width-complete),percentage))
-	sys.stdout.flush()
+    """ Function that prints the loading progress of the script! """
+    percentage = int(((current_state+1)/size)*100)
+    complete = int(width*percentage*0.01)
+    if percentage == 100:
+        sys.stdout.write("\r%s [%s%s] %s%% -- Done!\n" % (prefix,"#"*complete,"."*(width-complete),percentage))
+    else:
+        sys.stdout.write("\r%s [%s%s] %s%%" % (prefix,"#"*complete,"."*(width-complete),percentage))
+    sys.stdout.flush()
 
 def StartUp():
     basefile = os.path.abspath("".join(arg.outfile))
@@ -74,8 +74,8 @@ def StartUp():
 def SysPrep(basefile):
     #Function for prepairing the system for the pipeline.
     if os.path.isdir(basefile):
-		print("\nThe path used for the basefile points to a directory! Please use a file.\n")
-		quit("Please run 4Pipe4.py -h for help with running the pipeline.")
+        print("\nThe path used for the basefile points to a directory! Please use a file.\n")
+        quit("Please run 4Pipe4.py -h for help with running the pipeline.")
     basepath=os.path.split(basefile)
     if os.path.isdir(basepath[0]):
         os.chdir(basepath[0])
