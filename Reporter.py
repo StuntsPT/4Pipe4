@@ -23,7 +23,7 @@ def FASTAtoDict(fasta):
     for lines in fasta:
         if lines.startswith('>'):
             name=lines.strip('>\n')
-            Dict[name]= '' 
+            Dict[name]= ''
         else:
             Dict[name] = Dict[name] + lines.upper()
     fasta.close()
@@ -35,7 +35,7 @@ def FASTAtoLargeDict(fulllist):
     for lines in fulllist:
         if lines.startswith('>'):
             name=lines.strip('>\n')
-            LargeDict[name]= '' 
+            LargeDict[name]= ''
         else:
             LargeDict[name] = LargeDict[name] + lines.upper()
     fulllist.close()
@@ -81,12 +81,12 @@ def Characterize(Dict,Blasts,LargeDict,report):
     report.write('''<HTML>
     <HEAD>
         <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-        <TITLE>SNP Characterization</TITLE>            
+        <TITLE>SNP Characterization</TITLE>
         <STYLE>
-        <!-- 
+        <!--
         BODY,DIV,TABLE,THEAD,TBODY,TFOOT,TR,TH,TD,P { font-family:"Arial"; font-size:small }
         -->
-        </STYLE>                                               
+        </STYLE>
     </HEAD>\n''')
     report.write('<BODY>\n<TABLE CELLSPACING=1 BORDER=1>\n<TBODY>\n<TR>\n')
     report.write('''<TD ALIGN=CENTER>Contig</TD>
@@ -135,8 +135,8 @@ def Characterize(Dict,Blasts,LargeDict,report):
             row = row + '<TD ALIGN=CENTER>' + frame + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + str(pos) + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + left_limit + '</TD>\n'
-            row = row + '<TD ALIGN=CENTER>' + right_limit + '</TD>\n' 
-            row = row + '<TD ALIGN=CENTER><a href="html_files/' + k + '.ORF.fasta">' + str(abs(int(left_limit)-int(right_limit) + 1)) + '</TD>\n'
+            row = row + '<TD ALIGN=CENTER>' + right_limit + '</TD>\n'
+            row = row + '<TD ALIGN=CENTER><a href="html_files/' + re.match('^.*\]',k) + '.ORF.fasta">' + str(abs(int(left_limit)-int(right_limit) + 1)) + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + str(ke+1) + '</TD>\n'
             if str((ke+1)/3).find('.0') != -1:
                 position = v[ke-2:ke+1]
@@ -202,7 +202,7 @@ def FASTAsplitter(Dict,LargeDict,report_file):
         smallfile.write(LargeDict[seqs])
         smallfile.close()
     for seqs in Dict:
-        smallfile = open(filespath + seqs + '.ORF.fasta','w')
+        smallfile = open(filespath + re.match('^.*\]',seqs) + '.ORF.fasta','w')
         smallfile.write('>' + seqs + '\n')
         smallfile.write(Dict[seqs])
         smallfile.close()
