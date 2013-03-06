@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# Copyright 2011-2012 Francisco Pina Martins <f.pinamartins@gmail.com>
+# Copyright 2011-2013 Francisco Pina Martins <f.pinamartins@gmail.com>
 # This file is part of 4Pipe4.
 # 4Pipe4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
