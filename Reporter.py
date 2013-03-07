@@ -79,7 +79,7 @@ def BLASTParser(blast):
         #Blast+
         for lines in blast:
             if lines.startswith('<b>Query='):
-                if done = 0:
+                if done == 0:
                     parsed[title] = ''
                 else:
                     title = re.search(' \w* ',lines).group(0)[1:-1]
