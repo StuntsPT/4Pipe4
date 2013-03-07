@@ -184,7 +184,7 @@ def Characterize(Dict,Blasts,LargeDict,report):
             row = row + '<TD ALIGN=CENTER>' + str(pos) + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + left_limit + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + right_limit + '</TD>\n'
-            row = row + '<TD ALIGN=CENTER><a href="html_files/' + re.match('^.*\]',k) + '.ORF.fasta">' + str(abs(int(left_limit)-int(right_limit) + 1)) + '</TD>\n'
+            row = row + '<TD ALIGN=CENTER><a href="html_files/' + str(re.match('^.*\]',k)) + '.ORF.fasta">' + str(abs(int(left_limit)-int(right_limit) + 1)) + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + str(ke+1) + '</TD>\n'
             if str((ke+1)/3).find('.0') != -1:
                 position = v[ke-2:ke+1]
@@ -250,7 +250,7 @@ def FASTAsplitter(Dict,LargeDict,report_file):
         smallfile.write(LargeDict[seqs])
         smallfile.close()
     for seqs in Dict:
-        smallfile = open(filespath + re.match('^.*\]',seqs) + '.ORF.fasta','w')
+        smallfile = open(filespath + str(re.match('^.*\]',seqs)) + '.ORF.fasta','w')
         smallfile.write('>' + seqs + '\n')
         smallfile.write(Dict[seqs])
         smallfile.close()
