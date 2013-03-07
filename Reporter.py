@@ -62,7 +62,7 @@ def FASTAtoLargeDict(fulllist):
 
 def BLASTparser(blast):
     #Parses the output of NCBI's blastx
-    blastheader = blast.readlines(10)
+    blastheader = blast.readlines(300)
     for lines in blastheader:
         #Check blast version: 1 =blast2, 2=blast+
         if lines.startswith('<b>BLASTX'):
