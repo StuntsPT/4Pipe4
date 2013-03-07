@@ -60,7 +60,7 @@ def FASTAtoLargeDict(fulllist):
             #~ done = 1
     #~ return(parsed)
 
-def BLASTParser(blast):
+def BLASTparser(blast):
     #Parses the output of NCBI's blastx
     blastheader = blast.readlines(10)
     for lines in blastheader:
