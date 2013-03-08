@@ -41,25 +41,6 @@ def FASTAtoLargeDict(fulllist):
     fulllist.close()
     return(LargeDict)
 
-#~ def BLASTparser(blast):
-    #~ #Parses the output of NCBI's blastx (under blast 2)
-    #~ blastuple = tuple(blast.readlines())
-    #~ blast.close()
-    #~ parsed = {}
-    #~ for lines in blastuple:
-        #~ if lines.startswith('<b>Query='):
-            #~ title = re.search(' \w* ',lines).group(0)[1:-1]
-            #~ done = 0
-        #~ elif lines.startswith('>') and done == 0:
-            #~ anchor = re.search('= \d*',lines).group(0)[2:]
-            #~ lines = re.sub('<.* >','',lines).replace('</a>','')
-            #~ parsed[title] = lines.strip('\n> ') + '#' + anchor
-            #~ done = 1
-        #~ elif lines.startswith(' *****') and done == 0:
-            #~ parsed[title] = ''
-            #~ done = 1
-    #~ return(parsed)
-
 def BLASTparser(blast):
     #Parses the output of NCBI's blastx
     blastheader = blast.readlines(300)
@@ -71,42 +52,49 @@ def BLASTparser(blast):
             else:
                 version = 1
 
-    parsed = {}
-    done = 1
-
     if version == 2:
-
-        #Blast+
-        for lines in blast:
-            if lines.startswith('<b>Query='):
-                if done == 0:
-                    parsed[title] = ''
-                else:
-                    title = re.search(' \w* ',lines).group(0)[1:-1]
-                    done = 0
-            elif lines.startswith('<script') and done == 0:
-                anchor = re.search('<a name=\d*',lines).group(0)[8:]
-                lines = re.sub('<.* >','',re.sub('</a>.*<\a>','',lines))
-                parsed[title] = lines.strip('\n ') + '#' + anchor
-                done = 1
-
+        parsed = BLAST_plus(blast)
     else:
-        #Blast2
-        for lines in blast:
-            if lines.startswith('<b>Query='):
-                title = re.search(' \w* ',lines).group(0)[1:-1]
-                done = 0
-            elif lines.startswith('>') and done == 0:
-                anchor = re.search('= \d*',lines).group(0)[2:]
-                lines = re.sub('<.* >','',lines).replace('</a>','')
-                parsed[title] = lines.strip('\n> ') + '#' + anchor
-                done = 1
-            elif lines.startswith(' *****') and done == 0:
-                parsed[title] = ''
-                done = 1
+        parsed = BLAST_2(blast)
 
     blast.close()
     return(parsed)
+
+def BLAST_plus(blast):
+    #Blast+ parser
+    parsed = {}
+    done = 1
+    for lines in blast:
+        if lines.startswith('<b>Query='):
+            if done == 0:
+                parsed[title] = ''
+            else:
+                title = re.search(' \w* ',lines).group(0)[1:-1]
+                done = 0
+        elif lines.startswith('<script') and done == 0:
+            anchor = re.search('<a name=\d*',lines).group(0)[8:]
+            lines = re.sub('<.* >','',re.sub('</a>.*<\a>','',lines))
+            parsed[title] = lines.strip('\n ') + '#' + anchor
+            done = 1
+    return parsed
+
+def BLAST_2(blast):
+    #Blast2 parser
+    parsed = {}
+    done = 1
+    for lines in blast:
+        if lines.startswith('<b>Query='):
+            title = re.search(' \w* ',lines).group(0)[1:-1]
+            done = 0
+        elif lines.startswith('>') and done == 0:
+            anchor = re.search('= \d*',lines).group(0)[2:]
+            lines = re.sub('<.* >','',lines).replace('</a>','')
+            parsed[title] = lines.strip('\n> ') + '#' + anchor
+            done = 1
+        elif lines.startswith(' *****') and done == 0:
+            parsed[title] = ''
+            done = 1
+    return parsed
 
 def Characterize(Dict,Blasts,LargeDict,report):
     #Makes the SNP characterization and writes down the report.
