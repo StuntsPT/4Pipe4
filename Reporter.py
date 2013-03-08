@@ -250,7 +250,7 @@ def FASTAsplitter(Dict,LargeDict,report_file):
         smallfile.write(LargeDict[seqs])
         smallfile.close()
     for seqs in Dict:
-        smallfile = open(filespath + str(re.match('^.*]',seqs)) + '.ORF.fasta','w')
+        smallfile = open(filespath + re.match('^.*]',seqs).group(0) + '.ORF.fasta','w')
         smallfile.write('>' + seqs + '\n')
         smallfile.write(Dict[seqs])
         smallfile.close()
