@@ -24,7 +24,7 @@ def TCSParser(infile_name):
     else:
         TCS = []
         for i in range(3): infile.readline() #Skip header
-    
+
         for lines in infile:
             TCS.append(lines)
 
@@ -40,9 +40,9 @@ def ListParser(TCS,minqual,mincov):
         tcov = int(line[2][:5])
         covs = line[2][5:].strip().split()
         covs = sorted(list(map(int, covs)))
-        if tcov < mincov: #Discard positions with less then mincov
+        if tcov <= mincov: #Discard positions with less then mincov
             pass
-        elif covs[-2] < (ceil(mincov*0.2)):
+        elif covs[-2] <= (ceil(mincov*0.2)): #Discard insufficient second variant
             pass
         else:
             quals = line[3].replace('--','0')
@@ -50,7 +50,7 @@ def ListParser(TCS,minqual,mincov):
             quallist = sorted(list(map(int, quallist)))
             if quallist[-2] >= minqual: #Filter by quality
                 passed.append(lines)
-                
+
     return passed
 
 def ListWriter(infile_name,passed):
@@ -65,7 +65,7 @@ def ListWriter(infile_name,passed):
     outfile.close()
 
 def RunModule(infile_name,minqual,mincov):
-    
+
     TCS = TCSParser(infile_name)
     ShortList = ListParser(TCS,minqual,mincov)
     ListWriter(infile_name,ShortList)
