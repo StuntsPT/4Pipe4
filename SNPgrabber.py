@@ -16,20 +16,19 @@
 
 import re
 
-def TCStoDict(tcs_file):
+def TCStoDict(tcs_file,minqual):
     #Turns the TCS short list into a Dictionary with names:positionsBases
     tcs=open(tcs_file,'r')
     names = {}
     for i in range(4): tcs.readline() #Skip header
-    
+
     for lines in tcs:
         name = re.match('^\w*',lines).group(0) #Contig name
-        #quals = re.search('\|.{16}\|', lines).group(0)[2:-2].split(' ')
         quals = re.split(' *', re.search('\|.{16}\|', lines).group(0)[2:-2].strip())
         SNP = ''
         for q, b in zip(quals[:-1], ['A','C','G','T']):
             try:
-                if int(q) >= 70:
+                if int(q) >= minqual:
                     SNP = SNP + b
             except:
                 b = 0
@@ -50,7 +49,7 @@ def FASTAtoDict(fasta_file):
         if lines.startswith('>'):
             lines=lines.replace('>','')
             name=lines.replace('\n','')
-            Dict[name]= '' 
+            Dict[name]= ''
         else:
             Dict[name] = Dict[name] + lines.upper()
     fasta.close()
@@ -72,6 +71,6 @@ def ShortListFASTA(names,fasta,tcs_file):
 
 def RunModule(tcs_file,fasta_file):
     #Function to run the whole module:
-    Names=TCStoDict(tcs_file)
+    Names=TCStoDict(tcs_file,mincqual)
     Sequences=FASTAtoDict(fasta_file)
     ShortListFASTA(Names,Sequences,tcs_file)

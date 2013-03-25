@@ -182,7 +182,7 @@ def SNPgrabber(basefile):
     #Grabs suitable SNPs in the short TCS output DiscoveryTCS and outputs a fasta with only the relevant contigs, tagged with SNP info.
     os.chdir(os.path.split(basefile)[0])
     print("\nRunning SNP Grabber tool module...")
-    SNPg.RunModule(basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.short.tcs',basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.unpadded.fasta')
+    SNPg.RunModule(basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.short.tcs', basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.unpadded.fasta', int(config.get('Variables','minqual')))
     shutil.move(miraproject + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.short.fasta', basefile + '.SNPs.fasta')
 
 def ORFliner(basefile):
