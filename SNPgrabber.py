@@ -69,8 +69,8 @@ def ShortListFASTA(names,fasta,tcs_file):
         outfile.write(shortfasta[k] + '\n')
     outfile.close()
 
-def RunModule(tcs_file,fasta_file):
+def RunModule(tcs_file,fasta_file,minqual):
     #Function to run the whole module:
-    Names=TCStoDict(tcs_file,mincqual)
+    Names=TCStoDict(tcs_file,minqual)
     Sequences=FASTAtoDict(fasta_file)
     ShortListFASTA(Names,Sequences,tcs_file)
