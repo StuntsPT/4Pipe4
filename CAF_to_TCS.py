@@ -80,8 +80,8 @@ def cafParse(infile_name):
                     contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4])-1:int(assembly_info[5])]
                     contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][int(assembly_info[4])-1:int(assembly_info[5])]
                 else:
-                    contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4]):int(assembly_info[5])]
-                    contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][int(assembly_info[4]):int(assembly_info[5])]
+                    contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4]):int(assembly_info[5])-1]
+                    contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][int(assembly_info[4]):int(assembly_info[5])-1]
 
             elif lines.startswith("\n"):
                 datatype = 31
