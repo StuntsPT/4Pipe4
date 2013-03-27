@@ -31,7 +31,8 @@ def cafParse(infile_name):
             skip -= 1
             continue
 
-        #Datatypes: 0=nothing;1=sequence;2=quality;3=contig;31=contig seq, etc..
+        #Datatypes: 0=nothing;1=sequence;2=quality;3=contig;31=contig seq;
+        #32=contig qual;4=extra
         if lines.startswith("DNA"):
             datatype = 1
             readname = lines[lines.rindex(" "):].strip()
@@ -57,6 +58,13 @@ def cafParse(infile_name):
             for x in lines.strip().split():
                 contigreads[readname][1].append(int(x))
             if lines.startswith("\n"):
+                datatype = 4
+                skip = 2
+        elif datatype == 4:
+            if lines.strip().startswith("Tag FpAS"):
+                #detect any eventual Poly-A tail and record it.
+                poly_a[readname] = [int(lines.split()[2]), int(lines.split()[3])]
+            elif lines.strip().startswith("\n"):
                 datatype = 0
                 skip = 2
         elif datatype == 3:
@@ -86,12 +94,9 @@ def cafParse(infile_name):
 
                 #Slice and dice poly-a tails
                 if assembly_info[1] in poly_a.keys():
-                    contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][:min(poly_a[assembly_info[1])]] + contigreads[assembly_info[1]][0][max(poly_a[assembly_info[1])]:]
+                    contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][:min(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][0][max(poly_a[assembly_info[1]]):]
                     contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][:min(poly_a[assembly_info[1])]] + contigreads[assembly_info[1]][1][max(poly_a[assembly_info[1])]:]
 
-            elif lines.startswith("Tag FpAS"):
-                #detect any eventual Poly-A tail and record it.
-                poly_a[readname] = lines.split()[1] + lines.split()[2]
 
             elif lines.startswith("\n"):
                 datatype = 31
