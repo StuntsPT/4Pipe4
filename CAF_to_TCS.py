@@ -95,7 +95,7 @@ def cafParse(infile_name):
                 #Slice and dice poly-a tails
                 if assembly_info[1] in poly_a.keys():
                     contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][:min(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][0][max(poly_a[assembly_info[1]]):]
-                    contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][:min(poly_a[assembly_info[1])]] + contigreads[assembly_info[1]][1][max(poly_a[assembly_info[1])]:]
+                    contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][:min(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][1][max(poly_a[assembly_info[1]]):]
 
 
             elif lines.startswith("\n"):
