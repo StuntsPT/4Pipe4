@@ -23,6 +23,7 @@ def cafParse(infile_name):
     skip = 0
     contigreads = {}
     contigs = {}
+    poly_a = {}
 
     for lines in caffile:
         #Define lines to skip
@@ -82,6 +83,15 @@ def cafParse(infile_name):
                 else:
                     contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][len(contigreads[assembly_info[1]][0])-int(assembly_info[5]):int(assembly_info[5]):int(assembly_info[5])-int(assembly_info[4])]
                     contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][len(contigreads[assembly_info[1]][0])-int(assembly_info[5]):int(assembly_info[5]):int(assembly_info[5])-int(assembly_info[4])]
+
+                #Slice and dice poly-a tails
+                if assembly_info[1] in poly_a.keys():
+                    contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][:min(poly_a[assembly_info[1])]] + contigreads[assembly_info[1]][0][max(poly_a[assembly_info[1])]:]
+                    contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][:min(poly_a[assembly_info[1])]] + contigreads[assembly_info[1]][1][max(poly_a[assembly_info[1])]:]
+
+            elif lines.startswith("Tag FpAS"):
+                #detect any eventual Poly-A tail and record it.
+                poly_a[readname] = lines.split()[1] + lines.split()[2]
 
             elif lines.startswith("\n"):
                 datatype = 31
