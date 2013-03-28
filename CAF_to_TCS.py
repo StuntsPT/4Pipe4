@@ -70,6 +70,22 @@ def cafParse(infile_name):
         elif datatype == 3:
             if lines.startswith("Assembled"):
                 assembly_info = lines.strip().split()
+
+                #Slice the read according the assembly (what a mess)
+                contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4])-1:int(assembly_info[5])]
+                contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][int(assembly_info[4])-1:int(assembly_info[5])]
+
+                #Slice and dice poly-a tails
+                if assembly_info[1] in poly_a.keys():
+                    if int(assembly_info[4]) >= max(poly_a[assembly_info[1]]): #If clipping superseeds poly-a tails
+                        pass
+                    elif int(assembly_info[4]) <= min(poly_a[assembly_info[1]]) : #If clipping does not overlap poly-a tails
+                        contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][:min(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][0][max(poly_a[assembly_info[1]]):]
+                        contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][:min(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][1][max(poly_a[assembly_info[1]]):]
+                    else: #If clipping and poly-a tails overlap
+                        contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][:int(assembly_info[4])] + contigreads[assembly_info[1]][0][max(poly_a[assembly_info[1]]):]
+                        contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][:int(assembly_info[4])] + contigreads[assembly_info[1]][1][max(poly_a[assembly_info[1]]):]
+
                 #RevComp the sequences if required (and quals too)
                 if int(assembly_info[2]) < int(assembly_info[3]):
                     contigreads[assembly_info[1]][2] = int(assembly_info[2])
@@ -78,28 +94,11 @@ def cafParse(infile_name):
                     contigreads[assembly_info[1]][0] = RevComp(contigreads[assembly_info[1]][0])
                     contigreads[assembly_info[1]][1].reverse()
                     contigreads[assembly_info[1]][1][:] = [-1 * i for i in contigreads[assembly_info[1]][1]]
-                    #This line will remove "N"s from the start of a sequence.
+                    #Remove "N"s from the start of a sequence.
                     #Apparently they are silently removed from the .caf file...
                     if contigreads[assembly_info[1]][0].startswith("N"):
                         contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][1:]
                         contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][1:]
-
-                #Slice the read according the assembly (what a mess)
-                if int(assembly_info[4]) == 1:
-                    contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][int(assembly_info[4])-1:int(assembly_info[5])]
-                    contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][int(assembly_info[4])-1:int(assembly_info[5])]
-                else:
-                    contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][len(contigreads[assembly_info[1]][0])-int(assembly_info[5]):int(assembly_info[5]):int(assembly_info[5])-int(assembly_info[4])]
-                    contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][len(contigreads[assembly_info[1]][0])-int(assembly_info[5]):int(assembly_info[5]):int(assembly_info[5])-int(assembly_info[4])]
-
-                #Slice and dice poly-a tails
-                if assembly_info[1] in poly_a.keys():
-                    if int(assembly_info[2]) < int(assembly_info[3]):
-                        contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][:min(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][0][max(poly_a[assembly_info[1]]):]
-                        contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][:min(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][1][max(poly_a[assembly_info[1]]):]
-                    else:
-                        contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][:max(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][0][min(poly_a[assembly_info[1]]):]
-                        contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][:max(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][1][min(poly_a[assembly_info[1]]):]
 
             elif lines.startswith("\n"):
                 datatype = 31
