@@ -86,8 +86,13 @@ def cafParse(infile_name):
 
                 #Slice and dice poly-a tails
                 if assembly_info[1] in poly_a.keys():
-                    contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][:min(poly_a[assembly_info[1])]] + contigreads[assembly_info[1]][0][max(poly_a[assembly_info[1])]:]
-                    contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][:min(poly_a[assembly_info[1])]] + contigreads[assembly_info[1]][1][max(poly_a[assembly_info[1])]:]
+                    if int(assembly_info[2]) < int(assembly_info[3]):
+                        contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][:min(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][0][max(poly_a[assembly_info[1]]):]
+                        contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][:min(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][1][max(poly_a[assembly_info[1]]):]
+                    else:
+                        contigreads[assembly_info[1]][0] = contigreads[assembly_info[1]][0][:max(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][0][min(poly_a[assembly_info[1]]):]
+                        contigreads[assembly_info[1]][1] = contigreads[assembly_info[1]][1][:max(poly_a[assembly_info[1]])] + contigreads[assembly_info[1]][1][min(poly_a[assembly_info[1]]):]
+
 
             elif lines.startswith("Tag FpAS"):
                 #detect any eventual Poly-A tail and record it.
