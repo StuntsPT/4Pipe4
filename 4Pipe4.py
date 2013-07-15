@@ -218,7 +218,7 @@ def B2G(basefile):
     if config.get('Program paths','BLAST_path').endswith('blast2'):
         cli = [config.get('Program paths','BLAST_path'), '-p', 'blastx', '-d', config.get('Program paths','BLASTdb_path'), '-i', basefile + '.SNPs.fasta', '-m', '7', '-a', config.get('Variables','seqcores'), '-o', basefile + '.shortlistblast.xml']
     else:
-        cli = [config.get('Program paths','BLAST_path'), '-db', config.get('Program paths','BLASTdb_path'), '-query', basefile + '.SNPs.fasta', '-outfmt 5', '-num_threads', config.get('Variables','seqcores'), '-out', basefile + '.shortlistblast.xml']
+        cli = [config.get('Program paths','BLAST_path'), '-db', config.get('Program paths','BLASTdb_path'), '-query', basefile + '.SNPs.fasta', '-outfmt', '5', '-num_threads', config.get('Variables','seqcores'), '-out', basefile + '.shortlistblast.xml']
     print("\nRunning NCBI 'blastx' using the following command:")
     print(' '.join(cli))
     RunProgram(cli,0)
