@@ -151,20 +151,15 @@ def SeqClean(basefile):
 def MiraRun(basefile):
     #Assemble the sequences
     mira_dir = os.path.split(config.get('Program paths','mira_path'))[0] + '/'
-    if os.path.exists(basefile + '_in.454.fasta'):
-        os.unlink(basefile + '_in.454.fasta')
-        print ("\nWARNING: Old links were found and removed\n")
-    os.symlink(basefile + '.clean.fasta', basefile + '_in.454.fasta')
-    if os.path.exists(basefile + '_in.454.fasta.qual'):
-        os.unlink(basefile + '_in.454.fasta.qual')
-        print ("\nWARNING: Old links were found and removed\n")
-    os.symlink(basefile + '.clean.fasta.qual', basefile + '_in.454.fasta.qual')
-    #Keep these 2 lines in case 4Pipe4 is used in windows (no symlink support).
-    #shutil.copy(basefile + '.clean.fasta', basefile + '_in.454.fasta')
-    #shutil.copy(basefile + '.clean.fasta.qual', basefile + '_in.454.fasta.qual')
-    cli = [config.get('Program paths','mira_path'), '-project=' + miraproject]
-    for items in config.get('Mira Parameters','miraparms').split(' '):
-        cli.append(items)
+    manifest = open(basefile + ".manifest",'w')
+    manifest.write("project = " + os.path.basename(basefile) + "\n")
+    manifest.write(config.get('Mira Parameters', 'mirajob') + "\n")
+    manifest.write("-GE:not=" + config.get('Variables','seqcores') + "\n")
+    
+
+    manifest.close()
+    cli = [config.get('Program paths','mira_path'), basefile + ".manifest"]
+    
     print("\nRunning Mira using the following command:")
     print(' '.join(cli))
     RunProgram(cli,0)
