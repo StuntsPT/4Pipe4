@@ -50,9 +50,22 @@ minqual = 70
 min_ssr_qual = 70
 
 [Mira Parameters]
-##Parameters to pass to mira:
+##Parameters to put inside mira's manifest file':
 ##Example to search for SNPs in EST data:
-# --job=denovo,est,normal,454 -CO:asir=yes 454_SETTINGS -AL:mrs=95 -AL:egp=yes:egpl=reject_codongaps:megpp=100 -CO:rodirs=9 -LR:mxti=no
-##Example for Genome Assembly:
-# --job=denovo,genome,normal,454
-miraparms =
+
+#mirajob = "est,denovo,accurate"
+#miracommon = """COMMON_SETTINGS -AS:nop=2:ugpf=off \
+#-CO:mr=on:asir=on \
+#"""
+#mira454 = """454_SETTINGS -AL:egp=on \
+#-ED:ace=on \
+#-CL:cpat=on \
+#"""
+#mirareadgroup = """readgroup = 454_EST_data_from_cobig2
+#technology = 454
+#"""
+
+mirajob =
+miracommon =
+mira454 =
+mirareadgroup =
