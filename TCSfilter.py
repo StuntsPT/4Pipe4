@@ -42,7 +42,7 @@ def ListParser(TCS,minqual,mincov):
         covs = sorted(list(map(int, covs)))
         if tcov <= mincov: #Discard positions with less then mincov
             pass
-        elif covs[-2] <= (ceil(mincov*0.2)): #Discard insufficient second variant
+        elif covs[-2] <= (ceil(tcov*0.2)): #Discard insufficient second variant
             pass
         else:
             quals = line[3].replace('--','0')
