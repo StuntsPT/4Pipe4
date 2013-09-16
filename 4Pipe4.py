@@ -159,7 +159,7 @@ def MiraRun(basefile):
     manifest.write("-GE:not=" + config.get('Variables','seqcores') + "\n")
     manifest.write(config.get('Mira Parameters', 'mira454') + "\n\n")
     manifest.write(config.get('Mira Parameters', 'mirareadgroup') + "\n")
-    manifest.write("data = " + basename + ".clean.fasta")
+    manifest.write("data = " + basename + ".clean.fasta\n")
     manifest.close()
     
     cli = [config.get('Program paths','mira_path'), basefile + ".manifest"]
