@@ -56,9 +56,11 @@ min_ssr_qual = 70
 #mirajob = job = est,denovo,accurate
 #miracommon = parameters = COMMON_SETTINGS -AS:nop=2:ugpf=off -CO:mr=on:asir=on
 #mira454 = 454_SETTINGS -AL:egp=on -ED:ace=on -CL:cpat=on
-#mirareadgroup = readgroup = 454_EST_data_from_cobig2 technology = 454
+#mirareadgroup = readgroup = 454_EST_data_from_cobig2
+#miratech = technology = 454
 
 mirajob =
 miracommon =
 mira454 =
 mirareadgroup =
+miratech =
