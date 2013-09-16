@@ -155,7 +155,9 @@ def MiraRun(basefile):
     manifest.write("project = " + os.path.basename(basefile) + "\n")
     manifest.write(config.get('Mira Parameters', 'mirajob') + "\n")
     manifest.write("-GE:not=" + config.get('Variables','seqcores') + "\n")
-    
+    manifest.write(config.get('Mira Parameters', 'mira454') + "\n\n")
+    manifest.write(config.get('Mira Parameters', 'mirareadgroup') + "\n")
+    manifest.write("")
 
     manifest.close()
     cli = [config.get('Program paths','mira_path'), basefile + ".manifest"]
