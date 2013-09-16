@@ -151,15 +151,16 @@ def SeqClean(basefile):
 def MiraRun(basefile):
     #Assemble the sequences
     mira_dir = os.path.split(config.get('Program paths','mira_path'))[0] + '/'
+    #Write the menifest file
     manifest = open(basefile + ".manifest",'w')
     manifest.write("project = " + os.path.basename(basefile) + "\n")
     manifest.write(config.get('Mira Parameters', 'mirajob') + "\n")
     manifest.write("-GE:not=" + config.get('Variables','seqcores') + "\n")
     manifest.write(config.get('Mira Parameters', 'mira454') + "\n\n")
     manifest.write(config.get('Mira Parameters', 'mirareadgroup') + "\n")
-    manifest.write("")
-
+    manifest.write("data = " + basename + ".clean.fasta")
     manifest.close()
+    
     cli = [config.get('Program paths','mira_path'), basefile + ".manifest"]
     
     print("\nRunning Mira using the following command:")

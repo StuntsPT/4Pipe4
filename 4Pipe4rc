@@ -59,6 +59,6 @@ min_ssr_qual = 70
 #mirareadgroup = "readgroup = 454_EST_data_from_cobig2 technology = 454"
 
 mirajob =
-miracommon = "COMMON_SETTINGS -AS:nop=2:ugpf=off -CO:mr=on:asir=on"
+miracommon =
 mira454 =
 mirareadgroup =
