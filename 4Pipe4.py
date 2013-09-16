@@ -152,8 +152,9 @@ def MiraRun(basefile):
     #Assemble the sequences
     mira_dir = os.path.split(config.get('Program paths','mira_path'))[0] + '/'
     #Write the menifest file
+    basename = os.path.basename(basefile)
     manifest = open(basefile + ".manifest",'w')
-    manifest.write("project = " + os.path.basename(basefile) + "\n")
+    manifest.write("project = " + basename + "\n")
     manifest.write(config.get('Mira Parameters', 'mirajob') + "\n")
     manifest.write("-GE:not=" + config.get('Variables','seqcores') + "\n")
     manifest.write(config.get('Mira Parameters', 'mira454') + "\n\n")
@@ -166,8 +167,7 @@ def MiraRun(basefile):
     print("\nRunning Mira using the following command:")
     print(' '.join(cli))
     RunProgram(cli,0)
-    os.unlink(basefile + '_in.454.fasta')
-    os.unlink(basefile + '_in.454.fasta.qual')
+
 
 def DiscoveryTCS(basefile):
     #Discovers SNPs in the TCS output file of Mira. Use only if trying to find SNPs. Output in TCS format.
