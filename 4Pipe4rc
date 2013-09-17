@@ -54,8 +54,8 @@ min_ssr_qual = 70
 ##Example to search for SNPs in EST data:
 
 #mirajob = job = est,denovo,accurate
-#miracommon = parameters = COMMON_SETTINGS -AS:nop=5:ugpf=off -CO:mr=on:asir=on:mrpg=3
-#mira454 = 454_SETTINGS -AL:egp=off -ED:ace=on -CL:cpat=on
+#miracommon = parameters = COMMON_SETTINGS -AS:nop=5:ugpf=off -CO:mr=on:asir=on
+#mira454 = 454_SETTINGS -AL:egp=off -ED:ace=on -CL:cpat=on -CO:mrpg=3
 #mirareadgroup = readgroup = 454_EST_data_from_cobig2
 #miratech = technology = 454
 
