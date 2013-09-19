@@ -50,7 +50,7 @@ external programs that 4Pipe4 uses in it's processes. By default, these are:
 * mira 3.4.x series (http://mira-assembler.sourceforge.net/) 
 * getorf (http://emboss.sourceforge.net/apps/cvs/emboss/apps/getorf.html)
 * blast (ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
-* blast2go4pipe (http://bioinfo.cipf.es/aconesa/software.html)
+* blast2go4pipe (http://www.blast2go.com/b2glaunch/resources)
 * etandem (http://helixweb.nih.gov/emboss/html/etandem.html)
 * 7zip (http://www.7-zip.org/)
 
@@ -150,4 +150,4 @@ those options to reflect your own system and SNP detection preferences.
 If you have questions or feedback you can contact the author by email:
 f.pinamartins@gmail.com
 For other programs, also please be sure to check out our group's website:
-http://cobig2.fc.ul.pt
+http://cobig2.com
