@@ -149,5 +149,7 @@ those options to reflect your own system and SNP detection preferences.
 
 If you have questions or feedback you can contact the author by email:
 f.pinamartins@gmail.com
+For bug reporting, you can use github tracker:
+https://github.com/StuntsPT/4Pipe4/issues
 For other programs, also please be sure to check out our group's website:
 http://cobig2.com
