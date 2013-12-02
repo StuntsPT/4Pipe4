@@ -95,7 +95,7 @@ def Cov_counter(tcsfile, contig, position):
     tcs.close()
     return coverage
     
-def Characterize(Dict,Blasts,LargeDict,report):
+def Characterize(Dict,Blasts,LargeDict,report,tcsfile):
     #Makes the SNP characterization and writes down the report.
     translate = { 'TTT': 'Phe', 'TCT': 'Ser', 'TAT': 'Tyr', 'TGT': 'Cys',
                   'TTC': 'Phe', 'TCC': 'Ser', 'TAC': 'Tyr', 'TGC': 'Cys',
@@ -253,5 +253,5 @@ def RunModule(fasta_file,fulllist_file,blast_file,report_file,tcsfile):
     Dict=FASTAtoDict(fasta)
     LargeDict=FASTAtoDict(fulllist)
     Blasts=BLASTparser(blast)
-    Characterize(Dict,Blasts,LargeDict,report)
+    Characterize(Dict,Blasts,LargeDict,report,tcsfile)
     FASTAsplitter(Dict,LargeDict,report_file)
