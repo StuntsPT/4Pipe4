@@ -29,18 +29,6 @@ def FASTAtoDict(fasta):
     fasta.close()
     return Dict
 
-def FASTAtoLargeDict(fulllist):
-    #This will convert the shortilst fasta file into a dict like: "name":"seq" and return it
-    LargeDict={}
-    for lines in fulllist:
-        if lines.startswith('>'):
-            name=lines.strip('>\n')
-            LargeDict[name]= ''
-        else:
-            LargeDict[name] = LargeDict[name] + lines.upper()
-    fulllist.close()
-    return(LargeDict)
-
 def BLASTparser(blast):
     #Parses the output of NCBI's blastx
     blastheader = blast.readlines(300)
@@ -250,7 +238,7 @@ def RunModule(fasta_file,fulllist_file,blast_file,report_file):
     report = open(report_file,'w')
 
     Dict=FASTAtoDict(fasta)
-    LargeDict=FASTAtoLargeDict(fulllist)
+    LargeDict=FASTAtoDict(fulllist)
     Blasts=BLASTparser(blast)
     Characterize(Dict,Blasts,LargeDict,report)
     FASTAsplitter(Dict,LargeDict,report_file)
