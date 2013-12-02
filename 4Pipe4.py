@@ -208,7 +208,7 @@ def ORFliner(basefile):
     Metrics.Run_module(seqclean_log_path, basefile + '.fasta', basefile + '.clean.fasta', basefile + '.fasta.qual', basefile + '.clean.fasta.qual', basefile + '_assembly/' + miraproject + '_d_info/' + miraproject + '_info_assembly.txt', basefile + '.SNPs.fasta', basefile + '.BestORF.fasta', basefile + '.Metrics.html')
     #Finally we write down our report using the data gathered so far:
     print("\nRunning Reporter module...")
-    Reporter.RunModule(basefile + '.BestORF.fasta', basefile + '.SNPs.fasta', basefile + '.ORFblast.html', basefile + '.Report.html')
+    Reporter.RunModule(basefile + '.BestORF.fasta', basefile + '.SNPs.fasta', basefile + '.ORFblast.html', basefile + '.Report.html', basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.short.tcs')
 
 def B2G(basefile):
     #This will make all necessary runs to get a B2go anottation ready for the GUI aplication. Bummer...
