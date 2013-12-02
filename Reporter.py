@@ -89,7 +89,7 @@ def Cov_counter(tcsfile, contig, position):
     for lines in tcs:
         if lines.startswith(contig):
             lines = lines.split()
-            if int(lines[2]) == int(contig) - 1:
+            if int(lines[2]) == int(position) - 1:
                 covergae = lines[7]
                 break
     tcs.close()
