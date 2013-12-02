@@ -84,13 +84,15 @@ def BLAST_2(blast):
             done = 1
     return parsed
 
-def Cov_counter(tcs, contig, position):
+def Cov_counter(tcsfile, contig, position):
+    tcs = open(tcsfile,'r')
     for lines in tcs:
         if lines.startswith(contig):
             lines = lines.split()
             if int(lines[2]) == int(contig) - 1:
                 covergae = lines[7]
                 break
+    tcs.close()
     return coverage
     
 def Characterize(Dict,Blasts,LargeDict,report):
@@ -168,7 +170,7 @@ def Characterize(Dict,Blasts,LargeDict,report):
                     frame = '-2'
             row = row + '<TD ALIGN=CENTER>' + frame + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + str(pos) + '</TD>\n'
-            row = row + '<TD ALIGN=CENTER>' + Cov_counter(tcsfile, re.match('^\w*',k).group(0), str(pos) + '</TD>\n' #TESTING
+            row = row + '<TD ALIGN=CENTER>' + Cov_counter(tcsfile, re.match('^\w*',k).group(0), str(pos)) + '</TD>\n' #TESTING
             row = row + '<TD ALIGN=CENTER>' + left_limit + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + right_limit + '</TD>\n'
             row = row + '<TD ALIGN=CENTER><a href="html_files/' + str(re.match('^.*]',k).group(0)) + '.ORF.fasta">' + str(abs(int(left_limit)-int(right_limit) + 1)) + '</TD>\n'
@@ -242,7 +244,7 @@ def FASTAsplitter(Dict,LargeDict,report_file):
         smallfile.write(Dict[seqs])
         smallfile.close()
 
-def RunModule(fasta_file,fulllist_file,blast_file,report_file):
+def RunModule(fasta_file,fulllist_file,blast_file,report_file,tcsfile):
     fasta = open(fasta_file,'r')
     fulllist = open(fulllist_file,'r')
     blast = open(blast_file,'r')
