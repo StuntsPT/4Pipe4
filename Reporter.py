@@ -84,6 +84,15 @@ def BLAST_2(blast):
             done = 1
     return parsed
 
+def Cov_counter(tcs, contig, position):
+    for lines in tcs:
+        if lines.startswith(contig):
+            lines = lines.split()
+            if int(lines[2]) == int(contig) - 1:
+                covergae = lines[7]
+                break
+    return coverage
+    
 def Characterize(Dict,Blasts,LargeDict,report):
     #Makes the SNP characterization and writes down the report.
     translate = { 'TTT': 'Phe', 'TCT': 'Ser', 'TAT': 'Tyr', 'TGT': 'Cys',
@@ -116,6 +125,7 @@ def Characterize(Dict,Blasts,LargeDict,report):
     report.write('''<TD ALIGN=CENTER>Contig</TD>
         <TD ALIGN=CENTER>ORF Frame</TD>
         <TD ALIGN=CENTER>SNP Position in Contig</TD>
+        <TD ALIGN=CENTER>Coverage in Position</TD>
         <TD ALIGN=CENTER>ORF start</TD>
         <TD ALIGN=CENTER>ORF end</TD>
         <TD ALIGN=CENTER>ORF size</TD>
@@ -158,6 +168,7 @@ def Characterize(Dict,Blasts,LargeDict,report):
                     frame = '-2'
             row = row + '<TD ALIGN=CENTER>' + frame + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + str(pos) + '</TD>\n'
+            row = row + '<TD ALIGN=CENTER>' + Cov_counter(tcsfile, re.match('^\w*',k).group(0), str(pos) + '</TD>\n' #TESTING
             row = row + '<TD ALIGN=CENTER>' + left_limit + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + right_limit + '</TD>\n'
             row = row + '<TD ALIGN=CENTER><a href="html_files/' + str(re.match('^.*]',k).group(0)) + '.ORF.fasta">' + str(abs(int(left_limit)-int(right_limit) + 1)) + '</TD>\n'
