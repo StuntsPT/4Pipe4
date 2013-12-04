@@ -19,7 +19,7 @@
 #required emboss programs to run 4Pipe4.
 
 #Define some variables:
-emboss_url="ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.5.7.tar.gz"
+emboss_url="ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.6.0.tar.gz"
 
 #Create a working dir
 workdir=~/Software
