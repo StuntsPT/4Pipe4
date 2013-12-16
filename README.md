@@ -47,7 +47,7 @@ external programs that 4Pipe4 uses in it's processes. By default, these are:
 
 * ssf_extract (http://bioinf.comav.upv.es/sff_extract/)
 * seqclean (http://compbio.dfci.harvard.edu/tgi/software/)
-* mira 3.4.x series (http://mira-assembler.sourceforge.net/) 
+* mira 4.x series (http://mira-assembler.sourceforge.net/) 
 * getorf (http://emboss.sourceforge.net/apps/cvs/emboss/apps/getorf.html)
 * blast (ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
 * blast2go4pipe (http://www.blast2go.com/b2glaunch/resources)
