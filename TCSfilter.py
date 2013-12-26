@@ -40,8 +40,10 @@ def ListParser(TCS,minqual,mincov):
         tcov = int(line[2][:5])
         covs = line[2][5:].strip().split()
         covs = sorted(list(map(int, covs)))
-        if tcov <= mincov: #Discard positions with less then mincov
+        if tcov <= mincov: #Discard positions with less than mincov
             pass
+        elif int(lines.split()[12]) >= tcov/2: #Discard positions with many gaps
+            pass 
         elif covs[-2] <= (ceil(tcov*0.2)): #Discard insufficient second variant
             pass
         else:
