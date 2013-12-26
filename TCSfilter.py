@@ -16,24 +16,15 @@
 
 from math import ceil
 
-def TCSParser(infile_name):
-    #Parses the TCS file
-    infile = open(infile_name,'r')
-    if infile.readline().startswith("#TCS") == False:
+def ListParser(infile_name,minqual,mincov):
+    """Discards every line in the TCS file with a coverage below mincov and a qual
+    below minqual"""
+    TCS = open(infile_name,'r')
+    if TCS.readline().startswith("#TCS") == False:
         quit("Invalid input file. Use a TCS file as input.")
     else:
-        TCS = []
-        for i in range(3): infile.readline() #Skip header
-
-        for lines in infile:
-            TCS.append(lines)
-
-    infile.close()
-    return TCS
-
-def ListParser(TCS,minqual,mincov):
-    #Discards every line in the TCS file with a coverage below mincov and a qual
-    #below minqual
+        for i in range(3): TCS.readline() #Skip header
+        
     passed = []
     for lines in TCS:
         line = lines.split('|')
@@ -53,10 +44,11 @@ def ListParser(TCS,minqual,mincov):
             if quallist[-2] >= minqual: #Filter by quality
                 passed.append(lines)
 
+    TCS.close()
     return passed
 
 def ListWriter(infile_name,passed):
-    #Write the selected list into a file.
+    """Write the selected list into a file."""
     outfile = open((infile_name[0:-4] + '.short.tcs'),'w')
     outfile.write("#TCS V1.0\n")
     outfile.write("#\n")
@@ -67,9 +59,8 @@ def ListWriter(infile_name,passed):
     outfile.close()
 
 def RunModule(infile_name,minqual,mincov):
-
-    TCS = TCSParser(infile_name)
-    ShortList = ListParser(TCS,minqual,mincov)
+    """Run the module."""
+    ShortList = ListParser(infile_name,minqual,mincov)
     ListWriter(infile_name,ShortList)
 
-#RunModule("/home/francisco/Desktop/4PipeTest/TestData_assembly/TestData_d_results/TestData_out.tcs", 70, 15)
+#RunModule("/home/francisco/Programming/454/Scripts/ORF/test.tcs", 70, 15)
