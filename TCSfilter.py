@@ -33,7 +33,7 @@ def ListParser(infile_name,minqual,mincov):
         covs = sorted(list(map(int, covs)))
         if tcov <= mincov: #Discard positions with less than mincov
             pass
-        elif int(lines.split()[12]) >= tcov/2: #Discard positions with many gaps
+        elif int(lines.split()[12]) >= tcov//2: #Discard positions with many gaps
             pass 
         elif covs[-2] <= (ceil(tcov*0.2)): #Discard insufficient second variant
             pass
