@@ -177,12 +177,13 @@ def DiscoveryTCS(basefile):
     CAF_to_TCS.RunModule(basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.caf')
     TCS.RunModule(basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.tcs',int(config.get('Variables','minqual')),int(config.get('Variables','mincov')))
 
+
 def SNPgrabber(basefile):
     #Grabs suitable SNPs in the short TCS output DiscoveryTCS and outputs a fasta with only the relevant contigs, tagged with SNP info.
     os.chdir(os.path.split(basefile)[0])
     print("\nRunning SNP Grabber tool module...")
-    SNPg.RunModule(basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.short.tcs', basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.unpadded.fasta', int(config.get('Variables','minqual')))
-    shutil.move(miraproject + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.short.fasta', basefile + '.SNPs.fasta')
+    SNPg.RunModule(basefile + '_out.short.tcs', basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.unpadded.fasta', basefile + '.SNPs.fasta', int(config.get('Variables', 'minqual')))
+    
 
 def ORFliner(basefile):
     #This will run EMBOSS 'getorf' and use 2 scripts to filter the results and write a report. The paramters for 'getorf' are changed here.
@@ -208,7 +209,8 @@ def ORFliner(basefile):
     Metrics.Run_module(seqclean_log_path, basefile + '.fasta', basefile + '.clean.fasta', basefile + '.fasta.qual', basefile + '.clean.fasta.qual', basefile + '_assembly/' + miraproject + '_d_info/' + miraproject + '_info_assembly.txt', basefile + '.SNPs.fasta', basefile + '.BestORF.fasta', basefile + '.Metrics.html')
     #Finally we write down our report using the data gathered so far:
     print("\nRunning Reporter module...")
-    Reporter.RunModule(basefile + '.BestORF.fasta', basefile + '.SNPs.fasta', basefile + '.ORFblast.html', basefile + '.Report.html', basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.short.tcs')
+    Reporter.RunModule(basefile + '.BestORF.fasta', basefile + '.SNPs.fasta', basefile + '.ORFblast.html', basefile + '.Report.html', basefile + '_out.short.tcs')
+
 
 def B2G(basefile):
     #This will make all necessary runs to get a B2go anottation ready for the GUI aplication. Bummer...
@@ -230,10 +232,12 @@ def B2G(basefile):
     else:
         quit("\nERROR:Program not found... exiting. Check your configuration file.\n")
 
+
 def SSRfinder(basefile):
     #Runs the SSR finder in batch mode and generates an HTML. It's mostly disk I/O stress and not CPU intensive:
     print("\nRunning SSR finder module...")
     ssr.RunModule(basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.unpadded.fasta',basefile + '_assembly/' + miraproject + '_d_results/' + miraproject + '_out.unpadded.fasta.qual',basefile + '.SSR.html',config.get('Program paths','Etandem_path'),config.get('Variables','min_ssr_qual'))
+
 
 def TidyUP(basefile):
     #Tidy up the report folder:
@@ -277,6 +281,7 @@ def TidyUP(basefile):
     print(' '.join(cli))
     RunProgram(cli,0)
 
+
 def RunMe(arguments):
     #Function to parse which parts of 4Pipe4 will run.
     for option,number in zip(list(arguments),range(len(arguments))):
@@ -299,6 +304,8 @@ def RunMe(arguments):
         if option == "9":
             TidyUP(basefile)
     print("\nPipeline finished.\n")
+
+
 basefile,sff,config = StartUp()
 miraproject = SysPrep(basefile)
 RunMe(arg.run_list)
