@@ -348,7 +348,7 @@ def SSRfinder(basefile):
 
 
 def TidyUP(basefile):
-    #Tidy up the report folder:
+    '''Tidy up the report folder:'''
     os.chdir(os.path.split(basefile)[0])
     try:
         os.mkdir('Report')
