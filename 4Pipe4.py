@@ -394,7 +394,7 @@ def TidyUP(basefile):
 
 
 def RunMe(arguments):
-    #Function to parse which parts of 4Pipe4 will run.
+    '''Function to parse which parts of 4Pipe4 will run.'''
     for option, number in zip(list(arguments), range(len(arguments))):
         if option == "1":
             MinClip(basefile)
