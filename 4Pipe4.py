@@ -51,21 +51,21 @@ parser.add_argument("-o", dest="outfile", nargs=1, required=True,
                     plus the name you want to give your results\n",
                     metavar="basefile")
 parser.add_argument("-c", dest="configFile", nargs=1,
-                    help="Provide the full path to your configuration file. If\
-                    none is provided, the program will look in the current \
+                    help="Provide the full path to your configuration file. \
+                    If none is provided, the program will look in the current \
                     working directory and  then in ~/.config/4Pipe4rc (in this\
                     order) for one. If none is found the  program will stop\n",
                     metavar="configfile")
 parser.add_argument("-s", dest="run_list", nargs="?",
-                    default="1 2 3 4 5 6 7 8 9", help="Specify the numbers\
+                    default="1 2 3 4 5 6 7 8 9", help="Specify the numbers \
                     corresponding to the pipeline steps that will be run. The \
                     string after -s must be given inside quotation marks, and \
-                    numbers can be joined together or separated by any symbol.\
-                    The numbers are the pipeline steps that should be run. \
-                    This is an optional argument and it's omission will run \
-                    all steps by default. The numbers, from 1 to 9 represent \
-                    the following steps:\n\t1 - SFF extraction\n\t2 - \
-                    SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - \
+                    numbers can be joined together or separated by any \
+                    symbol. The numbers are the pipeline steps that should be \
+                    run. This is an optional argument and it's omission will \
+                    run all steps by default. The numbers, from 1 to 9 \
+                    represent the following steps:\n\t1 - SFF extraction\n\t2 \
+                    - SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - \
                     SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR \
                     finder\n\t9 - 7zip the report")
 arg = parser.parse_args()
@@ -97,7 +97,7 @@ def StartUp():
         rcfile = os.path.abspath(os.path.expanduser('~/.config/4Pipe4rc'))
         print("No config file provided, falling back to ~/.config/4Pipe4rc")
     else:
-        print("\nERROR:No config file provided nor found in the standard\
+        print("\nERROR:No config file provided nor found in the standard \
               locations.\n")
         quit("Please run 4Pipe4.py -h for help with running the pipeline.")
     try:
@@ -112,7 +112,7 @@ def StartUp():
 def SysPrep(basefile):
     '''Function for prepairing the system for the pipeline.'''
     if os.path.isdir(basefile):
-        print("\nThe path used for the basefile points to a directory!\
+        print("\nThe path used for the basefile points to a directory! \
               Please use a file.\n")
         quit("Please run 4Pipe4.py -h for help with running the pipeline.")
     basepath = os.path.split(basefile)
@@ -136,7 +136,7 @@ def RunProgram(cli, requires_output):
             print(lines)
             program_stdout.append(lines)
     except:
-        quit("\nERROR:Program not found... exiting. Check your configuration\
+        quit("\nERROR:Program not found... exiting. Check your configuration \
              file.\n")
     if requires_output == 1:
         return program_stdout
@@ -164,7 +164,7 @@ def SffExtract(sff, clip):
                         number = number + letters
                 return number
     else:
-        print("The found value seems acceptable. If this message is displayed\
+        print("The found value seems acceptable. If this message is displayed \
               twice in a row you have found your min_left_clip.\n")
         return "OK"
 
