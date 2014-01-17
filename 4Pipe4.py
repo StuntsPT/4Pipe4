@@ -237,7 +237,7 @@ def DiscoveryTCS(basefile):
     CAF_to_TCS.RunModule(basefile + '_assembly/' + miraproject
                          + '_d_results/' + miraproject + '_out.caf')
     TCS.RunModule(basefile + '_assembly/' + miraproject + '_d_results/'
-                  + miraproject + '_out.tcs', basefile + '_out.short.tcs'
+                  + miraproject + '_out.tcs', basefile + '_out.short.tcs',
                   int(config.get('Variables', 'minqual')),
                   int(config.get('Variables', 'mincov')))
 
