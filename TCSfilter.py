@@ -16,51 +16,57 @@
 
 from math import ceil
 
-def ListParser(infile_name,minqual,mincov):
-    """Discards every line in the TCS file with a coverage below mincov and a qual
-    below minqual"""
-    TCS = open(infile_name,'r')
-    if TCS.readline().startswith("#TCS") == False:
+
+def ListParser(infile_name, minqual, mincov):
+    '''Discards every line in the TCS file with a coverage below mincov and
+       a qual below minqual'''
+    TCS = open(infile_name, 'r')
+    if TCS.readline().startswith("#TCS") is False:
         quit("Invalid input file. Use a TCS file as input.")
     else:
-        for i in range(3): TCS.readline() #Skip header
-        
+        for i in range(3):
+            TCS.readline()  # Skip header
+
     passed = []
     for lines in TCS:
         line = lines.split('|')
         tcov = int(line[2][:5])
         covs = line[2][5:].strip().split()
         covs = sorted(list(map(int, covs)))
-        if tcov <= mincov: #Discard positions with less than mincov
+        if tcov <= mincov:  # Discard positions with less than mincov
             pass
-        elif int(lines.split()[12]) >= tcov//2: #Discard positions with many gaps
-            pass 
-        elif covs[-2] <= (ceil(tcov*0.2)): #Discard insufficient second variant
+        elif int(lines.split()[12]) >= tcov//2:  # Discard pos with many gaps
+            pass
+        elif covs[-2] <= (ceil(tcov * 0.2)):  # Discard low freq second variant
             pass
         else:
-            quals = line[3].replace('--','0')
+            quals = line[3].replace('--', '0')
             quallist = quals.strip().split()
             quallist = sorted(list(map(int, quallist)))
-            if quallist[-2] >= minqual: #Filter by quality
+            if quallist[-2] >= minqual:  # Filter by quality
                 passed.append(lines)
 
     TCS.close()
     return passed
 
-def ListWriter(infile_name,passed):
-    """Write the selected list into a file."""
-    outfile = open((infile_name[0:-4] + '.short.tcs'),'w')
+
+def ListWriter(infile_name, outfile_name, passed):
+    '''Write the selected list into a file.'''
+    outfile = open(outfile_name, 'w')
     outfile.write("#TCS V1.0\n")
     outfile.write("#\n")
-    outfile.write("# contig name\t\t\tpadPos\tupadPos| B  Q |\ttcov covA covC covG covT cov* | qA qC qG qT q* |  S |\tTags\n")
+    outfile.write("# contig name\t\t\tpadPos\tupadPos| B  Q |\ttcov covA \
+                  covC covG covT cov* | qA qC qG qT q* |  S |\tTags\n")
     outfile.write("#\n")
     for lines in passed:
         outfile.write(lines)
     outfile.close()
 
-def RunModule(infile_name,minqual,mincov):
-    """Run the module."""
-    ShortList = ListParser(infile_name,minqual,mincov)
-    ListWriter(infile_name,ShortList)
+
+def RunModule(infile_name, outfile_name, minqual, mincov):
+    '''Run the module.'''
+    ShortList = ListParser(infile_name, minqual, mincov)
+    ListWriter(infile_name, outfile_name, ShortList)
+
 
 #RunModule("/home/francisco/Programming/454/Scripts/ORF/test.tcs", 70, 15)

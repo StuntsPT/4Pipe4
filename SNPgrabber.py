@@ -55,22 +55,21 @@ def FASTAtoDict(fasta_file):
     fasta.close()
     return Dict
 
-def ShortListFASTA(names,fasta,tcs_file):
+def ShortListFASTA(names, fasta, tcs_file, snp_fasta):
     #Grabs the contig names and SNP positions from the TCS file and trims the fasta to match only these.
     shortfasta = {}
     for name in names:
         if name in fasta.keys():
             namepos = name + '#' + names[name] #namepos = contigname + #positions
             shortfasta[namepos] = fasta[name] #shortfasta = namepos : sequence from fasta file
-    newfile = re.match('^.*\.', tcs_file).group(0) + 'fasta'
-    outfile=open(newfile,'w')
+    outfile=open(snp_fasta, 'w')
     for k in shortfasta:
         outfile.write('>' + k + '\n')
         outfile.write(shortfasta[k] + '\n')
     outfile.close()
 
-def RunModule(tcs_file,fasta_file,minqual):
+def RunModule(tcs_file, fasta_file, snp_fasta, minqual):
     #Function to run the whole module:
-    Names=TCStoDict(tcs_file,minqual)
+    Names=TCStoDict(tcs_file, minqual)
     Sequences=FASTAtoDict(fasta_file)
-    ShortListFASTA(Names,Sequences,tcs_file)
+    ShortListFASTA(Names, Sequences, tcs_file, snp_fasta)
