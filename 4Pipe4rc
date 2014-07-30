@@ -37,7 +37,7 @@ Templates_path =
 
 [Variables]
 #Maximum percent of reads allowed so start with the same bases:
-max_equality = 30
+max_equality = 40
 #Minimum length of sequences not to be discarded by seqclean:
 min_len = 50
 #Number of CPU cores to be used by seqclean, BLAST and mira:
@@ -55,8 +55,8 @@ min_ssr_qual = 70
 
 #mirajob = job = est,denovo,accurate
 #miracommon = parameters = COMMON_SETTINGS -AS:nop=5:ugpf=off -CO:mr=on:asir=on
-#mira454 = 454_SETTINGS -AL:egp=off -ED:ace=on -CL:cpat=on -CO:mrpg=3
-#mirareadgroup = readgroup = 454_EST_data_from_cobig2
+#mira454 = 454_SETTINGS -AL:egp=off -CL:cpat=on
+#mirareadgroup = readgroup = Test data
 #miratech = technology = 454
 
 mirajob =
