@@ -55,6 +55,7 @@ def Read_qual_metrics(qual_file):
     quals = quals[1:-1]
     quals = list(map(int,quals))
     qual_avg = "%.2f" % (sum(quals)/len(quals))
+    qual.close()
     return(qual_avg)
 
 def Dataset_gather(seqclean_report_file,origin_fasta_file,clean_fasta_file,origin_qual_file,clean_qual_file):
@@ -209,4 +210,3 @@ def Run_module(seqclean_log_file, original_fasta_file, clean_fasta_file, origina
     contig_info = Contig_gather(info_assembly_file)
     snp_info = SNP_gather(snps_fasta_file, bestorf_fasta_file)
     Metrics_writer(dataset_info, contig_info, snp_info, metrics_file)
-
