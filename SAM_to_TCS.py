@@ -15,7 +15,7 @@
 # along with 4Pipe4.  If not, see <http://www.gnu.org/licenses/>.
 
 import pysam
-from pipeutils import FASTA_parser
+from pipeutils import ASCII_to_num, Ambiguifier
  
 #outfile = open("/home/francisco/Desktop/maf_2_tcs/sam/Taes_out.bam","wb")
 #outfile.write(pysam.view("-b", "-S", "/home/francisco/Desktop/maf_2_tcs/sam/Taes_out.sam"))
@@ -42,103 +42,98 @@ def TCSwriter(bamfile_name, fastafile_name):
 
     #Set bamfile 'settings'
     bamfile = pysam.Samfile(bamfile_name, 'rb')
-
-    #Get reference sequences from FASTA file
-    ref_seqs = FASTA_parser(fastafile_name)
     
     #Write TCS Header
     TCS.write("#TCS V1.0\n")
     TCS.write("#\n")
-    TCS.write("# contig name            padPos  upadPos| B  Q | tcov covA covC covG covT cov* | qA qC qG qT q* |  S |   Tags\n")
+    TCS.write("# contig name            padPos  upadPos| B  Q | tcov covA ")
+    TCS.write("covC covG covT cov* | qA qC qG qT q* |  S |   Tags\n")
     TCS.write("#\n")
 
     for refs in bamfile.references:
-        refseq = ref_seqs[refs]
         numpads = 0
         for pileupcolumn in bamfile.pileup(refs, 0):
+            #Define usefull variables that need to be reset
+            bases = {"A": [], "C": [], "G": [], "T": [], "*": []}
             position = pileupcolumn.pos
-            base = refseq[position]
-            if base == "*":
+            
+            #Define total covrage (AKA "Tcov")
+            tcov = pileupcolumn.n
+
+            #Define base coverages and qualities
+            for pileupread in pileupcolumn.pileups:
+                base = pileupread.alignment.seq[pileupread.qpos].upper()
+                qual = pileupread.alignment.qual[pileupread.qpos]
+                if pileupread.alignment.is_reverse:
+                    bases[base] += ASCII_to_num(qual) * -1
+                else:
+                    bases[base] += ASCII_to_num(qual)
+
+            covs, quals = covs_and_quals(bases)
+
+            #Define reference base (AKA "B") and qual (AKA "Q")
+            freqbase = major_base(bases)
+            refbase = Ambiguifier(freqbase)
+            #refqual =  #TODO
+           
+                
+
+            #Define padded and unpadded positions (AKA "padPos" and "upadPos")
+            if refbase == "*":
                 numpads += 1
                 unpadPos = -1
             else:
                 unpadPos = position - pads
+                
             padPos = position
-            tcov = pileupcolumn.n
-            bases = {"A" : [], "C" : [], "G" : [], "T" : [], "*" : []}
-            
-            for pileupread in pileupcolumn.pileups:
-                base = pileupread.alignment.seq[pileupread.qpos]
-                qual = pileupread.alignment.qual[pileupread.qpos]
-                bases[base] += qual
-
-            covs, quals = covs_and_quals(bases)
             
             
 def covs_and_quals(bases):
-    '''Takes the "bases" dict and converts it into two tuples - one with the
+    '''Takes the "bases" dict and converts it into two lists - one with the
     coverage and one with the average quals of each base (in order)'''
     ordered = ["A","C","G","T","*"]
     covs = []
     quals = []
     for i in ordered:
         covs.append(len(bases[i]))
-        try:
-            quals.append(str(sum(bases[i])/len(bases[i])))
-        except:
-            quals.append("--")
+        quals.append(QualityCalc(bases[i]))
 
-    newcovs = covs.copy()
-    top_cov = max(covs)
-    
-    
     return covs, quals
 
-    
-    #Use a natural sort on the dictionary. Really ugly!
-    sorted_keys = natural_sort(variation.keys())
-    sorted_values = []
-    for i in sorted_keys:
-        sorted_values.append(variation[i])
 
-    for k,v in zip(sorted_keys, sorted_values):
-        stretch_name = k + (" " * (24 - len(k) + 1))
+def major_base(bases):
+    '''Takes a dict like {base: [quals]} and returns the most frequent 
+    base(s)'''
+    base_counts = {}
+    for k in bases:
+        base_counts[k] = len(base[k])
 
-        for variants in sorted(v[0].keys()):
-            tcov = str(len(v[0][variants]["A"]) + len(v[0][variants]["C"]) + len(v[0][variants]["G"]) + len(v[0][variants]["T"]) + len(v[0][variants]["-"]))
-            TCS.write(stretch_name)
-            #Padded variation
-            TCS.write(" " * (5 - len(str(variants - 1))))
-            TCS.write(str(variants - 1))
-            #Unpaded variation
-            if v[1][variants - 1] == "-":
-                TCS.write("      -1")
-            else:
-                TCS.write(" " * (8 - len(str(variants - v[1][:variants].count("-") - 1))))
-                TCS.write(str(variants - v[1][:variants].count("-") - 1))
-            #Contig info
-            TCS.write(" | ")
-            TCS.write(v[1][variants - 1].upper().replace("-","*"))
-            TCS.write(" " * (3 - len(str(v[2][variants-1]))))
-            TCS.write(str(v[2][variants - 1]))
-            #Individual (and total) coverages
-            TCS.write(" | ")
-            TCS.write(" " * (4 - len(tcov)))
-            TCS.write(tcov)
-            for base in ["A", "C", "G", "T", "-"]:
-                TCS.write(" " * (5 - len(str(len(v[0][variants][base])))))
-                TCS.write(str(len(v[0][variants][base])))
-            TCS.write(" | ")
-            #Write base quals
-            for base in ["A", "C", "G", "T", "-"]:
-                if v[0][variants][base] == []:
-                    TCS.write("-- ")
-                elif base != "-":
-                    TCS.write(QualityCalc(v[0][variants][base]))
-                else:
-                    TCS.write(" 1 ")
-            #All tags are discarded. They are not necessary for 4Pipe4 anyway
-            TCS.write("|  : |")
-            TCS.write("\n")
+    highest = max(base_counts.values())
+    maxbases = [k for k,v in base_counts.items() if v == highest]
 
-    TCS.close()
+    if len(maxbases) > 1 and "*" in maxbases:
+        maxbases.remove("*")
+
+    return maxbases
+
+def QualityCalc(quals):
+    #Calculate individual bases qualities, just like mira does, as seen here:
+    #http://www.freelists.org/post/mira_talk/Quality-Values,4
+    quals.sort()
+    min1 = quals[0]
+    if min1 > 0: min1 = 0
+    max1 = quals[-1]
+    if max1 < 0: max1 = 0
+    if len(quals) > 1:
+        max2 = quals[-2]
+        if max2 < 0: max2 = 0
+        min2 = quals[1]
+        if min2 > 0: min2 = 0
+    else:
+        max2 = 0
+        min2 = 0
+
+    qual = (max1 + round(max2 * 0.1)) - (min1 + round(min2 * 0.1))
+    #Return the already formatted string
+    #return (" " * (2 - (len(str(qual))))) + str(qual) + " "
+    return qual
