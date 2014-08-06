@@ -26,7 +26,8 @@ import ORFmaker
 import Reporter
 import SSRfinder as ssr
 import Metrics
-import CAF_to_TCS
+import SAM_to_BAM
+import BAM_to_TCS
 import argparse
 from argparse import RawTextHelpFormatter
 
@@ -234,10 +235,11 @@ def DiscoveryTCS(basefile):
        find SNPs. Output in TCS format.'''
     os.chdir(os.path.split(basefile)[0])
     print("\nRunning SNP Discovery tool module...")
-    CAF_to_TCS.RunModule(basefile + '_assembly/' + miraproject
-                         + '_d_results/' + miraproject + '_out.caf')
-    TCS.RunModule(basefile + '_assembly/' + miraproject + '_d_results/'
-                  + miraproject + '_out.tcs', basefile + '_out.short.tcs',
+    SAM_to_BAM.RunModule(basefile + '_assembly/' + miraproject
+                         + '_d_results/' + miraproject + '_out.sam',
+                         basefile + miraproject + '_out.bam')
+    BAM_to_TCS.RunModule(basefile + miraproject + '_out.bam')
+    TCS.RunModule(basefile + '_out.tcs', basefile + '_out.short.tcs',
                   int(config.get('Variables', 'minqual')),
                   int(config.get('Variables', 'mincov')))
 
