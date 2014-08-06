@@ -16,33 +16,21 @@
 
 import pysam
 from pipeutils import ASCII_to_num, Ambiguifier
- 
-#outfile = open("/home/francisco/Desktop/maf_2_tcs/sam/Taes_out.bam","wb")
-#outfile.write(pysam.view("-b", "-S", "/home/francisco/Desktop/maf_2_tcs/sam/Taes_out.sam"))
 
-#pysam.sort("/home/francisco/Desktop/maf_2_tcs/sam/Taes_out.bam", "/home/francisco/Desktop/maf_2_tcs/sam/Taes_out_sorted.bam")
-#pysam.index("/home/francisco/Desktop/maf_2_tcs/sam/Taes_out_sorted.bam", "/home/francisco/Desktop/maf_2_tcs/sam/Taes_out_sorted.bai")
-
-#samfile = pysam.Samfile("/home/francisco/Desktop/maf_2_tcs/sam/Taes_out_sorted.bam",'rb')
-
-#for pileupcolumn in samfile.pileup( 'Taes_c1', 100, 120):
-    #print()
-    #print('coverage at base %s = %s' % (pileupcolumn.pos , pileupcolumn.n))
-    #for pileupread in pileupcolumn.pileups:
-        #print('\tbase in read %s = %s - %s' % (pileupread.alignment.qname, pileupread.alignment.seq[pileupread.qpos], pileupread.alignment.qual[pileupread.qpos]))
-
-
-def TCSwriter(bamfile_name, fastafile_name):
+def TCSwriter(bamfile_name):
     '''Converts the bamfile into the TCS format. The writing and the parsing
-    are done simultaneusly.'''
+    are done simultaneously.'''
 
     #Set TCS file 'settings'
-    tcsfile_name = bamfile[:bamfile.rindex(".")] + ".tcs"
+    tcsfile_name = bamfile_name[:bamfile_name.rindex(".")] + ".tcs"
     TCS = open(tcsfile_name,'w')
 
     #Set bamfile 'settings'
     bamfile = pysam.Samfile(bamfile_name, 'rb')
-    
+
+    #Set basetrans variable
+    basetrans = "ACGT*"
+
     #Write TCS Header
     TCS.write("#TCS V1.0\n")
     TCS.write("#\n")
@@ -52,41 +40,78 @@ def TCSwriter(bamfile_name, fastafile_name):
 
     for refs in bamfile.references:
         numpads = 0
-        for pileupcolumn in bamfile.pileup(refs, 0):
+        for pileupcolumn in bamfile.pileup(refs):
             #Define usefull variables that need to be reset
             bases = {"A": [], "C": [], "G": [], "T": [], "*": []}
             position = pileupcolumn.pos
-            
             #Define total covrage (AKA "Tcov")
-            tcov = pileupcolumn.n
+            tcov = pileupcolumn.n #TODO - submit bug for wrong counting
 
             #Define base coverages and qualities
             for pileupread in pileupcolumn.pileups:
-                base = pileupread.alignment.seq[pileupread.qpos].upper()
-                qual = pileupread.alignment.qual[pileupread.qpos]
-                if pileupread.alignment.is_reverse:
-                    bases[base] += ASCII_to_num(qual) * -1
+                if str(pileupread).startswith("*"):
+                    continue
+                if str(pileupread.alignment.seq[pileupread.qpos]) not in basetrans:
+                    continue
+                
+                if pileupread.is_del:
+                    bases["*"].append(1)
+
                 else:
-                    bases[base] += ASCII_to_num(qual)
+                    base = pileupread.alignment.seq[pileupread.qpos].upper()
+                    qual = pileupread.alignment.qual[pileupread.qpos]
+                    if pileupread.alignment.is_reverse:
+                        bases[base].append(ASCII_to_num(qual) * -1)
+                    else:
+                        bases[base].append(ASCII_to_num(qual))
 
             covs, quals = covs_and_quals(bases)
 
             #Define reference base (AKA "B") and qual (AKA "Q")
             freqbase = major_base(bases)
             refbase = Ambiguifier(freqbase)
-            #refqual =  #TODO
-           
-                
+
+            refqual =  max([quals[basetrans.find(x)] for x in freqbase])
 
             #Define padded and unpadded positions (AKA "padPos" and "upadPos")
             if refbase == "*":
                 numpads += 1
                 unpadPos = -1
             else:
-                unpadPos = position - pads
-                
+                unpadPos = position - numpads
             padPos = position
+
+            ##Write TCS lines
+            #Contig name
+            TCS.write(refs)
+            TCS.write(" " * (24 - len(refs)))
+            #padPos
+            TCS.write(" " * (5 - len(str(padPos))))
+            TCS.write(str(padPos))
+            #unpadPos
+            TCS.write(" " * (8 - len(str(unpadPos))))
+            TCS.write(str(unpadPos))
+            #"B" and "Q"
+            TCS.write(" | ")
+            TCS.write(refbase)
+            TCS.write(" " * (3 - len(str(refqual))))
+            TCS.write(str(refqual))
+            #Coverages
+            TCS.write(" | ")
+            TCS.write(" " * (6 - len(str(tcov))))
+            TCS.write(str(tcov))
+            for c in covs:
+                TCS.write(" " * (6 - len(str(c))))
+                TCS.write(str(c))
+            #Qualities
+            TCS.write(" | ")
+            for q in quals:
+                TCS.write(" " * (2 - len(str(q))))
+                TCS.write(str(q) + " ")
+            #Discard all tags (not necessary for 4Pipe4 anyway)
+            TCS.write("|  : |\n")
             
+    TCS.close()
             
 def covs_and_quals(bases):
     '''Takes the "bases" dict and converts it into two lists - one with the
@@ -96,7 +121,11 @@ def covs_and_quals(bases):
     quals = []
     for i in ordered:
         covs.append(len(bases[i]))
-        quals.append(QualityCalc(bases[i]))
+        if len(bases[i]) > 0:
+            quals.append(QualityCalc(bases[i]))
+        else:
+            quals.append("--")
+        
 
     return covs, quals
 
@@ -106,7 +135,7 @@ def major_base(bases):
     base(s)'''
     base_counts = {}
     for k in bases:
-        base_counts[k] = len(base[k])
+        base_counts[k] = len(bases[k])
 
     highest = max(base_counts.values())
     maxbases = [k for k,v in base_counts.items() if v == highest]
@@ -134,6 +163,12 @@ def QualityCalc(quals):
         min2 = 0
 
     qual = (max1 + round(max2 * 0.1)) - (min1 + round(min2 * 0.1))
-    #Return the already formatted string
-    #return (" " * (2 - (len(str(qual))))) + str(qual) + " "
+
     return qual
+
+def RunModule(bamfile_name):
+    TCSwriter(bamfile_name)
+
+if __name__ == "__main__":
+    from sys import argv
+    RunModule(argv[1])
