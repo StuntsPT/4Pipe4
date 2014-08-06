@@ -35,13 +35,10 @@ from argparse import RawTextHelpFormatter
 # # # # # ARGUMENT LIST # # # # # #
 parser = argparse.ArgumentParser(description="",
                                  epilog="The idea here is that to resume an \
-                                 analysis that was interrupted for example \
-                                 after the assembling process you should \
-                                 issue -s '4,5,6,7,8,9' or -s '456789'. Note \
-                                 that some steps depend on the output of \
-                                 previous steps, so using some combinations \
-                                 can cause errors. The arguments can be given \
-                                 in any order.",
+analysis that was interrupted for example after the assembling process you \
+should issue -s '4,5,6,7,8,9' or -s '456789'. Note that some steps depend on \
+the output of previous steps, so using some combinations can cause errors. \
+The arguments can be given in any order.",
                                  prog="4Pipe4",
                                  formatter_class=RawTextHelpFormatter)
 parser.add_argument("-i", dest="infile", nargs=1, required=True,
@@ -49,26 +46,23 @@ parser.add_argument("-i", dest="infile", nargs=1, required=True,
                     metavar="sff_file")
 parser.add_argument("-o", dest="outfile", nargs=1, required=True,
                     help="Provide the full path to your results directory, \
-                    plus the name you want to give your results\n",
+plus the name you want to give your results\n",
                     metavar="basefile")
 parser.add_argument("-c", dest="configFile", nargs=1,
                     help="Provide the full path to your configuration file. \
-                    If none is provided, the program will look in the current \
-                    working directory and  then in ~/.config/4Pipe4rc (in this\
-                    order) for one. If none is found the  program will stop\n",
-                    metavar="configfile")
+If none is provided, the program will look in the current working directory \
+and  then in ~/.config/4Pipe4rc (in this order) for one. If none is found the \
+program will stop\n", metavar="configfile")
 parser.add_argument("-s", dest="run_list", nargs="?",
                     default="1 2 3 4 5 6 7 8 9", help="Specify the numbers \
-                    corresponding to the pipeline steps that will be run. The \
-                    string after -s must be given inside quotation marks, and \
-                    numbers can be joined together or separated by any \
-                    symbol. The numbers are the pipeline steps that should be \
-                    run. This is an optional argument and it's omission will \
-                    run all steps by default. The numbers, from 1 to 9 \
-                    represent the following steps:\n\t1 - SFF extraction\n\t2 \
-                    - SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - \
-                    SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR \
-                    finder\n\t9 - 7zip the report")
+corresponding to the pipeline steps that will be run. The string after -s \
+must be given inside quotation marks, and numbers can be joined together or \
+separated by any symbol. The numbers are the pipeline steps that should be \
+run. This is an optional argument and it's omission will run all steps by \
+default. The numbers, from 1 to 9 represent the following steps:\n\t1 - SFF \
+extraction\n\t2 - SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - \
+SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR finder\n\t9 - 7zip \
+the report")
 arg = parser.parse_args()
 
 
