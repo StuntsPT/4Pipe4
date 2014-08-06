@@ -17,21 +17,22 @@
 import pysam
 from pipeutils import ASCII_to_num, Ambiguifier
 
+
 def TCSwriter(bamfile_name):
     '''Converts the bamfile into the TCS format. The writing and the parsing
     are done simultaneously.'''
 
-    #Set TCS file 'settings'
+    # Set TCS file 'settings'
     tcsfile_name = bamfile_name[:bamfile_name.rindex(".")] + ".tcs"
-    TCS = open(tcsfile_name,'w')
+    TCS = open(tcsfile_name, 'w')
 
-    #Set bamfile 'settings'
+    # Set bamfile 'settings'
     bamfile = pysam.Samfile(bamfile_name, 'rb')
 
-    #Set basetrans variable
+    # Set basetrans variable
     basetrans = "ACGT*"
 
-    #Write TCS Header
+    # Write TCS Header
     TCS.write("#TCS V1.0\n")
     TCS.write("#\n")
     TCS.write("# contig name            padPos  upadPos| B  Q | tcov covA ")
@@ -41,22 +42,22 @@ def TCSwriter(bamfile_name):
     for refs in bamfile.references:
         numpads = 0
         for pileupcolumn in bamfile.pileup(refs):
-            #Define usefull variables that need to be reset
+            # Define usefull variables that need to be reset
             bases = {"A": [], "C": [], "G": [], "T": [], "*": []}
             position = pileupcolumn.pos
-            tcov = 0 #Workaround
-            #Define total covrage (AKA "Tcov")
+            tcov = 0  # Workaround
+            # Define total covrage (AKA "Tcov")
             #tcov = pileupcolumn.n #TODO - submit bug for wrong counting
 
-            #Define base coverages and qualities
+            # Define base coverages and qualities
             for pileupread in pileupcolumn.pileups:
                 if str(pileupread).startswith("*"):
                     continue
-                if str(pileupread.alignment.seq[pileupread.qpos]) \
-                not in basetrans:
-                    tcov += 1 #Workaround
+                if str(pileupread.alignment.seq
+                       [pileupread.qpos]) not in basetrans:
+                    tcov += 1  # Workaround
                     continue
-                
+
                 if pileupread.is_del:
                     bases["*"].append(1)
 
@@ -70,15 +71,15 @@ def TCSwriter(bamfile_name):
 
             covs, quals = covs_and_quals(bases)
 
-            tcov += sum(covs) #Workaround
-        
-            #Define reference base (AKA "B") and qual (AKA "Q")
+            tcov += sum(covs)  # Workaround
+
+            # Define reference base (AKA "B") and qual (AKA "Q")
             freqbase = major_base(bases)
             refbase = Ambiguifier(freqbase)
 
-            refqual =  max([quals[basetrans.find(x)] for x in freqbase])
+            refqual = max([quals[basetrans.find(x)] for x in freqbase])
 
-            #Define padded and unpadded positions (AKA "padPos" and "upadPos")
+            # Define padded and unpadded positions (AKA "padPos" and "upadPos")
             if refbase == "*":
                 numpads += 1
                 unpadPos = -1
@@ -86,42 +87,43 @@ def TCSwriter(bamfile_name):
                 unpadPos = position - numpads
             padPos = position
 
-            ##Write TCS lines
-            #Contig name
+            # Write TCS lines #
+            # Contig name
             TCS.write(refs)
             TCS.write(" " * (24 - len(refs)))
-            #padPos
+            # padPos
             TCS.write(" " * (5 - len(str(padPos))))
             TCS.write(str(padPos))
-            #unpadPos
+            # unpadPos
             TCS.write(" " * (8 - len(str(unpadPos))))
             TCS.write(str(unpadPos))
-            #"B" and "Q"
+            # "B" and "Q"
             TCS.write(" | ")
             TCS.write(refbase)
             TCS.write(" " * (3 - len(str(refqual))))
             TCS.write(str(refqual))
-            #Coverages
+            # Coverages
             TCS.write(" | ")
             TCS.write(" " * (6 - len(str(tcov))))
             TCS.write(str(tcov))
             for c in covs:
                 TCS.write(" " * (6 - len(str(c))))
                 TCS.write(str(c))
-            #Qualities
+            # Qualities
             TCS.write(" | ")
             for q in quals:
                 TCS.write(" " * (2 - len(str(q))))
                 TCS.write(str(q) + " ")
-            #Discard all tags (not necessary for 4Pipe4 anyway)
+            # Discard all tags (not necessary for 4Pipe4 anyway)
             TCS.write("|  : |\n")
-            
+
     TCS.close()
-            
+
+
 def covs_and_quals(bases):
     '''Takes the "bases" dict and converts it into two lists - one with the
     coverage and one with the average quals of each base (in order)'''
-    ordered = ["A","C","G","T","*"]
+    ordered = ["A", "C", "G", "T", "*"]
     covs = []
     quals = []
     for i in ordered:
@@ -130,39 +132,43 @@ def covs_and_quals(bases):
             quals.append(QualityCalc(bases[i]))
         else:
             quals.append("--")
-        
 
     return covs, quals
 
 
 def major_base(bases):
-    '''Takes a dict like {base: [quals]} and returns the most frequent 
+    '''Takes a dict like {base: [quals]} and returns the most frequent
     base(s)'''
     base_counts = {}
     for k in bases:
         base_counts[k] = len(bases[k])
 
     highest = max(base_counts.values())
-    maxbases = [k for k,v in base_counts.items() if v == highest]
+    maxbases = [k for k, v in base_counts.items() if v == highest]
 
     if len(maxbases) > 1 and "*" in maxbases:
         maxbases.remove("*")
 
     return maxbases
 
+
 def QualityCalc(quals):
-    #Calculate individual bases qualities, just like mira does, as seen here:
-    #http://www.freelists.org/post/mira_talk/Quality-Values,4
+    '''Calculate individual bases qualities, just like mira does, as seen here:
+    http://www.freelists.org/post/mira_talk/Quality-Values,4'''
     quals.sort()
     min1 = quals[0]
-    if min1 > 0: min1 = 0
+    if min1 > 0:
+        min1 = 0
     max1 = quals[-1]
-    if max1 < 0: max1 = 0
+    if max1 < 0:
+        max1 = 0
     if len(quals) > 1:
         max2 = quals[-2]
-        if max2 < 0: max2 = 0
+        if max2 < 0:
+            max2 = 0
         min2 = quals[1]
-        if min2 > 0: min2 = 0
+        if min2 > 0:
+            min2 = 0
     else:
         max2 = 0
         min2 = 0
@@ -170,6 +176,7 @@ def QualityCalc(quals):
     qual = (max1 + round(max2 * 0.1)) - (min1 + round(min2 * 0.1))
 
     return qual
+
 
 def RunModule(bamfile_name):
     TCSwriter(bamfile_name)
