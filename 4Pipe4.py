@@ -32,7 +32,7 @@ import argparse
 from argparse import RawTextHelpFormatter
 
 
-##### ARGUMENT LIST ######
+# # # # # ARGUMENT LIST # # # # # #
 parser = argparse.ArgumentParser(description="",
                                  epilog="The idea here is that to resume an \
                                  analysis that was interrupted for example \
@@ -190,7 +190,7 @@ def MinClip(basefile):
 
 def SeqClean(basefile):
     '''Function for using seqclean and clean2qual.'''
-    #seqclean
+    # seqclean
     cli = [config.get('Program paths', 'seqclean_path'),
            basefile + '.fasta', '-r', basefile + '.clean.rpt', '-l',
            config.get('Variables', 'min_len'), '-o',
@@ -200,7 +200,7 @@ def SeqClean(basefile):
     print("\nRunning Seqclean using the following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
-    #cln2qual
+    # cln2qual
     cli = [config.get('Program paths', 'cln2qual_path'),
            basefile + '.clean.rpt', basefile + '.fasta.qual']
     print("\nRunning cln2qual using the following command:")
@@ -266,10 +266,10 @@ def ORFliner(basefile):
     print("\nRunning EMBOSS 'getorf' using the following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
-    #After this we go to ORFmaker.py:
+    # After this we go to ORFmaker.py:
     print("\nRunning ORFmaker module...")
     ORFmaker.RunModule(basefile + '.allORFs.fasta')
-    #Next we BLAST the resulting ORFs against the local 'nr' database:
+    # Next we BLAST the resulting ORFs against the local 'nr' database:
     if config.get('Program paths', 'BLAST_path').endswith('blast2'):
         cli = [config.get('Program paths', 'BLAST_path'), '-p', 'blastx', '-d',
                config.get('Program paths', 'BLASTdb_path'), '-i',
@@ -285,7 +285,7 @@ def ORFliner(basefile):
     print("\nRunning NCBI 'blastx' using the following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
-    #Then we write the metrics report:
+    # Then we write the metrics report:
     print("\nRunning the metrics calculator module...")
     seqclean_log_path = "%s/seqcl_%s.fasta.log" % (os.path.split(basefile)[0],
                                                    miraproject)
@@ -296,7 +296,7 @@ def ORFliner(basefile):
                        + miraproject + '_info_assembly.txt', basefile
                        + '.SNPs.fasta', basefile + '.BestORF.fasta',
                        basefile + '.Metrics.html')
-    #Finally we write down our report using the data gathered so far:
+    # Finally we write down our report using the data gathered so far:
     print("\nRunning Reporter module...")
     Reporter.RunModule(basefile + '.BestORF.fasta', basefile + '.SNPs.fasta',
                        basefile + '.ORFblast.html', basefile + '.Report.html',
@@ -323,7 +323,7 @@ def B2G(basefile):
     print("\nRunning NCBI 'blastx' using the following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
-    #After 'blasting' we run b2g4pipe:
+    # After 'blasting' we run b2g4pipe:
     if os.path.isfile(config.get('Program paths', 'Blast2go_path')):
         cli = ['java', '-jar', config.get('Program paths', 'Blast2go_path'),
                '-in', basefile + '.shortlistblast.xml', '-prop',
@@ -387,7 +387,7 @@ def TidyUP(basefile):
         print(basefile + '.Metrics.html does not exist')
     shutil.copy(config.get('Program paths', 'Templates_path') +
                 '/Report.html', 'Report/Report.html')
-    #7zip it
+    # 7zip it
     cli = [config.get('Program paths', '7z_path'), 'a', '-y', '-bd', basefile
            + '.report.7z', 'Report']
     print("\n7ziping the Report folder using the following command:")
