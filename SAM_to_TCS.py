@@ -44,14 +44,17 @@ def TCSwriter(bamfile_name):
             #Define usefull variables that need to be reset
             bases = {"A": [], "C": [], "G": [], "T": [], "*": []}
             position = pileupcolumn.pos
+            tcov = 0 #Workaround
             #Define total covrage (AKA "Tcov")
-            tcov = pileupcolumn.n #TODO - submit bug for wrong counting
+            #tcov = pileupcolumn.n #TODO - submit bug for wrong counting
 
             #Define base coverages and qualities
             for pileupread in pileupcolumn.pileups:
                 if str(pileupread).startswith("*"):
                     continue
-                if str(pileupread.alignment.seq[pileupread.qpos]) not in basetrans:
+                if str(pileupread.alignment.seq[pileupread.qpos]) \
+                not in basetrans:
+                    tcov += 1 #Workaround
                     continue
                 
                 if pileupread.is_del:
@@ -67,6 +70,8 @@ def TCSwriter(bamfile_name):
 
             covs, quals = covs_and_quals(bases)
 
+            tcov += sum(covs) #Workaround
+        
             #Define reference base (AKA "B") and qual (AKA "Q")
             freqbase = major_base(bases)
             refbase = Ambiguifier(freqbase)
