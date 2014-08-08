@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# Copyright 2011-2013 Francisco Pina Martins <f.pinamartins@gmail.com>
+# Copyright 2011-2014 Francisco Pina Martins <f.pinamartins@gmail.com>
 # This file is part of 4Pipe4.
 # 4Pipe4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,24 +16,14 @@
 
 import re
 import os
+from pipeutils import FASTA_parser
 
-def FASTAtoDict(fasta):
-    #This will convert the bestorf fasta file into a dict like: "name":"seq" and return it
-    Dict={}
-    for lines in fasta:
-        if lines.startswith('>'):
-            name=lines.strip('>\n')
-            Dict[name]= ''
-        else:
-            Dict[name] = Dict[name] + lines.upper()
-    fasta.close()
-    return Dict
 
 def BLASTparser(blast):
-    #Parses the output of NCBI's blastx
+    '''Parses the output of NCBI's blastx'''
     blastheader = blast.readlines(300)
     for lines in blastheader:
-        #Check blast version: 1 =blast2, 2=blast+
+        # Check blast version: 1 =blast2, 2=blast+
         if lines.startswith('<b>BLASTX'):
             if "+" in lines:
                 version = 2
@@ -46,10 +36,12 @@ def BLASTparser(blast):
         parsed = BLAST_2(blast)
 
     blast.close()
+
     return(parsed)
 
+
 def BLAST_plus(blast):
-    #Blast+ parser
+    '''Blast+ parser'''
     parsed = {}
     done = 1
     for lines in blast:
@@ -57,35 +49,40 @@ def BLAST_plus(blast):
             if done == 0:
                 parsed[title] = ''
             else:
-                title = re.search(' \w* ',lines).group(0)[1:-1]
+                title = re.search(' \w* ', lines).group(0)[1:-1]
                 done = 0
         elif lines.startswith('<script') and done == 0:
-            anchor = re.search('<a name=\d*',lines).group(0)[8:]
-            lines = re.sub('<.* >','',re.sub('</a>.*<\a>','',lines))
+            anchor = re.search('<a name=\d*', lines).group(0)[8:]
+            lines = re.sub('<.* >', '', re.sub('</a>.*<\a>', '', lines))
             parsed[title] = lines.strip('\n ') + '#' + anchor
             done = 1
+
     return parsed
 
+
 def BLAST_2(blast):
-    #Blast2 parser
+    '''Blast2 parser'''
     parsed = {}
     done = 1
     for lines in blast:
         if lines.startswith('<b>Query='):
-            title = re.search(' \w* ',lines).group(0)[1:-1]
+            title = re.search(' \w* ', lines).group(0)[1:-1]
             done = 0
         elif lines.startswith('>') and done == 0:
-            anchor = re.search('= \d*',lines).group(0)[2:]
-            lines = re.sub('<.* >','',lines).replace('</a>','')
+            anchor = re.search('= \d*', lines).group(0)[2:]
+            lines = re.sub('<.* >', '', lines).replace('</a>', '')
             parsed[title] = lines.strip('\n> ') + '#' + anchor
             done = 1
         elif lines.startswith(' *****') and done == 0:
             parsed[title] = ''
             done = 1
+
     return parsed
 
+
 def Cov_counter(tcsfile, contig, position):
-    tcs = open(tcsfile,'r')
+    '''Gets the coverage from a specific position'''
+    tcs = open(tcsfile, 'r')
     for lines in tcs:
         if lines.startswith(contig):
             lines = lines.split()
@@ -93,33 +90,36 @@ def Cov_counter(tcsfile, contig, position):
                 coverage = lines[7]
                 break
     tcs.close()
+
     return coverage
-    
-def Characterize(Dict,Blasts,LargeDict,report,tcsfile):
-    #Makes the SNP characterization and writes down the report.
-    translate = { 'TTT': 'Phe', 'TCT': 'Ser', 'TAT': 'Tyr', 'TGT': 'Cys',
-                  'TTC': 'Phe', 'TCC': 'Ser', 'TAC': 'Tyr', 'TGC': 'Cys',
-                  'TTA': 'Leu', 'TCA': 'Ser', 'TAA': '***', 'TGA': 'Trp',
-                  'TTG': 'Leu', 'TCG': 'Ser', 'TAG': '***', 'TGG': 'Trp',
-                  'CTT': 'Leu', 'CCT': 'Pro', 'CAT': 'His', 'CGT': 'Arg',
-                  'CTC': 'Leu', 'CCC': 'Pro', 'CAC': 'His', 'CGC': 'Arg',
-                  'CTA': 'Leu', 'CCA': 'Pro', 'CAA': 'Gln', 'CGA': 'Arg',
-                  'CTG': 'Leu', 'CCG': 'Pro', 'CAG': 'Gln', 'CGG': 'Arg',
-                  'ATT': 'Ile', 'ACT': 'Thr', 'AAT': 'Asn', 'AGT': 'Ser',
-                  'ATC': 'Ile', 'ACC': 'Thr', 'AAC': 'Asn', 'AGC': 'Ser',
-                  'ATA': 'Met', 'ACA': 'Thr', 'AAA': 'Lys', 'AGA': 'Arg',
-                  'ATG': 'Met', 'ACG': 'Thr', 'AAG': 'Lys', 'AGG': 'Arg',
-                  'GTT': 'Val', 'GCT': 'Ala', 'GAT': 'Asp', 'GGT': 'Gly',
-                  'GTC': 'Val', 'GCC': 'Ala', 'GAC': 'Asp', 'GGC': 'Gly',
-                  'GTA': 'Val', 'GCA': 'Ala', 'GAA': 'Glu', 'GGA': 'Gly',
-                  'GTG': 'Val', 'GCG': 'Ala', 'GAG': 'Glu', 'GGG': 'Gly'}
+
+
+def Characterize(Dict, Blasts, LargeDict, report, tcsfile):
+    '''Makes the SNP characterization and writes down the report.'''
+    translate = {'TTT': 'Phe', 'TCT': 'Ser', 'TAT': 'Tyr', 'TGT': 'Cys',
+                 'TTC': 'Phe', 'TCC': 'Ser', 'TAC': 'Tyr', 'TGC': 'Cys',
+                 'TTA': 'Leu', 'TCA': 'Ser', 'TAA': '***', 'TGA': 'Trp',
+                 'TTG': 'Leu', 'TCG': 'Ser', 'TAG': '***', 'TGG': 'Trp',
+                 'CTT': 'Leu', 'CCT': 'Pro', 'CAT': 'His', 'CGT': 'Arg',
+                 'CTC': 'Leu', 'CCC': 'Pro', 'CAC': 'His', 'CGC': 'Arg',
+                 'CTA': 'Leu', 'CCA': 'Pro', 'CAA': 'Gln', 'CGA': 'Arg',
+                 'CTG': 'Leu', 'CCG': 'Pro', 'CAG': 'Gln', 'CGG': 'Arg',
+                 'ATT': 'Ile', 'ACT': 'Thr', 'AAT': 'Asn', 'AGT': 'Ser',
+                 'ATC': 'Ile', 'ACC': 'Thr', 'AAC': 'Asn', 'AGC': 'Ser',
+                 'ATA': 'Met', 'ACA': 'Thr', 'AAA': 'Lys', 'AGA': 'Arg',
+                 'ATG': 'Met', 'ACG': 'Thr', 'AAG': 'Lys', 'AGG': 'Arg',
+                 'GTT': 'Val', 'GCT': 'Ala', 'GAT': 'Asp', 'GGT': 'Gly',
+                 'GTC': 'Val', 'GCC': 'Ala', 'GAC': 'Asp', 'GGC': 'Gly',
+                 'GTA': 'Val', 'GCA': 'Ala', 'GAA': 'Glu', 'GGA': 'Gly',
+                 'GTG': 'Val', 'GCG': 'Ala', 'GAG': 'Glu', 'GGG': 'Gly'}
     report.write('''<HTML>
     <HEAD>
         <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
         <TITLE>SNP Characterization</TITLE>
         <STYLE>
         <!--
-        BODY,DIV,TABLE,THEAD,TBODY,TFOOT,TR,TH,TD,P { font-family:"Arial"; font-size:small }
+        BODY,DIV,TABLE,THEAD,TBODY,TFOOT,TR,TH,TD,P { font-family:"Arial"; \
+font-size:small }
         -->
         </STYLE>
     </HEAD>\n''')
@@ -141,15 +141,15 @@ def Characterize(Dict,Blasts,LargeDict,report,tcsfile):
         <TD ALIGN=CENTER>BLAST Species</TD>
         </TR>\n''')
     rows = []
-    for k,v in Dict.items():
-        snps = re.search('\{.*\}',k).group(0)
+    for k, v in Dict.items():
+        snps = re.search('\{.*\}', k).group(0)
         tmpdict = eval(snps)
-        v = v.replace('\n','')
-        for ke,va in tmpdict.items():
+        v = v.replace('\n', '')
+        for ke, va in tmpdict.items():
             ke = ke - 1
-            row = '<TR>\n<TD ALIGN=LEFT><a href="html_files/' + re.match('^\w*',k).group(0) + '.fasta">' + re.match('^\w*',k).group(0) + '</a></TD>\n'
-            left_limit = re.search('\[.* -',k).group(0)[1:-2]
-            right_limit = re.search('- .*\]',k).group(0)[2:-1]
+            row = '<TR>\n<TD ALIGN=LEFT><a href="html_files/' + re.match('^\w*', k).group(0) + '.fasta">' + re.match('^\w*', k).group(0) + '</a></TD>\n'
+            left_limit = re.search('\[.* -', k).group(0)[1:-2]
+            right_limit = re.search('- .*\]', k).group(0)[2:-1]
             if int(left_limit) < int(right_limit):
                 pos = int(left_limit) + ke
                 div = (int(left_limit)/3)
@@ -170,10 +170,10 @@ def Characterize(Dict,Blasts,LargeDict,report,tcsfile):
                     frame = '-2'
             row = row + '<TD ALIGN=CENTER>' + frame + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + str(pos) + '</TD>\n'
-            row = row + '<TD ALIGN=CENTER>' + Cov_counter(tcsfile, re.match('^\w*',k).group(0), str(pos)) + '</TD>\n' #TESTING
+            row = row + '<TD ALIGN=CENTER>' + Cov_counter(tcsfile, re.match('^\w*', k).group(0), str(pos)) + '</TD>\n' #TESTING
             row = row + '<TD ALIGN=CENTER>' + left_limit + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + right_limit + '</TD>\n'
-            row = row + '<TD ALIGN=CENTER><a href="html_files/' + str(re.match('^.*]',k).group(0)) + '.ORF.fasta">' + str(abs(int(left_limit)-int(right_limit) + 1)) + '</TD>\n'
+            row = row + '<TD ALIGN=CENTER><a href="html_files/' + str(re.match('^.*]', k).group(0)) + '.ORF.fasta">' + str(abs(int(left_limit)-int(right_limit) + 1)) + '</TD>\n'
             row = row + '<TD ALIGN=CENTER>' + str(ke+1) + '</TD>\n'
             if str((ke+1)/3).find('.0') != -1:
                 position = v[ke-2:ke+1]
@@ -184,7 +184,7 @@ def Characterize(Dict,Blasts,LargeDict,report,tcsfile):
                 codons = list(v[ke-1:ke] + x + v[ke+1:ke+2] for x in va)
                 row = row + '<TD ALIGN=CENTER>2</TD>\n'
             else:
-                position = v[ke:ke+3]
+                position = v[ke:ke + 3]
                 codons = list(x + v[ke+1:ke+3] for x in va)
                 row = row + '<TD ALIGN=CENTER>1</TD>\n'
             translated = []
@@ -200,58 +200,71 @@ def Characterize(Dict,Blasts,LargeDict,report,tcsfile):
                 row = row + '<TD ALIGN=CENTER>Y</TD>\n'
             else:
                 row = row + '<TD ALIGN=CENTER>N</TD>\n'
-            if re.match('^\w*',k).group(0) in Blasts and Blasts[re.match('^\w*',k).group(0)] != '':
-                reference = re.match('^.*\|.*\|',Blasts[re.match('^\w*',k).group(0)]).group(0)
-                protein = re.sub('^.*\|.*\|','',Blasts[re.match('^\w*',k).group(0)])
-                if '[' in Blasts[re.match('^\w*',k).group(0)]:
-                    protein = re.search('^.*\[',protein).group(0)[:-1]
-                    species = re.search('\[.*#',Blasts[re.match('^\w*',k).group(0)]).group(0).strip('[]')[:-2]
+            if re.match('^\w*', k).group(0) in Blasts and Blasts[re.match('^\w*', k).group(0)] != '':
+                reference = re.match('^.*\|.*\|', Blasts[re.match('^\w*', k).group(0)]).group(0)
+                protein = re.sub('^.*\|.*\|', '', Blasts[re.match('^\w*', k).group(0)])
+                if '[' in Blasts[re.match('^\w*', k).group(0)]:
+                    protein = re.search('^.*\[', protein).group(0)[:-1]
+                    species = re.search('\[.*#', Blasts[re.match('^\w*', k).group(0)]).group(0).strip('[]')[:-2]
                 else:
-                    protein =  re.search('^.*#',protein).group(0)[:-1]
+                    protein = re.search('^.*#', protein).group(0)[:-1]
                     species = 'N/A'
-                row = row + '<TD ALIGN=LEFT><a href="html_files/ORFblast.html' + re.search('#\d*$',Blasts[re.match('^\w*',k).group(0)]).group(0) + '">' + reference + '</a></TD>\n'
+                row = row + '<TD ALIGN=LEFT><a href="html_files/ORFblast.html' + re.search('#\d*$', Blasts[re.match('^\w*', k).group(0)]).group(0) + '">' + reference + '</a></TD>\n'
                 row = row + '<TD ALIGN=LEFT>' + protein + '</TD>\n'
                 row = row + '<TD ALIGN=LEFT>' + species + '</TD></TR>\n'
             else:
-                row = row + '<TD ALIGN=LEFT>No similar proteins found in database</TD><TD>N/A</TD><TD>N/A</TD></TR>\n'
+                row = row + '<TD ALIGN=LEFT>No similar proteins found in \
+database</TD><TD>N/A</TD><TD>N/A</TD></TR>\n'
             rows.append(row)
     rows.sort()
     for r in rows:
         report.write(r)
-    report.write('<TR><TH ALIGN=CENTER COLSPAN="14">Contigs that contained SNPs that could not be characterized since they were outside any ORF</TH></TR>')
-    tester = set(re.match('^\w*',x).group(0) for x in Dict.keys())
+    report.write('<TR><TH ALIGN=CENTER COLSPAN="14">Contigs that contained \
+SNPs that could not be characterized since they were outside any ORF\
+</TH></TR>')
+    tester = set(re.match('^\w*', x).group(0) for x in Dict.keys())
     for unchar in LargeDict:
-        if re.match('^\w*',unchar).group(0) not in tester:
-            report.write('<TR>\n<TH ALIGN=LEFT COLSPAN="14">' + '<a href="html_files/' + re.match('^\w*',unchar).group(0) + '.fasta">' + re.match('^\w*',unchar).group(0) + '</a>''</TH>\n</TR>\n')
+        if re.match('^\w*', unchar).group(0) not in tester:
+            report.write('<TR>\n<TH ALIGN=LEFT COLSPAN="14">'
+                         + '<a href="html_files/'
+                         + re.match('^\w*', unchar).group(0) + '.fasta">'
+                         + re.match('^\w*', unchar).group(0)
+                         + '</a>''</TH>\n</TR>\n')
     report.write('</TBODY>\n</TABLE>\n</BODY>\n</HTML>')
     report.close()
 
-def FASTAsplitter(Dict,LargeDict,report_file):
-    #This will split the Dict with the relevant FASTA information into individual fasta files for viewing
+
+def FASTAsplitter(Dict, LargeDict, report_file):
+    '''Splits the Dict with the relevant FASTA information into individual
+    fasta files for viewing.'''
     filespath = os.path.split(report_file)[0] + '/html_files/'
     try:
         os.mkdir(filespath)
     except:
         print('Warning - directory ' + filespath + '/html_files exists')
     for seqs in LargeDict:
-        smallfile = open(filespath + re.match('^\w*',seqs).group(0) + '.fasta','w')
+        smallfile = open(filespath + re.match('^\w*', seqs).group(0)
+                         + '.fasta', 'w')
         smallfile.write('>' + seqs + '\n')
         smallfile.write(LargeDict[seqs])
         smallfile.close()
     for seqs in Dict:
-        smallfile = open(filespath + re.match('^.*]',seqs).group(0) + '.ORF.fasta','w')
+        smallfile = open(filespath + re.match('^.*]', seqs).group(0)
+                         + '.ORF.fasta', 'w')
         smallfile.write('>' + seqs + '\n')
         smallfile.write(Dict[seqs])
         smallfile.close()
 
-def RunModule(fasta_file,fulllist_file,blast_file,report_file,tcsfile):
-    fasta = open(fasta_file,'r')
-    fulllist = open(fulllist_file,'r')
-    blast = open(blast_file,'r')
-    report = open(report_file,'w')
 
-    Dict=FASTAtoDict(fasta)
-    LargeDict=FASTAtoDict(fulllist)
-    Blasts=BLASTparser(blast)
-    Characterize(Dict,Blasts,LargeDict,report,tcsfile)
-    FASTAsplitter(Dict,LargeDict,report_file)
+def RunModule(fasta_file, fulllist_file, blast_file, report_file, tcsfile):
+    '''Runs the Module'''
+    fasta = open(fasta_file, 'r')
+    fulllist = open(fulllist_file, 'r')
+    blast = open(blast_file, 'r')
+    report = open(report_file, 'w')
+
+    Dict = FASTA_parser(fasta)
+    LargeDict = FASTA_parser(fulllist)
+    Blasts = BLASTparser(blast)
+    Characterize(Dict, Blasts, LargeDict, report, tcsfile)
+    FASTAsplitter(Dict, LargeDict, report_file)

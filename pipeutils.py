@@ -14,36 +14,39 @@
 # You should have received a copy of the GNU General Public License
 # along with 4Pipe4.  If not, see <http://www.gnu.org/licenses/>.
 
+
 def FASTA_parser(fasta_file):
     '''Parses and converts fasta files into a dict like: "name":"seq" and
     returns it'''
-    fasta=open(fasta_file,'r')
-    d={}
+    fasta = open(fasta_file, 'r')
+    d = {}
+
     for lines in fasta:
         if lines.startswith('>'):
-            name=lines[1:].strip()
-            d[name]= ''
+            name = lines[1:].strip()
+            d[name] = ''
         else:
             d[name] += lines.strip().upper()
     fasta.close()
+
     return d
 
 
 def Ambiguifier(bases):
     '''Takea a list or tuple of bases and returns the corresondig ambiguity.'''
     ambigs = {"A": "A", "C": "C", "T": "T", "G": "G", "AC": "M", "AG": "R",
-    "AT": "W", "CG": "S", "CT": "Y", "GT": "K", "ACG": "V", "ACT": "H",
-    "AGT": "D", "CGT": "B", "ACGT": "N", "*": "*"}
-    
+              "AT": "W", "CG": "S", "CT": "Y", "GT": "K", "ACG": "V",
+              "ACT": "H", "AGT": "D", "CGT": "B", "ACGT": "N", "*": "*"}
+
     bases.sort()
-    
+
     return ambigs["".join(bases)]
 
 
 def ASCII_to_num(qual):
-	'''Translates the ASCII sequence quality values into numerical ones.'''
-	values = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^\
-    _`abcdefghijklmnopqrstuvwxyz{|}~"
-	num_qual = values.index(qual)
+    '''Translates the ASCII sequence quality values into numerical ones.'''
+    values = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^\
+_`abcdefghijklmnopqrstuvwxyz{|}~"
+    num_qual = values.index(qual)
 
-	return num_qual
+    return num_qual

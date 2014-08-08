@@ -20,8 +20,7 @@ from pipeutils import FASTA_parser
 
 def Read_metrics(fasta_file):
     '''Calculate metrics from fasta files.'''
-    fasta = open(fasta_file, 'r')
-    fasta_dict = FASTA_parser(fasta)
+    fasta_dict = FASTA_parser(fasta_file)
     values = list(map(len, fasta_dict.values()))
     max_len = max(values)
     avg_len = "%.2f" % (sum(values)/len(values))
@@ -115,7 +114,6 @@ def Contig_gather(mira_report):
 
 def SNP_gather(snp_file, orf_file):
     '''Gather SNP data from the fasta files:'''
-    snp_file = open(snp_file, 'r')
     snps = FASTA_parser(snp_file)
     ammount = 0
     for titles in snps.keys():
