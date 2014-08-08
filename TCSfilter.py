@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# Copyright 2011-2013 Francisco Pina Martins <f.pinamartins@gmail.com>
+# Copyright 2011-2014 Francisco Pina Martins <f.pinamartins@gmail.com>
 # This file is part of 4Pipe4.
 # 4Pipe4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@ def ListParser(infile_name, minqual, mincov):
     passed = []
     for lines in TCS:
         line = lines.split('|')
-        tcov = int(line[2][:5])
-        covs = line[2][5:].strip().split()
+        tcov = int(line[2].split()[0])
+        covs = line[2].split()[1:]
         covs = sorted(list(map(int, covs)))
         if tcov <= mincov:  # Discard positions with less than mincov
             pass
@@ -68,5 +68,7 @@ def RunModule(infile_name, outfile_name, minqual, mincov):
     ShortList = ListParser(infile_name, minqual, mincov)
     ListWriter(infile_name, outfile_name, ShortList)
 
-
-#RunModule("/home/francisco/Programming/454/Scripts/ORF/test.tcs", 70, 15)
+if __name__ == "__main__":
+    # Usage: python3 TCSfilter.py file.tcs minqual mincov
+    from sys import argv
+    RunModule(argv[1], argv[2], argv[3])
