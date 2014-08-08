@@ -160,7 +160,7 @@ def SffExtract(sff, clip):
                 return number
     else:
         print("The found value seems acceptable. If this message is displayed \
-              twice in a row you have found your min_left_clip.\n")
+twice in a row you have found your min_left_clip.\n")
         return "OK"
 
 

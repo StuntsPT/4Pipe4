@@ -46,7 +46,7 @@ def TCSwriter(bamfile_name):
             bases = {"A": [], "C": [], "G": [], "T": [], "*": []}
             position = pileupcolumn.pos
             tcov = 0  # Workaround
-            # Define total covrage (AKA "Tcov")
+            # Define total coverage (AKA "Tcov")
             #tcov = pileupcolumn.n #TODO - submit bug for wrong counting
 
             # Define base coverages and qualities

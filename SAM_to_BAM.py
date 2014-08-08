@@ -22,19 +22,21 @@ import os
 
 def SAM_to_BAM(samfile_name, bamfile_name):
     '''Converts a SAM file into an ordered and indexed BAM file.'''
-    unsortedbamfile_name = samfile_name[:-3] + "_unsorted.bam"
+    unsortedbamfile_name = samfile_name[:-4] + "_unsorted.bam"
 
     bamfile = open(unsortedbamfile_name, "wb")
     bamfile.write(pysam.view("-b", "-S", samfile_name))
 
+    if bamfile_name.endswith(".bam"):
+        bamfile_name = bamfile_name[:-4]
     pysam.sort(unsortedbamfile_name, bamfile_name)
-    pysam.index(bamfile_name, bamfile_name[:-3] + ".bai")
+    pysam.index(bamfile_name + ".bam", bamfile_name + ".bam.bai")
 
 
 def Cleanup(samfile_name):
     '''Cleans up the unnecessary files left behind by the SAM to BAM
     conversion'''
-    os.unlink(samfile_name[:-3] + "_unsorted.bam")
+    os.unlink(samfile_name[:-4] + "_unsorted.bam")
 
 
 def RunModule(samfile_name, bamfile_name):
