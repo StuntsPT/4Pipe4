@@ -217,9 +217,19 @@ def MiraRun(basefile):
     manifest.write("data = " + basename + ".clean.fasta\n")
     manifest.close()
 
+    # Run mira
     cli = [config.get('Program paths', 'mira_path'), basefile + ".manifest"]
 
     print("\nRunning Mira using the following command:")
+    print(' '.join(cli))
+    RunProgram(cli, 0)
+
+    # Convert the MAF output to SAM output
+    cli = [config.get('Program paths', 'mira_path') + "convert", "-f", "maf",
+           "-t", "sam", basefile + '_assembly/' + miraproject + '_d_results/' +
+           miraproject + '_out.maf', basefile + ".sam"]
+
+    print("\nConverting MAF to SAM using miraconvert:")
     print(' '.join(cli))
     RunProgram(cli, 0)
 
@@ -229,11 +239,10 @@ def DiscoveryTCS(basefile):
        find SNPs. Output in TCS format.'''
     os.chdir(os.path.split(basefile)[0])
     print("\nRunning SNP Discovery tool module...")
-    SAM_to_BAM.RunModule(basefile + '_assembly/' + miraproject
-                         + '_d_results/' + miraproject + '_out.sam',
-                         basefile + miraproject + '_out.bam')
-    BAM_to_TCS.RunModule(basefile + miraproject + '_out.bam')
-    TCS.RunModule(basefile + '_out.tcs', basefile + '_out.short.tcs',
+    SAM_to_BAM.RunModule(basefile + '.sam',
+                         basefile + '.bam')
+    BAM_to_TCS.RunModule(basefile + '.bam')
+    TCS.RunModule(basefile + '.tcs', basefile + '_out.short.tcs',
                   int(config.get('Variables', 'minqual')),
                   int(config.get('Variables', 'mincov')))
 
