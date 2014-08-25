@@ -72,4 +72,4 @@ def RunModule(tcs_file, fasta_file, snp_fasta, minqual):
 if __name__ == "__main__":
     from sys import argv
     # Usage: python3 SNPgrabber.py file.tcs file.fasta file.SNPs.fasta minqual
-    RunModule(argv[1:])
+    RunModule(argv[1], argv[2], argv[3], argv[4], argv[5])
