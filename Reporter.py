@@ -147,7 +147,9 @@ font-size:small }
         v = v.replace('\n', '')
         for ke, va in tmpdict.items():
             ke = ke - 1
-            row = '<TR>\n<TD ALIGN=LEFT><a href="html_files/' + re.match('^\w*', k).group(0) + '.fasta">' + re.match('^\w*', k).group(0) + '</a></TD>\n'
+            row = '<TR>\n<TD ALIGN=LEFT><a href="html_files/' + \
+                  re.match('^\w*', k).group(0) + '.fasta">' + \
+                  re.match('^\w*', k).group(0) + '</a></TD>\n'
             left_limit = re.search('\[.* -', k).group(0)[1:-2]
             right_limit = re.search('- .*\]', k).group(0)[2:-1]
             if int(left_limit) < int(right_limit):
@@ -168,52 +170,66 @@ font-size:small }
                     frame = '-1'
                 else:
                     frame = '-2'
-            row = row + '<TD ALIGN=CENTER>' + frame + '</TD>\n'
-            row = row + '<TD ALIGN=CENTER>' + str(pos) + '</TD>\n'
-            row = row + '<TD ALIGN=CENTER>' + Cov_counter(tcsfile, re.match('^\w*', k).group(0), str(pos)) + '</TD>\n' #TESTING
-            row = row + '<TD ALIGN=CENTER>' + left_limit + '</TD>\n'
-            row = row + '<TD ALIGN=CENTER>' + right_limit + '</TD>\n'
-            row = row + '<TD ALIGN=CENTER><a href="html_files/' + str(re.match('^.*]', k).group(0)) + '.ORF.fasta">' + str(abs(int(left_limit)-int(right_limit) + 1)) + '</TD>\n'
-            row = row + '<TD ALIGN=CENTER>' + str(ke+1) + '</TD>\n'
+            row += '<TD ALIGN=CENTER>' + frame + '</TD>\n'
+            row += '<TD ALIGN=CENTER>' + str(pos) + '</TD>\n'
+            row += '<TD ALIGN=CENTER>' + \
+                   Cov_counter(tcsfile,
+                               re.match('^\w*', k).group(0), str(pos)) + \
+                   '</TD>\n'
+            row += '<TD ALIGN=CENTER>' + left_limit + '</TD>\n'
+            row += '<TD ALIGN=CENTER>' + right_limit + '</TD>\n'
+            row += '<TD ALIGN=CENTER><a href="html_files/' + \
+                   str(re.match('^.*]', k).group(0)) + '.ORF.fasta">' + \
+                   str(abs(int(left_limit)-int(right_limit) + 1)) + '</TD>\n'
+            row += '<TD ALIGN=CENTER>' + str(ke+1) + '</TD>\n'
             if str((ke+1)/3).find('.0') != -1:
                 position = v[ke-2:ke+1]
                 codons = list(v[ke-2:ke] + x for x in va)
-                row = row + '<TD ALIGN=CENTER>3</TD>\n'
+                row += '<TD ALIGN=CENTER>3</TD>\n'
             elif str((ke+1)/3).find('.6') != -1:
                 position = v[ke-1:ke+2]
                 codons = list(v[ke-1:ke] + x + v[ke+1:ke+2] for x in va)
-                row = row + '<TD ALIGN=CENTER>2</TD>\n'
+                row += '<TD ALIGN=CENTER>2</TD>\n'
             else:
                 position = v[ke:ke + 3]
                 codons = list(x + v[ke+1:ke+3] for x in va)
-                row = row + '<TD ALIGN=CENTER>1</TD>\n'
+                row += '<TD ALIGN=CENTER>1</TD>\n'
             translated = []
             for codon in codons:
                 if codon in translate:
                     translated.append(translate[codon])
                 else:
                     translated.append('ERR')
-            row = row + '<TD ALIGN=CENTER>' + str(codons).replace('\'','').replace(', ','|') + '</TD>\n'
-            row = row + '<TD ALIGN=CENTER>' + str(translated).replace('\'','').replace(', ','|') + '</TD>\n'
+            row += '<TD ALIGN=CENTER>' + \
+                   str(codons).replace('\'', '').replace(', ', '|') + '</TD>\n'
+            row += '<TD ALIGN=CENTER>' + \
+                   str(translated).replace('\'', '').replace(', ', '|') + \
+                   '</TD>\n'
             silent = set(translated)
             if len(silent) == 1:
-                row = row + '<TD ALIGN=CENTER>Y</TD>\n'
+                row += '<TD ALIGN=CENTER>Y</TD>\n'
             else:
-                row = row + '<TD ALIGN=CENTER>N</TD>\n'
-            if re.match('^\w*', k).group(0) in Blasts and Blasts[re.match('^\w*', k).group(0)] != '':
-                reference = re.match('^.*\|.*\|', Blasts[re.match('^\w*', k).group(0)]).group(0)
-                protein = re.sub('^.*\|.*\|', '', Blasts[re.match('^\w*', k).group(0)])
+                row += '<TD ALIGN=CENTER>N</TD>\n'
+            if re.match('^\w*', k).group(0) in Blasts and \
+               Blasts[re.match('^\w*', k).group(0)] != '':
+                reference = re.match('^.*\|.*\|', Blasts[re.match('^\w*', k).
+                                                         group(0)]).group(0)
+                protein = re.sub('^.*\|.*\|', '', Blasts[re.match('^\w*', k).
+                                                         group(0)])
                 if '[' in Blasts[re.match('^\w*', k).group(0)]:
                     protein = re.search('^.*\[', protein).group(0)[:-1]
-                    species = re.search('\[.*#', Blasts[re.match('^\w*', k).group(0)]).group(0).strip('[]')[:-2]
+                    species = re.search('\[.*#', Blasts[re.match('^\w*', k).
+                                        group(0)]).group(0).strip('[]')[:-2]
                 else:
                     protein = re.search('^.*#', protein).group(0)[:-1]
                     species = 'N/A'
-                row = row + '<TD ALIGN=LEFT><a href="html_files/ORFblast.html' + re.search('#\d*$', Blasts[re.match('^\w*', k).group(0)]).group(0) + '">' + reference + '</a></TD>\n'
-                row = row + '<TD ALIGN=LEFT>' + protein + '</TD>\n'
-                row = row + '<TD ALIGN=LEFT>' + species + '</TD></TR>\n'
+                row += '<TD ALIGN=LEFT><a href="html_files/ORFblast.html' + \
+                       re.search('#\d*$', Blasts[re.match('^\w*', k).group(0)]).group(0)\
+                       + '">' + reference + '</a></TD>\n'
+                row += '<TD ALIGN=LEFT>' + protein + '</TD>\n'
+                row += '<TD ALIGN=LEFT>' + species + '</TD></TR>\n'
             else:
-                row = row + '<TD ALIGN=LEFT>No similar proteins found in \
+                row += '<TD ALIGN=LEFT>No similar proteins found in \
 database</TD><TD>N/A</TD><TD>N/A</TD></TR>\n'
             rows.append(row)
     rows.sort()
