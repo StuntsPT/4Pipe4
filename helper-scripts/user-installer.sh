@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2011-2013 Francisco Pina Martins <f.pinamartins@gmail.com>
+# Copyright 2011-2014 Francisco Pina Martins <f.pinamartins@gmail.com>
 # This file is part of 4Pipe4.
 # 4Pipe4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #URLs:
 sff_extract_url="http://bioinf.comav.upv.es/_downloads/sff_extract_0_3_0"
 seqclean_url="http://sourceforge.net/projects/seqclean/files/seqclean-x86_64.tgz/download"
-mira_url="http://sourceforge.net/projects/mira-assembler/files/MIRA/stable/mira_4.0rc4_linux-gnu_x86_64_static.tar.bz2/download"
+mira_url="http://sourceforge.net/projects/mira-assembler/files/MIRA/stable/mira_4.0.2_linux-gnu_x86_64_static.tar.bz2/download"
 blast_url="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.2.28/ncbi-blast-2.2.28+-x64-linux.tar.gz"
 p7zip_url="http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1_x86_linux_bin.tar.bz2/download"
 
