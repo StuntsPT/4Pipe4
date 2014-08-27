@@ -29,6 +29,7 @@ mira_url="http://sourceforge.net/projects/mira-assembler/files/MIRA/stable/mira_
 blast_url="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.2.28/ncbi-blast-2.2.28+-x64-linux.tar.gz"
 p7zip_url="http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1_x86_linux_bin.tar.bz2/download"
 #Temporary for pysam:
+setuptools_url="https://bootstrap.pypa.io/ez_setup.py"
 cython_url="https://github.com/cython/cython/archive/0.21b1.tar.gz"
 pysam_url="https://github.com/pysam-developers/pysam.git"
 
@@ -68,6 +69,10 @@ done
 
 
 #Temporary for pysam
+#Build setuptools
+cd $dldir
+wget $setuptools_url -O - | python3 - --user
+
 #Build cython
 cd $dldir/cython-0.21b1
 python3 setup.py install --user
