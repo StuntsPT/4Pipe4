@@ -30,7 +30,7 @@ blast_url="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.2.28/ncbi-blast
 p7zip_url="http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1_x86_linux_bin.tar.bz2/download"
 #Temporary for pysam:
 setuptools_url="https://bootstrap.pypa.io/ez_setup.py"
-cython_url="https://github.com/cython/cython/archive/0.21b1.tar.gz"
+cython_url="https://github.com/cython/cython/archive/0.18.tar.gz"
 pysam_url="https://github.com/pysam-developers/pysam.git"
 
 
@@ -79,8 +79,8 @@ python3 setup.py install --user
 echo "cython was locally installed to ~/.local"
 
 #Download and build pysam
-git clone $pysam_url $workdir/pysam_url
-cd $workdir/pysam_url
+git clone $pysam_url $workdir/pysam
+cd $workdir/pysam
 python3 setup.py install --user
 echo "pysam was locally installed to ~/.local"
 
