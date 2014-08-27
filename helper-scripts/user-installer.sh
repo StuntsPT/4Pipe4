@@ -74,7 +74,7 @@ cd $dldir
 wget --no-check-certificate $setuptools_url -O - | python3 - --user
 
 #Build cython
-cd $dldir/cython-0.21b1
+cd $workdir/cython-0.21b1
 python3 setup.py install --user
 echo "cython was locally installed to ~/.local"
 
