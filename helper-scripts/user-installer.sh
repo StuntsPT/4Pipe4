@@ -71,7 +71,7 @@ done
 #Temporary for pysam
 #Build setuptools
 cd $dldir
-wget $setuptools_url -O - | python3 - --user
+wget --no-check-certificate $setuptools_url -O - | python3 - --user
 
 #Build cython
 cd $dldir/cython-0.21b1
