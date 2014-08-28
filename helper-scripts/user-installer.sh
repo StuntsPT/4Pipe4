@@ -52,7 +52,7 @@ wget -c $mira_url -O $dldir/mira_4.0rc4_linux-gnu_x86_64_static.tar.bz2
 wget -c $blast_url -P $dldir/
 wget -c $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2
 wget -c $cython_url -P $dldir/
-wget -c $python_url -O $dldir/Python-3.4.1.tar.gz
+wget -c --no-check-certificate $python_url -O $dldir/Python-3.4.1.tar.gz
 wget -c --no-check-certificate $virtualnv_url -P $dldir/
 
 
