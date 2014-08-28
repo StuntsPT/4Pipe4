@@ -74,14 +74,14 @@ done
 
 #Temporary for pysam (and virtualenv)
 #Build Python 3.4
-cd $dldir/python-3.4.1
+cd $workdir/python-3.4.1
 mkdir $workdir/python-3.4.1
 ./configure --prefix=$workdir/python-3.4.1
 make
 make install
 
 #Build virtualenv
-cd $dldir/virtualenv-1.11.6
+cd $workdir/virtualenv-1.11.6
 $workdir/python-3.4.1/bin/python3.4 setup.py install
 
 #Create virtualenv
