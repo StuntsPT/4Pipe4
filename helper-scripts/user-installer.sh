@@ -28,9 +28,11 @@ seqclean_url="http://sourceforge.net/projects/seqclean/files/seqclean-x86_64.tgz
 mira_url="http://sourceforge.net/projects/mira-assembler/files/MIRA/stable/mira_4.0.2_linux-gnu_x86_64_static.tar.bz2/download"
 blast_url="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.2.28/ncbi-blast-2.2.28+-x64-linux.tar.gz"
 p7zip_url="http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1_x86_linux_bin.tar.bz2/download"
-#Temporary for pysam:
+#Temporary for pysam (and virtualenv):
+python_url="https://www.python.org/ftp/python/3.4.1/Python-3.4.1.tgz"
+virtualnv_url="https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.6.tar.gz"
 setuptools_url="https://bootstrap.pypa.io/ez_setup.py"
-cython_url="https://github.com/cython/cython/archive/0.18.tar.gz"
+cython_url="https://github.com/cython/cython/archive/0.20.2.tar.gz"
 pysam_url="https://github.com/pysam-developers/pysam.git"
 
 
@@ -50,6 +52,8 @@ wget -c $mira_url -O $dldir/mira_4.0rc4_linux-gnu_x86_64_static.tar.bz2
 wget -c $blast_url -P $dldir/
 wget -c $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2
 wget -c $cython_url -P $dldir/
+wget -c $python_url -O $dldir/Python-3.4.1.tar.gz
+wget -c $virtualnv_url -P $dldir/
 
 
 #Extract and prepare the downloaded programs:
@@ -68,21 +72,36 @@ tar xfj $dldir/$i -C $workdir
 done
 
 
-#Temporary for pysam
+#Temporary for pysam (and virtualenv)
+#Build Python 3.4
+cd $dldir/python-3.4.1
+mkdir $workdir/python-3.4.1
+./configure --prefix=$workdir/python-3.4.1
+make
+make install
+
+#Build virtualenv
+cd $dldir/virtualenv-1.11.6
+$workdir/python-3.4.1/bin/python3.4 setup.py install
+
+#Create virtualenv
+virtualenv $workdir/virtual_python-3.4.1_env -p $workdir/python-3.4.1/bin/python3.4
+
 #Build setuptools
+source $workdir/virtual_python-3.4.1_env/bin/activate
 cd $dldir
 wget --no-check-certificate $setuptools_url -O - | python3 - --user
 
 #Build cython
-cd $workdir/cython-0.21b1
+source $workdir/virtual_python-3.4.1_env/bin/activate
+cd $workdir/cython-0.18
 python3 setup.py install --user
-echo "cython was locally installed to ~/.local"
 
 #Download and build pysam
+source $workdir/virtual_python-3.4.1_env/bin/activate
 git clone $pysam_url $workdir/pysam
 cd $workdir/pysam
 python3 setup.py install --user
-echo "pysam was locally installed to ~/.local"
 
 
 echo ""
