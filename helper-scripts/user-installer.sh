@@ -85,20 +85,20 @@ cd $dldir/virtualenv-1.11.6
 $workdir/python-3.4.1/bin/python3.4 setup.py install
 
 #Create virtualenv
-virtualenv $workdir/virtual_python-3.4.1_env -p $workdir/python-3.4.1/bin/python3.4
+virtualenv ~/.config/4Pipe4_python_env -p $workdir/python-3.4.1/bin/python3.4
 
 #Build setuptools
-source $workdir/virtual_python-3.4.1_env/bin/activate
+source ~/.config/4Pipe4_python_env/bin/activate
 cd $dldir
 wget --no-check-certificate $setuptools_url -O - | python3 - --user
 
 #Build cython
-source $workdir/virtual_python-3.4.1_env/bin/activate
+source ~/.config/4Pipe4_python_env/bin/activate
 cd $workdir/cython-0.18
 python3 setup.py install --user
 
 #Download and build pysam
-source $workdir/virtual_python-3.4.1_env/bin/activate
+source ~/.config/4Pipe4_python_env/bin/activate
 git clone $pysam_url $workdir/pysam
 cd $workdir/pysam
 python3 setup.py install --user
