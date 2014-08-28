@@ -53,7 +53,7 @@ wget -c $blast_url -P $dldir/
 wget -c $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2
 wget -c $cython_url -P $dldir/
 wget -c $python_url -O $dldir/Python-3.4.1.tar.gz
-wget -c $virtualnv_url -P $dldir/
+wget -c --no-check-certificate $virtualnv_url -P $dldir/
 
 
 #Extract and prepare the downloaded programs:
