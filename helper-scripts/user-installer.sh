@@ -23,7 +23,7 @@
 
 #Define some variables:
 #system python version
-pyver=$(python3 --version |sed 's/Python //')
+pyver=$(python3 --version |& sed 's/Python //')
 #URLs:
 sff_extract_url="http://bioinf.comav.upv.es/downloads/sff_extract_0_3_0"
 seqclean_url="http://sourceforge.net/projects/seqclean/files/seqclean-x86_64.tgz/download"
@@ -72,7 +72,7 @@ tar xfj $dldir/$i -C $workdir
 done
 
 
-#Temporary for pysam (and virtualenv)
+#Temporary for pysam
 #Include Python 3 headers
 export CPATH=$CPATH:$workdir/Python-$pyver/Include
 
@@ -89,6 +89,8 @@ git clone $pysam_url $workdir/pysam
 cd $workdir/pysam
 python3 setup.py install --user
 
+#Clean up
+rm $workdir/Python-$pyver
 
 echo ""
 echo "If no errors occurred, (dead links, etc..) all of the software required \
