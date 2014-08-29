@@ -21,13 +21,16 @@ PATH=/path/to/4Pipe4/:$PATH
 
 * 4Pipe4.py - Main file: this is the script you want to run;
 * 4Pipe4rc - Configuration file;
+* BAM_to_TCS.py - Module to convert .bam files into the TCS format.
 * CAF_to_TCS.py - Module for locating variation in .caf files. Outputs a TCS.
 * TCSfilter.py - Module for SNP filtering in TCS files;
 * LICENSE - License file;
 * Metrics.py - Module for generating dataset metrics;
 * ORFmaker.py - Module for finding ORFs;
+* pipeutils.py - Module with code common to several other modules.
 * README.md - This file;
 * Reporter.py - Module for generating putative SNP reports;
+* SAM_to_BAM.py - Module for converting the .sam files into .bam files.
 * SNPgrabber.py - Module for organizing SNP information;
 * SSRfinder.py - Module for finding SSRs;
 * Templates/Report.html - Template for report "front page";
@@ -53,16 +56,17 @@ external programs that 4Pipe4 uses in it's processes. By default, these are:
 * blast2go4pipe (http://www.blast2go.com/b2glaunch/resources)
 * etandem (http://helixweb.nih.gov/emboss/html/etandem.html)
 * 7zip (http://www.7-zip.org/)
+* pysam (https://github.com/pysam-developers/pysam)
 
 These programs are mentioned as "optinal" since you can have for example an
 already assembled dataset and just want to run the SNP detection routines,
 starting the pipeline from step #4. This would not require sff_extract, seqclean
 nor mira to be installed.
 All of these programs aer required if you wish to run all the steps in 4Pipe4.
-Beware the 4Pipe4 currentlly relies on the stable version of mira, and not the
-development version. When the current development branch (3.9.x series at the
-time of writing) sees a stable release 4Pipe4 will be updated to work with this
-new version, which radically changes the user interface.
+Beware that 4Pipe4 currently relies on the 4.x version of mira, and is not
+backward compatible with 3.x versions. If you wish to use a 3.x version of
+mira for your assembly you can use an older version of 4Pipe4 (v1.1.3 and
+below).
 
 You should also have a local database of NCBI's
 Univec (http://www.ncbi.nlm.nih.gov/VecScreen/UniVec.html)
@@ -82,7 +86,7 @@ Inside the directory "helper-scripts" you will find 4 shell scripts:
 If they are run in the order they are shown here, they will:
 
 1. Download and locally install the programs: "sff_extract", "seqclean", "mira",
-"blast" and "p7zip".
+"blast", "p7zip", "pysam", "cython" and "setuptools".
 2. Download, compile and locally install emboss' "getorf" and "etandem". (This
 script requires build tools such as "make" and "gcc". They should be readily
 available on any *nix machine you have access to but don't have root access.)
@@ -134,7 +138,7 @@ If you wish to run the entire pipeline, just issue something like
 python3 4Pipe4.py -i /path/to/file.sff -o /path/to/results/basefilename
 ```
 
-Use the -n option to specify only the steps you wish to run from the analysis
+Use the -s option to specify only the steps you wish to run from the analysis
 and the -c option to point 4Pipe4 to a specific configuration file.
 
 In the directory "Testdata" you will find an example sff file for testing
