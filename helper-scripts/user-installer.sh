@@ -22,6 +22,8 @@
 #4Pipe4.
 
 #Define some variables:
+#system python version
+pyver=$(python3 --version |sed 's/Python //')
 #URLs:
 sff_extract_url="http://bioinf.comav.upv.es/downloads/sff_extract_0_3_0"
 seqclean_url="http://sourceforge.net/projects/seqclean/files/seqclean-x86_64.tgz/download"
@@ -29,10 +31,9 @@ mira_url="http://sourceforge.net/projects/mira-assembler/files/MIRA/stable/mira_
 blast_url="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.2.28/ncbi-blast-2.2.28+-x64-linux.tar.gz"
 p7zip_url="http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1_x86_linux_bin.tar.bz2/download"
 #Temporary for pysam (and virtualenv):
-python_url="https://www.python.org/ftp/python/3.4.1/Python-3.4.1.tgz"
-virtualnv_url="https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.6.tar.gz"
+python_url="https://www.python.org/ftp/python/$pyver/Python-$pyver.tgz"
 setuptools_url="https://bootstrap.pypa.io/ez_setup.py"
-cython_url="https://github.com/cython/cython/archive/0.20.2.tar.gz"
+cython_url="https://github.com/cython/cython/archive/0.18.tar.gz"
 pysam_url="https://github.com/pysam-developers/pysam.git"
 
 
@@ -52,8 +53,7 @@ wget -c $mira_url -O $dldir/mira_4.0rc4_linux-gnu_x86_64_static.tar.bz2
 wget -c $blast_url -P $dldir/
 wget -c $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2
 wget -c $cython_url -P $dldir/
-wget -c --no-check-certificate $python_url -O $dldir/Python-3.4.1.tar.gz
-wget -c --no-check-certificate $virtualnv_url -P $dldir/
+wget -c --no-check-certificate $python_url -O $dldir/Python-$pyver.tar.gz
 
 
 #Extract and prepare the downloaded programs:
@@ -73,32 +73,18 @@ done
 
 
 #Temporary for pysam (and virtualenv)
-#Build Python 3.4
-cd $workdir/python-3.4.1
-mkdir $workdir/python-3.4.1
-./configure --prefix=$workdir/python-3.4.1
-make
-make install
-
-#Build virtualenv
-cd $workdir/virtualenv-1.11.6
-$workdir/python-3.4.1/bin/python3.4 setup.py install
-
-#Create virtualenv
-virtualenv ~/.config/4Pipe4_python_env -p $workdir/python-3.4.1/bin/python3.4
+#Include Python 3 headers
+export CPATH=$CPATH:$workdir/Python-$pyver/Include
 
 #Build setuptools
-source ~/.config/4Pipe4_python_env/bin/activate
 cd $dldir
 wget --no-check-certificate $setuptools_url -O - | python3 - --user
 
 #Build cython
-source ~/.config/4Pipe4_python_env/bin/activate
 cd $workdir/cython-0.18
 python3 setup.py install --user
 
 #Download and build pysam
-source ~/.config/4Pipe4_python_env/bin/activate
 git clone $pysam_url $workdir/pysam
 cd $workdir/pysam
 python3 setup.py install --user
