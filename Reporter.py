@@ -274,13 +274,11 @@ def FASTAsplitter(Dict, LargeDict, report_file):
 
 def RunModule(fasta_file, fulllist_file, blast_file, report_file, tcsfile):
     '''Runs the Module'''
-    fasta = open(fasta_file, 'r')
-    fulllist = open(fulllist_file, 'r')
     blast = open(blast_file, 'r')
     report = open(report_file, 'w')
 
-    Dict = FASTA_parser(fasta)
-    LargeDict = FASTA_parser(fulllist)
+    Dict = FASTA_parser(fasta_file)
+    LargeDict = FASTA_parser(fulllist_file)
     Blasts = BLASTparser(blast)
     Characterize(Dict, Blasts, LargeDict, report, tcsfile)
     FASTAsplitter(Dict, LargeDict, report_file)
