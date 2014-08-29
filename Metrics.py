@@ -126,7 +126,6 @@ def SNP_gather(snp_file, orf_file):
     avg_contig_size = "%.2f" % (sum(contig_sizes)/len(contig_sizes))
 
     # This part counts how many SNPs are inside ORFs
-    orf_file = open(orf_file, 'r')
     orfs = FASTA_parser(orf_file)
     contig_names = []
     for contigs in orfs.keys():
