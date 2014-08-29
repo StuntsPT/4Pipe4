@@ -29,8 +29,8 @@ datadir=~/Databases
 
 #Download Univec and create a dir for it
 echo "Downloading the Univec database..."
-mkdir -p $datadir/Univec
-wget -c univec_url -O $datadir/Univec/Univec
+mkdir -p $datadir/UniVec
+wget -c -nd univec_url -O $datadir/UniVec/UniVec
 
 #Download nr and create a dir for it
 mkdir -p $datadir/nr
