@@ -41,9 +41,9 @@ blastx=$(find $workdir -executable -name blastx -type f);echo "."
 #7zip
 _7z=$(find $workdir -executable -name 7z -type f);echo "."
 #Univec
-univec=$(find $datadir -name Univec -type f); echo "."
+univec=$(find $datadir -name UniVec -type f); echo "."
 #nr
-nr=$(find $datadir -name nr -type f); echo "."
+nr=$(find $datadir -name nr.pal -type f |sed 's/.pal//'); echo "."
 
 echo "Done!"
 echo "You may add these lines to your 4Pipe4rc file:"
