@@ -87,10 +87,11 @@ python3 setup.py install --user
 #Download and build pysam
 git clone $pysam_url $workdir/pysam
 cd $workdir/pysam
+#Patch to disable automated cython
+sed -i '/cython/d' setup.py
+#install
 python3 setup.py install --user
 
-#Clean up
-rm $workdir/Python-$pyver
 
 echo ""
 echo "If no errors occurred, (dead links, etc..) all of the software required \
