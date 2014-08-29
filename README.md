@@ -15,6 +15,9 @@ or add 4Pipe4's directory to your $PATH.
 PATH=/path/to/4Pipe4/:$PATH
 ```
 
+Please check the README.md section on the helper scripts for a semi-automatic
+way to install all of 4Pipe4's dependencies.
+
 ### FILES
 
 4Pipe4 contains the following files (in alphabetical order):
