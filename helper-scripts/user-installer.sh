@@ -30,7 +30,7 @@ seqclean_url="http://sourceforge.net/projects/seqclean/files/seqclean-x86_64.tgz
 mira_url="http://sourceforge.net/projects/mira-assembler/files/MIRA/stable/mira_4.0.2_linux-gnu_x86_64_static.tar.bz2/download"
 blast_url="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.2.28/ncbi-blast-2.2.28+-x64-linux.tar.gz"
 p7zip_url="http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1_x86_linux_bin.tar.bz2/download"
-#Temporary for pysam (and virtualenv):
+#Temporary for pysam:
 python_url="https://www.python.org/ftp/python/$pyver/Python-$pyver.tgz"
 setuptools_url="https://bootstrap.pypa.io/ez_setup.py"
 cython_url="https://github.com/cython/cython/archive/0.18.tar.gz"

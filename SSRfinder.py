@@ -24,7 +24,7 @@ def SmallFiles(FDict, QDict, etandem, endreport, minqual):
     '''Generates the individual SSR fasta files and the final SSR report'''
     final = {}
     for k, v in FDict.items():
-        qlist = list(map(int, QDict[k][1:].split(' ')))
+        qlist = list(map(int, QDict[k][1:].split()))
         if sum(qlist)/len(qlist) >= int(minqual):
             filename = str(os.getpid())
             outfile = open('/tmp/' + filename + '.fasta', 'w')
