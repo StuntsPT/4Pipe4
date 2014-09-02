@@ -29,6 +29,7 @@ import Metrics
 import SAM_to_BAM
 import BAM_to_TCS
 import argparse
+import sff_extractor
 from argparse import RawTextHelpFormatter
 
 
@@ -138,48 +139,39 @@ def RunProgram(cli, requires_output):
     time.sleep(5)
 
 
-def SffExtract(sff, clip):
-    '''Function for using the sff_extract program. The function returns the
-       'clip' value recommended by sff_extract. If run sequentially, the
-       recommendations should be added.'''
-    cli = [config.get('Program paths', 'sff_extract_path'), '-c',
-           '--min_left_clip=' + str(clip),
-           '--min_frequency=' + config.get('Variables', 'max_equality'), '-o',
-           basefile, "-A", sff]
-    print("\nRunning sff_extract using the following command:")
-    print(' '.join(cli))
-    sff_extract_stdout = RunProgram(cli, 1)
-    if len(sff_extract_stdout) == 20:
-        for lines in sff_extract_stdout:
-            if "Probably" in str(lines):
-                warning = str(lines)
-                number = ''
-                for letters in warning:
-                    if letters.isdigit():
-                        number = number + letters
-                return number
-    else:
-        print("The found value seems acceptable. If this message is displayed \
-twice in a row you have found your min_left_clip.\n")
-        return "OK"
+def SffExtraction(sff, basefile):
+    '''Function for using the sff_extractor module. It will look for an "ideal"
+    clipping value using multiple runs before outputting the final files.'''
+    clip_found = 0
 
+    # Sff_extractor parameters:
+    sff_config = {}
+    sff_config["append"] = False
+    sff_config["qual_fname"] = basefile + ".fasta.qual"
+    sff_config["want_fastq"] = False
+    sff_config["min_leftclip"] = 0
+    sff_config["min_freq"] = int(config.get('Variables', 'max_equality'))
+    sff_config["xml_info"] = None
+    sff_config["want_fr"] = False
+    sff_config["pelinker_fname"] = ""
+    sff_config["mix_case"] = True
+    sff_config["clip"] = True
+    sff_config["xml_fname"] = basefile + ".xml"
+    sff_config["basename"] = basefile
+    sff_config["seq_fname"] = basefile + ".fasta"
 
-def MinClip(basefile):
-    '''Function for calling the SffExtract function and adding 1 to the 'clip'
-       value until the ideal value is found. Depends on SffExtract.'''
-    OK = 0
-    clip = 0
-    while OK < 2:
-        turner = SffExtract(sff, clip)
-        if turner == "OK":
-            OK = OK + 1
-            clip = clip + 1
-            if OK == 2:
-                clip = clip - 2
+    while clip_found < 2:
+        extra_clip = sff_extractor.extract_reads_from_sff(sff_config, [sff])
+        sff_config["min_leftclip"] += extra_clip
+        if extra_clip == 0:
+            clip_found += 1
         else:
-            OK = 0
-            clip = clip + int(turner)
-    print("Sff_extract finished with a min_left_clip=" + str(clip) + ".\n")
+            clip_found = 0
+
+    print("Sff_extractor finished with a min_left_clip=" +
+          str(sff_config["min_leftclip"]) + ".\n")
+
+    return
 
 
 def SeqClean(basefile):
@@ -402,7 +394,7 @@ def RunMe(arguments):
     '''Function to parse which parts of 4Pipe4 will run.'''
     for option, number in zip(list(arguments), range(len(arguments))):
         if option == "1":
-            MinClip(basefile)
+            SffExtraction(sff, basefile)
         if option == "2":
             SeqClean(basefile)
         if option == "3":

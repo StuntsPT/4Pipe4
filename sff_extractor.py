@@ -963,7 +963,7 @@ def split_paired_end(data, sff_fh, seq_fh, qual_fh, xml_fh):
 
 
 
-def extract_reads_from_sff(config, sff_files):
+def extract_reads_from_sff(conf, sff_files):
     '''Given the configuration and the list of sff_files it writes the seqs,
     qualities and ancillary data into the output file(s).
 
@@ -973,7 +973,9 @@ def extract_reads_from_sff(config, sff_files):
     '''
 
     global ssahapematches
-
+    if __name__ != "__main__":
+        global config
+    config = conf
 
     if len(sff_files) == 0 :
         raise RuntimeError("No SFF file given?")
@@ -1089,7 +1091,9 @@ def extract_reads_from_sff(config, sff_files):
         print('Converted', str(nseqs_sff), 'reads into', str(nseqs_out), 'sequences.')
         sff_fh.close()
 
-        check_for_dubious_startseq(seqcheckstore,sff_file,seq_data)
+        extra_clip = check_for_dubious_startseq(seqcheckstore,sff_file,seq_data)
+        if extra_clip is None:
+            extra_clip = 0
         seqcheckstore = ([])
 
     xml_fh.write('</trace_volume>\n')
@@ -1099,7 +1103,10 @@ def extract_reads_from_sff(config, sff_files):
     if qual_fh is not None:
         qual_fh.close()
 
-    return
+    if __name__ != "__main__":
+        return extra_clip
+    else:
+        return
 
 def check_for_dubious_startseq(seqcheckstore, sffname,seqdata):
 
@@ -1137,6 +1144,7 @@ def check_for_dubious_startseq(seqcheckstore, sffname,seqdata):
             break
     if len(foundproblem):
         print(foundproblem)
+        return(left+len(shortseq))
 
 
 def parse_extra_info(info):
