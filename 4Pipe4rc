@@ -10,8 +10,6 @@
 #eg. "/home/user/software/sff_extract" instead of "~/software/sff_extract"
 
 [Program paths]
-#Path to sff_extract:
-sff_extract_path =
 #Path to seqclean:
 seqclean_path =
 #Path to cln2qual:

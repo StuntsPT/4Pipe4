@@ -25,7 +25,6 @@ way to install all of 4Pipe4's dependencies.
 * 4Pipe4.py - Main file: this is the script you want to run;
 * 4Pipe4rc - Configuration file;
 * BAM_to_TCS.py - Module to convert .bam files into the TCS format.
-* CAF_to_TCS.py - Module for locating variation in .caf files. Outputs a TCS.
 * TCSfilter.py - Module for SNP filtering in TCS files;
 * LICENSE - License file;
 * Metrics.py - Module for generating dataset metrics;
@@ -34,6 +33,7 @@ way to install all of 4Pipe4's dependencies.
 * README.md - This file;
 * Reporter.py - Module for generating putative SNP reports;
 * SAM_to_BAM.py - Module for converting the .sam files into .bam files.
+* sff_extractor.py - Module for extracting fasta and fasta.qual from sff files. Originally developed by José Blanca, but forked and ported to python 3 since it was removed from the original website.
 * SNPgrabber.py - Module for organizing SNP information;
 * SSRfinder.py - Module for finding SSRs;
 * Templates/Report.html - Template for report "front page";
@@ -51,7 +51,6 @@ it from the website (http://python.org/download/).
 Not strictly required, but highly recommended to for best results are the
 external programs that 4Pipe4 uses in it's processes. By default, these are:
 
-* ssf_extract (http://bioinf.comav.upv.es/sff_extract/)
 * seqclean (http://compbio.dfci.harvard.edu/tgi/software/)
 * mira 4.x series (http://mira-assembler.sourceforge.net/) 
 * getorf (http://emboss.sourceforge.net/apps/cvs/emboss/apps/getorf.html)
