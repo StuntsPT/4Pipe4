@@ -40,7 +40,6 @@ pysam_url="https://github.com/pysam-developers/pysam.git"
 workdir=~/Software
 dldir=$workdir/compressed
 
-mkdir -p $workdir/sff_extract
 mkdir -p $dldir
 
 
@@ -55,8 +54,6 @@ wget -c --no-check-certificate $python_url -O $dldir/Python-$pyver.tar.gz
 
 
 #Extract and prepare the downloaded programs:
-#sff_extract
-chmod 755 $workdir/sff_extract/sff_extract
 echo "Extracting and locally installing the downloaded programs... Please wait."
 #Gzipped:
 for i in $(ls $dldir |grep .gz)
