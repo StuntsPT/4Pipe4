@@ -24,8 +24,6 @@ workdir=~/Software
 datadir=~/Databases
 
 echo "Looking for your programs..."
-#sff_extract
-sff_extract=$(find $workdir -executable -name sff_extract -type f);echo "."
 #seqclean
 seqclean=$(find $workdir -executable -name seqclean -type f);echo "."
 #clean2qual
@@ -51,8 +49,6 @@ echo "Done!"
 echo "You may add these lines to your 4Pipe4rc file:"
 echo "-----Copy from here-----"
 echo "[Program paths]"
-echo "#Path to sff_extract:"
-echo "sff_extract_path = $sff_extract"
 echo "#Path to seqclean:"
 echo "seqclean_path = $seqclean"
 echo "#Path to cln2qual:"
