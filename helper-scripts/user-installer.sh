@@ -72,7 +72,7 @@ done
 
 #Temporary for pysam
 #Include Python 3 headers
-export CPATH=$CPATH:$workdir/Python-$pyver/Include
+export CPATH=$CPATH:$workdir/Python-$pyver/Include:$workdir/Python-$pyver/PC
 
 #Build setuptools
 cd $dldir
