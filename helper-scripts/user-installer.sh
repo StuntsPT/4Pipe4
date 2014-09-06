@@ -69,7 +69,10 @@ done
 
 #Temporary for pysam
 #Include Python 3 headers
-export CPATH=$CPATH:$workdir/Python-$pyver/Include:$workdir/Python-$pyver/PC
+mkdir $workdir/pyheaders
+find $workdir/Python-$pyver -name "*.h" -exec mv "{}" $workdir/pyheaders/ \;
+export CPATH=$CPATH:$workdir/pyheaders
+rm -rf $workdir/Python-$pyver
 
 #Build setuptools
 cd $dldir
