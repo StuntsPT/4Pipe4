@@ -73,6 +73,8 @@ mkdir $workdir/pyheaders
 find $workdir/Python-$pyver -name "*.h" -exec mv "{}" $workdir/pyheaders/ \;
 export CPATH=$CPATH:$workdir/pyheaders
 rm -rf $workdir/Python-$pyver
+rm -rf $workdir/Python-$pyver
+rm -rf $workdir/Python-$pyver
 
 #Build setuptools
 cd $dldir
