@@ -24,15 +24,21 @@
 #Define some variables:
 #system python version
 pyver=$(python3 --version |& sed 's/Python //')
+#required cython version
+if [ $(echo $pyver |grep -o "\.4\.") ]
+	then
+	cyver=0.20.2
+	else
+	cyver=0.18
+fi
 #URLs:
 seqclean_url="http://sourceforge.net/projects/seqclean/files/seqclean-x86_64.tgz/download"
 mira_url="http://sourceforge.net/projects/mira-assembler/files/MIRA/stable/mira_4.0.2_linux-gnu_x86_64_static.tar.bz2/download"
 blast_url="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.2.28/ncbi-blast-2.2.28+-x64-linux.tar.gz"
 p7zip_url="http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1_x86_linux_bin.tar.bz2/download"
 #Temporary for pysam:
-python_url="https://www.python.org/ftp/python/$pyver/Python-$pyver.tgz"
 setuptools_url="https://bootstrap.pypa.io/ez_setup.py"
-cython_url="https://github.com/cython/cython/archive/0.18.tar.gz"
+cython_url="https://github.com/cython/cython/archive/$cyver.tar.gz"
 pysam_url="https://github.com/pysam-developers/pysam.git"
 
 
@@ -50,7 +56,6 @@ wget -c $mira_url -O $dldir/mira_4.0rc4_linux-gnu_x86_64_static.tar.bz2
 wget -c $blast_url -P $dldir/
 wget -c $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2
 wget -c $cython_url -P $dldir/
-wget -c --no-check-certificate $python_url -O $dldir/Python-$pyver.tar.gz
 
 
 #Extract and prepare the downloaded programs:
@@ -68,20 +73,12 @@ done
 
 
 #Temporary for pysam
-#Include Python 3 headers
-mkdir $workdir/pyheaders
-find $workdir/Python-$pyver -name "*.h" -exec mv "{}" $workdir/pyheaders/ \;
-export CPATH=$CPATH:$workdir/pyheaders
-rm -rf $workdir/Python-$pyver
-rm -rf $workdir/Python-$pyver
-rm -rf $workdir/Python-$pyver
-
 #Build setuptools
 cd $dldir
 wget --no-check-certificate $setuptools_url -O - | python3 - --user
 
 #Build cython
-cd $workdir/cython-0.18
+cd $workdir/cython-$cyver
 python3 setup.py install --user
 
 #Download and build pysam
