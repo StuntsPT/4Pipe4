@@ -47,7 +47,8 @@ As time progresses and 4Pipe4 sees new development, this list will be updated.
 4Pipe4 is written in python 3. Therefore an installation of python 3 is required
 to run 4Pipe4. If you are using linux you can get python 3 from you
 distribution's package manager (sudo apt-get install python3 for Ubuntu) or get
-it from the website (http://python.org/download/).
+it from the website (http://python.org/download/). Also required are the python3
+header files (the package name in Ubuntu is python3-dev).
 Not strictly required, but highly recommended to for best results are the
 external programs that 4Pipe4 uses in it's processes. By default, these are:
 
