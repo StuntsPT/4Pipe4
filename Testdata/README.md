@@ -43,7 +43,7 @@ with with the "-s" option.
 ### Expected results
 
 If running 4Pipe4 with it's default settings you should expect to find around
-25 SNPs with different characteristics.
+4 SNPs with different characteristics.
 
 Changing the parameters in the used 4Pipe4 configuration file will result in a
 different amount of SNPs being found.
