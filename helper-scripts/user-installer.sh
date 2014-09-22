@@ -22,6 +22,8 @@
 #4Pipe4.
 
 #Define some variables:
+set -e
+set -o pipefail
 #system python version
 pyver=$(python3 --version |& sed 's/Python //')
 #required cython version
