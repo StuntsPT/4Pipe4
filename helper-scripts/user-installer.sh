@@ -53,11 +53,11 @@ mkdir -p $dldir
 
 #Download the programs form the web
 echo "Downloading programs from their respective websites... Please wait."
-wget -c $seqclean_url -O $dldir/seqclean-x86_64.tgz
-wget -c $mira_url -O $dldir/mira_4.0rc4_linux-gnu_x86_64_static.tar.bz2
-wget -c $blast_url -P $dldir/
-wget -c $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2
-wget -c $cython_url -P $dldir/
+wget -c -t inf $seqclean_url -O $dldir/seqclean-x86_64.tgz
+wget -c -t inf $mira_url -O $dldir/mira_4.0rc4_linux-gnu_x86_64_static.tar.bz2
+wget -c -t inf $blast_url -P $dldir/
+wget -c -t inf $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2
+wget -c -t inf $cython_url -P $dldir/
 
 
 #Extract and prepare the downloaded programs:
