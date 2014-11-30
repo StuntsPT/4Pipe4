@@ -119,6 +119,7 @@ def TCSwriter(bamfile_name):
             TCS.write(TCS_line)
 
     TCS.close()
+    bamfile.close()
 
 
 def covs_and_quals(bases):
