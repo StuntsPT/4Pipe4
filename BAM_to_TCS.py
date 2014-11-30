@@ -77,7 +77,7 @@ def TCSwriter(bamfile_name):
             freqbase = major_base(bases)
             refbase = Ambiguifier(freqbase)
 
-            refqual = max([quals[basetrans.find(x)] for x in freqbase])
+            refqual = max((quals[basetrans.find(x)] for x in freqbase))
 
             # Define padded and unpadded positions (AKA "padPos" and "upadPos")
             if refbase == "*":
@@ -89,33 +89,34 @@ def TCSwriter(bamfile_name):
 
             # Write TCS lines #
             # Contig name
-            TCS.write(refs)
-            TCS.write(" " * (24 - len(refs)))
+            TCS_line = refs
+            TCS_line += " " * (24 - len(refs))
             # padPos
-            TCS.write(" " * (5 - len(str(padPos))))
+            TCS_line += " " * (5 - len(str(padPos)))
             TCS.write(str(padPos))
             # unpadPos
-            TCS.write(" " * (8 - len(str(unpadPos))))
-            TCS.write(str(unpadPos))
+            TCS_line += " " * (8 - len(str(unpadPos)))
+            TCS_line += str(unpadPos)
             # "B" and "Q"
-            TCS.write(" | ")
-            TCS.write(refbase)
-            TCS.write(" " * (3 - len(str(refqual))))
-            TCS.write(str(refqual))
+            TCS_line += " | "
+            TCS_line += refbase
+            TCS_line += " " * (3 - len(str(refqual)))
+            TCS_line += str(refqual)
             # Coverages
-            TCS.write(" | ")
-            TCS.write(" " * (6 - len(str(tcov))))
-            TCS.write(str(tcov))
+            TCS_line += " | "
+            TCS_line += " " * (6 - len(str(tcov)))
+            TCS_line += str(tcov)
             for c in covs:
-                TCS.write(" " * (6 - len(str(c))))
-                TCS.write(str(c))
+                TCS_line += " " * (6 - len(str(c)))
+                TCS_line += str(c)
             # Qualities
-            TCS.write(" | ")
+            TCS_line += " | "
             for q in quals:
-                TCS.write(" " * (2 - len(str(q))))
-                TCS.write(str(q) + " ")
+                TCS_line += " " * (2 - len(str(q)))
+                TCS_line += str(q) + " "
             # Discard all tags (not necessary for 4Pipe4 anyway)
-            TCS.write("|  : |\n")
+            TCS_line += "|  : |\n"
+            TCS.write(TCS_line)
 
     TCS.close()
 
