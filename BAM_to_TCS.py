@@ -19,8 +19,8 @@ from pipeutils import ASCII_to_num, Ambiguifier
 
 
 def TCSwriter(bamfile_name):
-    '''Converts the bamfile into the TCS format. The writing and the parsing
-    are done simultaneously.'''
+    """Convert the bamfile into the TCS format. The writing and the parsing
+    are done simultaneously."""
 
     # Set TCS file 'settings'
     tcsfile_name = bamfile_name[:bamfile_name.rindex(".")] + ".tcs"
@@ -122,8 +122,8 @@ def TCSwriter(bamfile_name):
 
 
 def covs_and_quals(bases):
-    '''Takes the "bases" dict and converts it into two lists - one with the
-    coverage and one with the average quals of each base (in order)'''
+    """Take the "bases" dict and returns two lists - one with the
+    coverage and one with the average quals of each base (in order)."""
     ordered = ["A", "C", "G", "T", "*"]
     covs = []
     quals = []
@@ -138,8 +138,8 @@ def covs_and_quals(bases):
 
 
 def major_base(bases):
-    '''Takes a dict like {base: [quals]} and returns the most frequent
-    base(s)'''
+    """Take a dict like {base: [quals]} and return the most frequent
+    base(s)."""
     base_counts = {}
     for k in bases:
         base_counts[k] = len(bases[k])
@@ -154,8 +154,8 @@ def major_base(bases):
 
 
 def QualityCalc(quals):
-    '''Calculate individual bases qualities, just like mira does, as seen here:
-    http://www.freelists.org/post/mira_talk/Quality-Values,4'''
+    """Calculate individual bases qualities, just like mira does, as seen here:
+    http://www.freelists.org/post/mira_talk/Quality-Values,4"""
     quals.sort()
     min1 = quals[0]
     if min1 > 0:
@@ -180,6 +180,7 @@ def QualityCalc(quals):
 
 
 def RunModule(bamfile_name):
+    """Run the module."""
     TCSwriter(bamfile_name)
 
 if __name__ == "__main__":
