@@ -93,7 +93,7 @@ def TCSwriter(bamfile_name):
             TCS_line += " " * (24 - len(refs))
             # padPos
             TCS_line += " " * (5 - len(str(padPos)))
-            TCS.write(str(padPos))
+            TCS_line += str(padPos)
             # unpadPos
             TCS_line += " " * (8 - len(str(unpadPos)))
             TCS_line += str(unpadPos)
