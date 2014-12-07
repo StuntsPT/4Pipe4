@@ -69,6 +69,6 @@ def RunModule(infile_name, outfile_name, minqual, mincov):
     ListWriter(infile_name, outfile_name, ShortList)
 
 if __name__ == "__main__":
-    # Usage: python3 TCSfilter.py file.tcs minqual mincov
+    # Usage: python3 TCSfilter.py file.tcs file_out.short.tcs minqual mincov
     from sys import argv
     RunModule(argv[1], argv[2], int(argv[3]), int(argv[4]))
