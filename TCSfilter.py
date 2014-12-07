@@ -71,4 +71,4 @@ def RunModule(infile_name, outfile_name, minqual, mincov):
 if __name__ == "__main__":
     # Usage: python3 TCSfilter.py file.tcs minqual mincov
     from sys import argv
-    RunModule(argv[1], argv[2], argv[3])
+    RunModule(argv[1], argv[2], int(argv[3]), int(argv[4]))
