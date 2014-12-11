@@ -39,11 +39,10 @@ def Read_qual_metrics(qual_file):
     qual = open(qual_file, 'r')
     quals = []
     for lines in qual:
-        if lines[0].isdigit():
-            quals.append(lines)
-    quals = re.split('\D*', str(quals))
-    quals = quals[1:-1]
-    quals = list(map(int, quals))
+        if lines.startswith(">") == False:
+            lines = list(map(int, lines.strip().split()))
+            quals += lines
+    qual.close()
     qual_avg = "%.2f" % (sum(quals)/len(quals))
 
     return(qual_avg)
