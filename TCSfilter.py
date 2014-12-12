@@ -18,8 +18,8 @@ from math import ceil
 
 
 def ListParser(infile_name, minqual, mincov):
-    '''Discards every line in the TCS file with a coverage below mincov and
-       a qual below minqual'''
+    """Discard every line in the TCS file with a coverage below mincov and
+       a qual below minqual."""
     TCS = open(infile_name, 'r')
     if TCS.readline().startswith("#TCS") is False:
         quit("Invalid input file. Use a TCS file as input.")
@@ -51,7 +51,7 @@ def ListParser(infile_name, minqual, mincov):
 
 
 def ListWriter(infile_name, outfile_name, passed):
-    '''Write the selected list into a file.'''
+    """Write the selected list into a file."""
     outfile = open(outfile_name, 'w')
     outfile.write("#TCS V1.0\n")
     outfile.write("#\n")
@@ -64,7 +64,7 @@ def ListWriter(infile_name, outfile_name, passed):
 
 
 def RunModule(infile_name, outfile_name, minqual, mincov):
-    '''Run the module.'''
+    """Run the module."""
     ShortList = ListParser(infile_name, minqual, mincov)
     ListWriter(infile_name, outfile_name, ShortList)
 
