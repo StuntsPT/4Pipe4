@@ -19,7 +19,8 @@ from math import ceil
 
 def ListParser(infile_name, minqual, mincov):
     """Discard every line in the TCS file with a coverage below mincov and
-       a qual below minqual."""
+       a qual below minqual. Returns a list of TCS lines that passed the
+       filtering criteria."""
     TCS = open(infile_name, 'r')
     if TCS.readline().startswith("#TCS") is False:
         quit("Invalid input file. Use a TCS file as input.")
