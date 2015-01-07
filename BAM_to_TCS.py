@@ -54,7 +54,7 @@ def TCSwriter(bamfile_name):
                 if str(pileupread).startswith("*"):
                     continue
                 if str(pileupread.alignment.seq
-                       [pileupread.qpos]) not in basetrans:
+                       [pileupread.query_position]) not in basetrans:
                     tcov += 1  # Workaround
                     continue
 
@@ -62,8 +62,8 @@ def TCSwriter(bamfile_name):
                     bases["*"].append(1)
 
                 else:
-                    base = pileupread.alignment.seq[pileupread.qpos].upper()
-                    qual = pileupread.alignment.qual[pileupread.qpos]
+                    base = pileupread.alignment.seq[pileupread.query_position].upper()
+                    qual = pileupread.alignment.qual[pileupread.query_position]
                     if pileupread.alignment.is_reverse:
                         bases[base].append(ASCII_to_num(qual) * -1)
                     else:
