@@ -30,7 +30,7 @@ def SAM_to_BAM(samfile_name, bamfile_name):
     if bamfile_name.endswith(".bam"):
         bamfile_name = bamfile_name[:-4]
     pysam.sort(unsortedbamfile_name, bamfile_name)
-    pysam.index(bamfile_name + ".bam", bamfile_name + ".bam.bai")
+    pysam.index(bamfile_name + ".bam")
 
 
 def Cleanup(samfile_name):
