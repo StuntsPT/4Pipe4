@@ -15,10 +15,10 @@
 # along with 4Pipe4.  If not, see <http://www.gnu.org/licenses/>.
 
 import pysam
-from pipeutils import ASCII_to_num, Ambiguifier
+from pipeutils import ASCII_to_num, FASTA_parser
 
 
-def TCSwriter(bamfile_name):
+def TCSwriter(bamfile_name, fasta_d):
     """Convert the bamfile into the TCS format. The writing and the parsing
     are done simultaneously."""
 
@@ -74,10 +74,10 @@ def TCSwriter(bamfile_name):
             tcov += sum(covs)  # Workaround
 
             # Define reference base (AKA "B") and qual (AKA "Q")
-            freqbase = major_base(bases)
-            refbase = Ambiguifier(freqbase)
 
-            refqual = max((quals[basetrans.find(x)] for x in freqbase))
+            refbase = fasta_d[refs][position]
+
+            refqual = quals[basetrans.find(refbase)]
 
             # Define padded and unpadded positions (AKA "padPos" and "upadPos")
             if refbase == "*":
@@ -138,22 +138,6 @@ def covs_and_quals(bases):
     return covs, quals
 
 
-def major_base(bases):
-    """Take a dict like {base: [quals]} and return the most frequent
-    base(s)."""
-    base_counts = {}
-    for k in bases:
-        base_counts[k] = len(bases[k])
-
-    highest = max(base_counts.values())
-    maxbases = [k for k, v in base_counts.items() if v == highest]
-
-    if len(maxbases) > 1 and "*" in maxbases:
-        maxbases.remove("*")
-
-    return maxbases
-
-
 def QualityCalc(quals):
     """Calculate individual bases qualities, just like mira does, as seen here:
     http://www.freelists.org/post/mira_talk/Quality-Values,4"""
@@ -180,10 +164,11 @@ def QualityCalc(quals):
     return qual
 
 
-def RunModule(bamfile_name):
+def RunModule(bamfile_name, padded_fasta_name):
     """Run the module."""
-    TCSwriter(bamfile_name)
+    TCSwriter(bamfile_name, FASTA_parser(padded_fasta_name))
 
 if __name__ == "__main__":
+    # Usage: python3 BAM_to_TCS.py file.bam file_out.padded.fasta
     from sys import argv
-    RunModule(argv[1])
+    RunModule(argv[1], argv[2])
