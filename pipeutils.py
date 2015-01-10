@@ -16,8 +16,7 @@
 
 
 def FASTA_parser(fasta_file):
-    '''Parses and converts fasta files into a dict like: "name":"seq" and
-    returns it'''
+    """Parse, convert and return fasta files into a dict like: 'name':'seq'."""
     fasta = open(fasta_file, 'r')
     d = {}
 
@@ -33,7 +32,7 @@ def FASTA_parser(fasta_file):
 
 
 def Ambiguifier(bases):
-    '''Takea a list or tuple of bases and returns the corresondig ambiguity.'''
+    """Take a list or tuple of bases and returns the corresondig ambiguity."""
     ambigs = {"A": "A", "C": "C", "T": "T", "G": "G", "AC": "M", "AG": "R",
               "AT": "W", "CG": "S", "CT": "Y", "GT": "K", "ACG": "V",
               "ACT": "H", "AGT": "D", "CGT": "B", "ACGT": "N", "*": "*"}
@@ -44,7 +43,7 @@ def Ambiguifier(bases):
 
 
 def ASCII_to_num(qual):
-    '''Translates the ASCII sequence quality values into numerical ones.'''
+    """Translate a sequence qual values from ASCII to decimal and return it."""
     values = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^\
 _`abcdefghijklmnopqrstuvwxyz{|}~"
     num_qual = values.index(qual)
