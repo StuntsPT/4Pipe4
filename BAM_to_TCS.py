@@ -47,7 +47,7 @@ def TCSwriter(bamfile_name, fasta_d):
             position = pileupcolumn.pos
             tcov = 0  # Workaround
             # Define total coverage (AKA "Tcov")
-            #tcov = pileupcolumn.n #TODO - submit bug for wrong counting
+            # tcov = pileupcolumn.n #TODO - submit bug for wrong counting
 
             # Define base coverages and qualities
             for pileupread in pileupcolumn.pileups:
@@ -139,8 +139,9 @@ def covs_and_quals(bases):
 
 
 def QualityCalc(quals):
-    """Calculate individual bases qualities, just like mira does, as seen here:
-    http://www.freelists.org/post/mira_talk/Quality-Values,4"""
+    """Calculate and return individual bases qualities, just like mira does,
+    as seen here:
+    http://www.freelists.org/post/mira_talk/Quality-Values,4 ."""
     quals.sort()
     min1 = quals[0]
     if min1 > 0:
