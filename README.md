@@ -160,3 +160,7 @@ For bug reporting, you can use github tracker:
 https://github.com/StuntsPT/4Pipe4/issues
 For other programs, also please be sure to check out our group's website:
 http://cobig2.com
+
+### CITING
+
+[![DOI](https://zenodo.org/badge/7462/StuntsPT/4Pipe4.svg)](http://dx.doi.org/10.5281/zenodo.13948)
