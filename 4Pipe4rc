@@ -10,8 +10,6 @@
 #eg. "/home/user/software/sff_extract" instead of "~/software/sff_extract"
 
 [Program paths]
-#Path to sff_extract:
-sff_extract_path =
 #Path to seqclean:
 seqclean_path =
 #Path to cln2qual:
@@ -54,7 +52,7 @@ min_ssr_qual = 70
 ##Example to search for SNPs in EST data:
 
 #mirajob = job = est,denovo,accurate
-#miracommon = parameters = COMMON_SETTINGS -AS:nop=5:ugpf=off -CO:mr=on:asir=on
+#miracommon = parameters = COMMON_SETTINGS -AS:nop=5:ugpf=off -CO:mr=on:asir=on -OUT:output_result_caf=off:output_result_maf=on
 #mira454 = 454_SETTINGS -AL:egp=off -CL:cpat=on
 #mirareadgroup = readgroup = Test data
 #miratech = technology = 454

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# Copyright 2011-2013 Francisco Pina Martins <f.pinamartins@gmail.com>
+# Copyright 2011-2015 Francisco Pina Martins <f.pinamartins@gmail.com>
 # This file is part of 4Pipe4.
 # 4Pipe4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,21 +26,20 @@ import ORFmaker
 import Reporter
 import SSRfinder as ssr
 import Metrics
-import CAF_to_TCS
+import SAM_to_BAM
+import BAM_to_TCS
 import argparse
+import sff_extractor
 from argparse import RawTextHelpFormatter
 
 
-##### ARGUMENT LIST ######
+# # # # # ARGUMENT LIST # # # # # #
 parser = argparse.ArgumentParser(description="",
                                  epilog="The idea here is that to resume an \
-                                 analysis that was interrupted for example \
-                                 after the assembling process you should \
-                                 issue -s '4,5,6,7,8,9' or -s '456789'. Note \
-                                 that some steps depend on the output of \
-                                 previous steps, so using some combinations \
-                                 can cause errors. The arguments can be given \
-                                 in any order.",
+analysis that was interrupted for example after the assembling process you \
+should issue -s '4,5,6,7,8,9' or -s '456789'. Note that some steps depend on \
+the output of previous steps, so using some combinations can cause errors. \
+The arguments can be given in any order.",
                                  prog="4Pipe4",
                                  formatter_class=RawTextHelpFormatter)
 parser.add_argument("-i", dest="infile", nargs=1, required=True,
@@ -48,26 +47,23 @@ parser.add_argument("-i", dest="infile", nargs=1, required=True,
                     metavar="sff_file")
 parser.add_argument("-o", dest="outfile", nargs=1, required=True,
                     help="Provide the full path to your results directory, \
-                    plus the name you want to give your results\n",
+plus the name you want to give your results\n",
                     metavar="basefile")
 parser.add_argument("-c", dest="configFile", nargs=1,
                     help="Provide the full path to your configuration file. \
-                    If none is provided, the program will look in the current \
-                    working directory and  then in ~/.config/4Pipe4rc (in this\
-                    order) for one. If none is found the  program will stop\n",
-                    metavar="configfile")
+If none is provided, the program will look in the current working directory \
+and  then in ~/.config/4Pipe4rc (in this order) for one. If none is found the \
+program will stop\n", metavar="configfile")
 parser.add_argument("-s", dest="run_list", nargs="?",
                     default="1 2 3 4 5 6 7 8 9", help="Specify the numbers \
-                    corresponding to the pipeline steps that will be run. The \
-                    string after -s must be given inside quotation marks, and \
-                    numbers can be joined together or separated by any \
-                    symbol. The numbers are the pipeline steps that should be \
-                    run. This is an optional argument and it's omission will \
-                    run all steps by default. The numbers, from 1 to 9 \
-                    represent the following steps:\n\t1 - SFF extraction\n\t2 \
-                    - SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - \
-                    SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR \
-                    finder\n\t9 - 7zip the report")
+corresponding to the pipeline steps that will be run. The string after -s \
+must be given inside quotation marks, and numbers can be joined together or \
+separated by any symbol. The numbers are the pipeline steps that should be \
+run. This is an optional argument and it's omission will run all steps by \
+default. The numbers, from 1 to 9 represent the following steps:\n\t1 - SFF \
+extraction\n\t2 - SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - \
+SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR finder\n\t9 - 7zip \
+the report")
 arg = parser.parse_args()
 
 
@@ -143,53 +139,44 @@ def RunProgram(cli, requires_output):
     time.sleep(5)
 
 
-def SffExtract(sff, clip):
-    '''Function for using the sff_extract program. The function returns the
-       'clip' value recommended by sff_extract. If run sequentially, the
-       recommendations should be added.'''
-    cli = [config.get('Program paths', 'sff_extract_path'), '-c',
-           '--min_left_clip=' + str(clip),
-           '--min_frequency=' + config.get('Variables', 'max_equality'), '-o',
-           basefile, "-A", sff]
-    print("\nRunning sff_extract using the following command:")
-    print(' '.join(cli))
-    sff_extract_stdout = RunProgram(cli, 1)
-    if len(sff_extract_stdout) == 20:
-        for lines in sff_extract_stdout:
-            if "Probably" in str(lines):
-                warning = str(lines)
-                number = ''
-                for letters in warning:
-                    if letters.isdigit():
-                        number = number + letters
-                return number
-    else:
-        print("The found value seems acceptable. If this message is displayed \
-              twice in a row you have found your min_left_clip.\n")
-        return "OK"
+def SffExtraction(sff, basefile):
+    '''Function for using the sff_extractor module. It will look for an "ideal"
+    clipping value using multiple runs before outputting the final files.'''
+    clip_found = 0
 
+    # Sff_extractor parameters:
+    sff_config = {}
+    sff_config["append"] = False
+    sff_config["qual_fname"] = basefile + ".fasta.qual"
+    sff_config["want_fastq"] = False
+    sff_config["min_leftclip"] = 0
+    sff_config["min_freq"] = int(config.get('Variables', 'max_equality'))
+    sff_config["xml_info"] = None
+    sff_config["want_fr"] = False
+    sff_config["pelinker_fname"] = ""
+    sff_config["mix_case"] = True
+    sff_config["clip"] = True
+    sff_config["xml_fname"] = basefile + ".xml"
+    sff_config["basename"] = basefile
+    sff_config["seq_fname"] = basefile + ".fasta"
 
-def MinClip(basefile):
-    '''Function for calling the SffExtract function and adding 1 to the 'clip'
-       value until the ideal value is found. Depends on SffExtract.'''
-    OK = 0
-    clip = 0
-    while OK < 2:
-        turner = SffExtract(sff, clip)
-        if turner == "OK":
-            OK = OK + 1
-            clip = clip + 1
-            if OK == 2:
-                clip = clip - 2
+    while clip_found < 2:
+        extra_clip = sff_extractor.extract_reads_from_sff(sff_config, [sff])
+        sff_config["min_leftclip"] += extra_clip
+        if extra_clip == 0:
+            clip_found += 1
         else:
-            OK = 0
-            clip = clip + int(turner)
-    print("Sff_extract finished with a min_left_clip=" + str(clip) + ".\n")
+            clip_found = 0
+
+    print("Sff_extractor finished with a min_left_clip=" +
+          str(sff_config["min_leftclip"]) + ".\n")
+
+    return
 
 
 def SeqClean(basefile):
     '''Function for using seqclean and clean2qual.'''
-    #seqclean
+    # seqclean
     cli = [config.get('Program paths', 'seqclean_path'),
            basefile + '.fasta', '-r', basefile + '.clean.rpt', '-l',
            config.get('Variables', 'min_len'), '-o',
@@ -199,7 +186,7 @@ def SeqClean(basefile):
     print("\nRunning Seqclean using the following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
-    #cln2qual
+    # cln2qual
     cli = [config.get('Program paths', 'cln2qual_path'),
            basefile + '.clean.rpt', basefile + '.fasta.qual']
     print("\nRunning cln2qual using the following command:")
@@ -222,9 +209,19 @@ def MiraRun(basefile):
     manifest.write("data = " + basename + ".clean.fasta\n")
     manifest.close()
 
+    # Run mira
     cli = [config.get('Program paths', 'mira_path'), basefile + ".manifest"]
 
     print("\nRunning Mira using the following command:")
+    print(' '.join(cli))
+    RunProgram(cli, 0)
+
+    # Convert the MAF output to SAM output
+    cli = [config.get('Program paths', 'mira_path') + "convert", "-f", "maf",
+           "-t", "sam", basefile + '_assembly/' + miraproject + '_d_results/' +
+           miraproject + '_out.maf', basefile + ".sam"]
+
+    print("\nConverting MAF to SAM using miraconvert:")
     print(' '.join(cli))
     RunProgram(cli, 0)
 
@@ -234,10 +231,12 @@ def DiscoveryTCS(basefile):
        find SNPs. Output in TCS format.'''
     os.chdir(os.path.split(basefile)[0])
     print("\nRunning SNP Discovery tool module...")
-    CAF_to_TCS.RunModule(basefile + '_assembly/' + miraproject
-                         + '_d_results/' + miraproject + '_out.caf')
-    TCS.RunModule(basefile + '_assembly/' + miraproject + '_d_results/'
-                  + miraproject + '_out.tcs', basefile + '_out.short.tcs',
+    SAM_to_BAM.RunModule(basefile + '.sam',
+                         basefile + '.bam')
+    BAM_to_TCS.RunModule(basefile + '.bam', basefile + '_assembly/' +
+                         miraproject + '_d_results/' + miraproject +
+                         '_out.padded.fasta')
+    TCS.RunModule(basefile + '.tcs', basefile + '_out.short.tcs',
                   int(config.get('Variables', 'minqual')),
                   int(config.get('Variables', 'mincov')))
 
@@ -264,10 +263,10 @@ def ORFliner(basefile):
     print("\nRunning EMBOSS 'getorf' using the following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
-    #After this we go to ORFmaker.py:
+    # After this we go to ORFmaker.py:
     print("\nRunning ORFmaker module...")
     ORFmaker.RunModule(basefile + '.allORFs.fasta')
-    #Next we BLAST the resulting ORFs against the local 'nr' database:
+    # Next we BLAST the resulting ORFs against the local 'nr' database:
     if config.get('Program paths', 'BLAST_path').endswith('blast2'):
         cli = [config.get('Program paths', 'BLAST_path'), '-p', 'blastx', '-d',
                config.get('Program paths', 'BLASTdb_path'), '-i',
@@ -283,7 +282,7 @@ def ORFliner(basefile):
     print("\nRunning NCBI 'blastx' using the following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
-    #Then we write the metrics report:
+    # Then we write the metrics report:
     print("\nRunning the metrics calculator module...")
     seqclean_log_path = "%s/seqcl_%s.fasta.log" % (os.path.split(basefile)[0],
                                                    miraproject)
@@ -294,7 +293,7 @@ def ORFliner(basefile):
                        + miraproject + '_info_assembly.txt', basefile
                        + '.SNPs.fasta', basefile + '.BestORF.fasta',
                        basefile + '.Metrics.html')
-    #Finally we write down our report using the data gathered so far:
+    # Finally we write down our report using the data gathered so far:
     print("\nRunning Reporter module...")
     Reporter.RunModule(basefile + '.BestORF.fasta', basefile + '.SNPs.fasta',
                        basefile + '.ORFblast.html', basefile + '.Report.html',
@@ -321,7 +320,7 @@ def B2G(basefile):
     print("\nRunning NCBI 'blastx' using the following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
-    #After 'blasting' we run b2g4pipe:
+    # After 'blasting' we run b2g4pipe:
     if os.path.isfile(config.get('Program paths', 'Blast2go_path')):
         cli = ['java', '-jar', config.get('Program paths', 'Blast2go_path'),
                '-in', basefile + '.shortlistblast.xml', '-prop',
@@ -385,7 +384,7 @@ def TidyUP(basefile):
         print(basefile + '.Metrics.html does not exist')
     shutil.copy(config.get('Program paths', 'Templates_path') +
                 '/Report.html', 'Report/Report.html')
-    #7zip it
+    # 7zip it
     cli = [config.get('Program paths', '7z_path'), 'a', '-y', '-bd', basefile
            + '.report.7z', 'Report']
     print("\n7ziping the Report folder using the following command:")
@@ -397,7 +396,7 @@ def RunMe(arguments):
     '''Function to parse which parts of 4Pipe4 will run.'''
     for option, number in zip(list(arguments), range(len(arguments))):
         if option == "1":
-            MinClip(basefile)
+            SffExtraction(sff, basefile)
         if option == "2":
             SeqClean(basefile)
         if option == "3":

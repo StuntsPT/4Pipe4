@@ -1,2 +1,5 @@
 *.swp
 *.pyc
+#Eric5 ignores:
+*.e4p
+.eric5project/*

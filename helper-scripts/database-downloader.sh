@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2011-2013 Francisco Pina Martins <f.pinamartins@gmail.com>
+# Copyright 2011-2015 Francisco Pina Martins <f.pinamartins@gmail.com>
 # This file is part of 4Pipe4.
 # 4Pipe4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ datadir=~/Databases
 
 #Download Univec and create a dir for it
 echo "Downloading the Univec database..."
-mkdir -p $datadir/Univec
-wget -c univec_url -O $datadir/Univec/Univec
+mkdir -p $datadir/UniVec
+wget -c -nd univec_url -O $datadir/UniVec/UniVec
 
 #Download nr and create a dir for it
 mkdir -p $datadir/nr

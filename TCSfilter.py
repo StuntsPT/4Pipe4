@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# Copyright 2011-2013 Francisco Pina Martins <f.pinamartins@gmail.com>
+# Copyright 2011-2014 Francisco Pina Martins <f.pinamartins@gmail.com>
 # This file is part of 4Pipe4.
 # 4Pipe4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@ from math import ceil
 
 
 def ListParser(infile_name, minqual, mincov):
-    '''Discards every line in the TCS file with a coverage below mincov and
-       a qual below minqual'''
+    """Discard every line in the TCS file with a coverage below mincov and
+       a qual below minqual. Returns a list of TCS lines that passed the
+       filtering criteria."""
     TCS = open(infile_name, 'r')
     if TCS.readline().startswith("#TCS") is False:
         quit("Invalid input file. Use a TCS file as input.")
@@ -30,12 +31,12 @@ def ListParser(infile_name, minqual, mincov):
     passed = []
     for lines in TCS:
         line = lines.split('|')
-        tcov = int(line[2][:5])
-        covs = line[2][5:].strip().split()
+        tcov = int(line[2].split()[0])
+        covs = line[2].split()[1:]
         covs = sorted(list(map(int, covs)))
         if tcov <= mincov:  # Discard positions with less than mincov
             pass
-        elif int(lines.split()[12]) >= tcov//2:  # Discard pos with many gaps
+        elif int(lines.split()[12]) >= tcov//2 or lines.split()[2] == "-":  # Discard pos with many gaps
             pass
         elif covs[-2] <= (ceil(tcov * 0.2)):  # Discard low freq second variant
             pass
@@ -51,7 +52,7 @@ def ListParser(infile_name, minqual, mincov):
 
 
 def ListWriter(infile_name, outfile_name, passed):
-    '''Write the selected list into a file.'''
+    """Write the selected list into a file."""
     outfile = open(outfile_name, 'w')
     outfile.write("#TCS V1.0\n")
     outfile.write("#\n")
@@ -64,9 +65,11 @@ def ListWriter(infile_name, outfile_name, passed):
 
 
 def RunModule(infile_name, outfile_name, minqual, mincov):
-    '''Run the module.'''
+    """Run the module."""
     ShortList = ListParser(infile_name, minqual, mincov)
     ListWriter(infile_name, outfile_name, ShortList)
 
-
-#RunModule("/home/francisco/Programming/454/Scripts/ORF/test.tcs", 70, 15)
+if __name__ == "__main__":
+    # Usage: python3 TCSfilter.py file.tcs file_out.short.tcs minqual mincov
+    from sys import argv
+    RunModule(argv[1], argv[2], int(argv[3]), int(argv[4]))
