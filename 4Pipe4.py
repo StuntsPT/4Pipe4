@@ -228,7 +228,10 @@ def SNPcaller(basefile):
        find SNPs. Output in FASTA format.'''
     basepath = os.path.split(basefile)[0]
     os.chdir(basepath)
-    os.mkdir(basepath + "/QSNPng")
+    try:
+        os.mkdir(basepath + "/QSNPng")
+    except:
+        print("Warning! " + basepath + "/QSNPng already exists. Overwriting.")
     cli = [config.get('Program paths', 'QSNPng_path'), '-servermode',
            '-config', config.get('Program paths', 'QSNPngT_path'), '-outdir',
            basepath + '/QSNPng', basefile + ".sam"]
@@ -243,7 +246,7 @@ def SNPgrabber(basefile):
     basepath = os.path.split(basefile)[0]
     os.chdir(basepath)
     print("\nRunning SNP Grabber NG tool module...")
-    SNPg.RunModule(basepath + '/QSNPng/variants.csv',
+    SNPg.RunModule(basepath + '/QSNPng/variations.csv',
                    basefile + '_assembly/' + miraproject + '_d_results/'
                    + miraproject + '_out.padded.fasta',
                    basefile + '.SNPs.fasta')
