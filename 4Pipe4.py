@@ -61,7 +61,7 @@ must be given inside quotation marks, and numbers can be joined together or \
 separated by any symbol. The numbers are the pipeline steps that should be \
 run. This is an optional argument and it's omission will run all steps by \
 default. The numbers, from 1 to 9 represent the following steps:\n\t1 - SFF \
-extraction\n\t2 - SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - \
+extraction\n\t2 - SeqClean\n\t3 - Mira\n\t4 - SNPcaller\n\t5 - \
 SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR finder\n\t9 - 7zip \
 the report")
 arg = parser.parse_args()
@@ -226,23 +226,22 @@ def MiraRun(basefile):
     RunProgram(cli, 0)
 
 
-def DiscoveryTCS(basefile):
-    '''Discovers SNPs in the TCS output file of Mira. Use only if trying to
-       find SNPs. Output in TCS format.'''
+def SNPcaller(basefile):
+    '''Discovers SNPs in the SAM output file of Mira. Use only if trying to
+       find SNPs. Output in FASTA format.'''
     os.chdir(os.path.split(basefile)[0])
-    print("\nRunning SNP Discovery tool module...")
-    SAM_to_BAM.RunModule(basefile + '.sam',
-                         basefile + '.bam')
-    BAM_to_TCS.RunModule(basefile + '.bam', basefile + '_assembly/' +
-                         miraproject + '_d_results/' + miraproject +
-                         '_out.padded.fasta')
-    TCS.RunModule(basefile + '.tcs', basefile + '_out.short.tcs',
-                  int(config.get('Variables', 'minqual')),
-                  int(config.get('Variables', 'mincov')))
+    basepath = os.path.split(basefile)
+    os.mkdir(basepath + "/QSNPng")
+    cli = [config.get('Program paths', 'QSNPng_path'), '-servermode',
+           '-config', config.get('Program paths', 'QSNPngT_path'), '-outdir',
+           basepath + '/QSNPng']
+    print("\nRunning QualitySNPng to find SNPs with he following command:")
+    print(' '.join(cli))
+    RunProgram(cli, 0)
 
 
 def SNPgrabber(basefile):
-    '''Grabs suitable SNPs in the short TCS output DiscoveryTCS and outputs a
+    '''Grabs suitable SNPs in the short TCS output SNPcaller and outputs a
        fasta with only the relevant contigs, tagged with SNP info.'''
     os.chdir(os.path.split(basefile)[0])
     print("\nRunning SNP Grabber tool module...")
@@ -402,7 +401,7 @@ def RunMe(arguments):
         if option == "3":
             MiraRun(basefile)
         if option == "4":
-            DiscoveryTCS(basefile)
+            SNPcaller(basefile)
         if option == "5":
             SNPgrabber(basefile)
         if option == "6":
