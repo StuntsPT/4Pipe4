@@ -25,6 +25,7 @@ way to install all of 4Pipe4's dependencies.
 * 4Pipe4.py - Main file: this is the script you want to run;
 * 4Pipe4rc - Configuration file;
 * argparse.py - Module for argument parsing;
+* bin/QualitySNPng - A statically built binary of [QualitySNPng](http://www.bioinformatics.nl/QualitySNPng/). The source code can be found [here](https://github.com/StuntsPT/QualitySNP).
 * helper-scripts/database-downloader.sh - Script to download NCBI's databases;
 * helper-scripts/emboss-user-installer.sh - Script to compile and install EMBOSS;
 * helper-scripts/rc-generator.sh - Script to generate most of 4Pipe4's configuration parameters;
@@ -57,6 +58,7 @@ external programs that 4Pipe4 uses in it's processes. By default, these are:
 * seqclean (http://compbio.dfci.harvard.edu/tgi/software/)
 * mira 4.x series (http://mira-assembler.sourceforge.net/) 
 * getorf (http://emboss.sourceforge.net/apps/cvs/emboss/apps/getorf.html)
+* QualitySNPng (http://www.bioinformatics.nl/QualitySNPng/)
 * blast (ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
 * blast2go4pipe (http://www.blast2go.com/b2glaunch/resources)
 * etandem (http://helixweb.nih.gov/emboss/html/etandem.html)
