@@ -44,7 +44,7 @@ def ShortListFASTA(names, fasta, snp_fasta):
     shortfasta = {}
     for name in names:
         if name in fasta.keys():
-            namepos = names[name]
+            namepos = name + names[name]
             shortfasta[namepos] = fasta[name]
     outfile = open(snp_fasta, 'w')
     for k in shortfasta:
