@@ -25,6 +25,10 @@ way to install all of 4Pipe4's dependencies.
 * 4Pipe4.py - Main file: this is the script you want to run;
 * 4Pipe4rc - Configuration file;
 * argparse.py - Module for argument parsing;
+* helper-scripts/database-downloader.sh - Script to download NCBI's databases;
+* helper-scripts/emboss-user-installer.sh - Script to compile and install EMBOSS;
+* helper-scripts/rc-generator.sh - Script to generate most of 4Pipe4's configuration parameters;
+* helper-scripts/user-installer.sh - Script to install most of 4Pipe4's dependencies;
 * LICENSE - License file;
 * Metrics.py - Module for generating dataset metrics;
 * ORFmaker.py - Module for finding ORFs;
