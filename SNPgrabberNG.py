@@ -57,7 +57,7 @@ def RunModule(variants_file, fasta_file, snp_fasta):
     '''Runs the module:'''
     Names = TCStoDict(variants_file)
     Sequences = FASTA_parser(fasta_file)
-    ShortListFASTA(Names, Sequences, variants_file, snp_fasta)
+    ShortListFASTA(Names, Sequences, snp_fasta)
 
 if __name__ == "__main__":
     from sys import argv
