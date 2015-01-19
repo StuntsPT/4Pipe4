@@ -27,7 +27,7 @@ def TCStoDict(variants_file):
 
     for lines in variants:
         lines=lines.split()
-        if int(lines[-1]) > 0:
+        if int(lines[-1]) > 9:
             try:
                 names[lines[0]] += "#" + lines[1] + lines[2] + lines[3]
             except:
