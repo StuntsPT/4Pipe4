@@ -44,10 +44,6 @@ max_equality = 40
 min_len = 50
 #Number of CPU cores to be used by seqclean, BLAST and mira:
 seqcores = 10
-#Minumim base coverage to accept as a putative SNP:
-mincov = 15
-#Minimum average base quality to accept as a putative SNP:
-minqual = 70
 #Minimum contig quality to accept SSR:
 min_ssr_qual = 70
 
