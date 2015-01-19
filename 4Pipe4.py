@@ -20,14 +20,11 @@ import sys
 import shutil
 import time
 import configparser
-import TCSfilter as TCS
-import SNPgrabber as SNPg
+import SNPgrabberNG as SNPg
 import ORFmaker
 import Reporter
 import SSRfinder as ssr
 import Metrics
-import SAM_to_BAM
-import BAM_to_TCS
 import argparse
 import sff_extractor
 from argparse import RawTextHelpFormatter
