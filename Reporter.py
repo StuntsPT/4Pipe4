@@ -41,7 +41,7 @@ def BLASTparser(blast):
 
 
 def BLAST_plus(blast):
-    '''Blast+ parser'''
+    '''Blast+ parser.'''
     parsed = {}
     done = 1
     for lines in blast:
@@ -61,7 +61,7 @@ def BLAST_plus(blast):
 
 
 def BLAST_2(blast):
-    '''Blast2 parser'''
+    '''Blast2 parser.'''
     parsed = {}
     done = 1
     for lines in blast:
@@ -80,22 +80,8 @@ def BLAST_2(blast):
     return parsed
 
 
-def Cov_counter(tcsfile, contig, position):
-    '''Gets the coverage from a specific position'''
-    tcs = open(tcsfile, 'r')
-    for lines in tcs:
-        if lines.startswith(contig):
-            lines = lines.split()
-            if int(lines[2]) == int(position) - 1:
-                coverage = lines[7]
-                break
-    tcs.close()
-
-    return coverage
-
-
 def Characterize(Dict, Blasts, LargeDict, report, tcsfile):
-    '''Makes the SNP characterization and writes down the report.'''
+    '''Make the SNP characterization and write down the report.'''
     translate = {'TTT': 'Phe', 'TCT': 'Ser', 'TAT': 'Tyr', 'TGT': 'Cys',
                  'TTC': 'Phe', 'TCC': 'Ser', 'TAC': 'Tyr', 'TGC': 'Cys',
                  'TTA': 'Leu', 'TCA': 'Ser', 'TAA': '***', 'TGA': 'Trp',
@@ -127,7 +113,6 @@ font-size:small }
     report.write('''<TD ALIGN=CENTER>Contig</TD>
         <TD ALIGN=CENTER>ORF Frame</TD>
         <TD ALIGN=CENTER>SNP Position in Contig</TD>
-        <TD ALIGN=CENTER>Coverage in Position</TD>
         <TD ALIGN=CENTER>ORF start</TD>
         <TD ALIGN=CENTER>ORF end</TD>
         <TD ALIGN=CENTER>ORF size</TD>
@@ -172,10 +157,6 @@ font-size:small }
                     frame = '-2'
             row += '<TD ALIGN=CENTER>' + frame + '</TD>\n'
             row += '<TD ALIGN=CENTER>' + str(pos) + '</TD>\n'
-            row += '<TD ALIGN=CENTER>' + \
-                   Cov_counter(tcsfile,
-                               re.match('^\w*', k).group(0), str(pos)) + \
-                   '</TD>\n'
             row += '<TD ALIGN=CENTER>' + left_limit + '</TD>\n'
             row += '<TD ALIGN=CENTER>' + right_limit + '</TD>\n'
             row += '<TD ALIGN=CENTER><a href="html_files/' + \
@@ -251,7 +232,7 @@ SNPs that could not be characterized since they were outside any ORF\
 
 
 def FASTAsplitter(Dict, LargeDict, report_file):
-    '''Splits the Dict with the relevant FASTA information into individual
+    '''Split the Dict with the relevant FASTA information into individual
     fasta files for viewing.'''
     filespath = os.path.split(report_file)[0] + '/html_files/'
     try:
@@ -273,7 +254,7 @@ def FASTAsplitter(Dict, LargeDict, report_file):
 
 
 def RunModule(fasta_file, fulllist_file, blast_file, report_file, tcsfile):
-    '''Runs the Module'''
+    '''Run the Module.'''
     blast = open(blast_file, 'r')
     report = open(report_file, 'w')
 
