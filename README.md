@@ -24,19 +24,18 @@ way to install all of 4Pipe4's dependencies.
 
 * 4Pipe4.py - Main file: this is the script you want to run;
 * 4Pipe4rc - Configuration file;
-* BAM_to_TCS.py - Module to convert .bam files into the TCS format.
-* TCSfilter.py - Module for SNP filtering in TCS files;
+* argparse.py - Module for argument parsing;
 * LICENSE - License file;
 * Metrics.py - Module for generating dataset metrics;
 * ORFmaker.py - Module for finding ORFs;
 * pipeutils.py - Module with code common to several other modules.
 * README.md - This file;
 * Reporter.py - Module for generating putative SNP reports;
-* SAM_to_BAM.py - Module for converting the .sam files into .bam files.
 * sff_extractor.py - Module for extracting fasta and fasta.qual from sff files. Originally developed by José Blanca, but forked and ported to python 3 since it was removed from the original website.
-* SNPgrabber.py - Module for organizing SNP information;
+* SNPgrabberNG.py - Module for organizing SNP information;
 * SSRfinder.py - Module for finding SSRs;
 * Templates/Report.html - Template for report "front page";
+* Templates/QSNPng.cfg - Template for QualitySNPng settings;
 * Testdata/4Pipe4_test.sff - Test data file;
 * Testdata/README.md - Documentation on the test data;
 
