@@ -50,8 +50,7 @@ As time progresses and 4Pipe4 sees new development, this list will be updated.
 4Pipe4 is written in python 3. Therefore an installation of python 3 is required
 to run 4Pipe4. If you are using linux you can get python 3 from you
 distribution's package manager (sudo apt-get install python3 for Ubuntu) or get
-it from the website (http://python.org/download/). Also required are the python3
-header files (the package name in Ubuntu is python3-dev).
+it from the website (http://python.org/download/).
 Not strictly required, but highly recommended to for best results are the
 external programs that 4Pipe4 uses in it's processes. By default, these are:
 
@@ -62,12 +61,11 @@ external programs that 4Pipe4 uses in it's processes. By default, these are:
 * blast2go4pipe (http://www.blast2go.com/b2glaunch/resources)
 * etandem (http://helixweb.nih.gov/emboss/html/etandem.html)
 * 7zip (http://www.7-zip.org/)
-* pysam (https://github.com/pysam-developers/pysam)
 
-These programs are mentioned as "optinal" since you can have for example an
+These programs are mentioned as "optional" since you can have for example an
 already assembled dataset and just want to run the SNP detection routines,
-starting the pipeline from step #4. This would not require sff_extract, seqclean
-nor mira to be installed.
+starting the pipeline from step #4. This would not require seqclean nor mira to
+be installed.
 All of these programs aer required if you wish to run all the steps in 4Pipe4.
 Beware that 4Pipe4 currently relies on the 4.x version of mira, and is not
 backward compatible with 3.x versions. If you wish to use a 3.x version of
@@ -92,7 +90,7 @@ Inside the directory "helper-scripts" you will find 4 shell scripts:
 If they are run in the order they are shown here, they will:
 
 1. Download and locally install the programs: "sff_extract", "seqclean", "mira",
-"blast", "p7zip", "pysam", "cython" and "setuptools".
+"blast" and "p7zip".
 2. Download, compile and locally install emboss' "getorf" and "etandem". (This
 script requires build tools such as "make" and "gcc". They should be readily
 available on any *nix machine you have access to but don't have root access.)
@@ -126,7 +124,7 @@ optional arguments:
                         1 - SFF extraction
                         2 - SeqClean
                         3 - Mira
-                        4 - DiscoveryTCS
+                        4 - SNP caller
                         5 - SNP grabber
                         6 - ORF finder
                         7 - Blast2go
@@ -164,6 +162,7 @@ https://github.com/StuntsPT/4Pipe4/issues
 For other programs, also please be sure to check out our group's website:
 http://cobig2.com
 
-### CITING
+### CITATION
 
+If you use 4Pipe4 on your research, please cite the following DOI:
 [![DOI](https://zenodo.org/badge/7462/StuntsPT/4Pipe4.svg)](http://dx.doi.org/10.5281/zenodo.13948)
