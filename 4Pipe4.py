@@ -241,15 +241,15 @@ def SNPcaller(basefile):
 
 
 def SNPgrabber(basefile):
-    '''Grabs suitable SNPs in the short TCS output SNPcaller and outputs a
+    '''Grabs suitable SNPs in the variants.csv output of SNPcaller and outputs a
        fasta with only the relevant contigs, tagged with SNP info.'''
-    os.chdir(os.path.split(basefile)[0])
-    print("\nRunning SNP Grabber tool module...")
-    SNPg.RunModule(basefile + '_out.short.tcs',
+    basepath = os.path.split(basefile)[0]
+    os.chdir(basepath)
+    print("\nRunning SNP Grabber NG tool module...")
+    SNPg.RunModule(basepath + '/QSNPng/variants.csv',
                    basefile + '_assembly/' + miraproject + '_d_results/'
-                   + miraproject + '_out.unpadded.fasta',
-                   basefile + '.SNPs.fasta',
-                   int(config.get('Variables', 'minqual')))
+                   + miraproject + '_out.padded.fasta',
+                   basefile + '.SNPs.fasta')
 
 
 def ORFliner(basefile):
