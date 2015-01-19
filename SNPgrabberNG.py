@@ -52,7 +52,15 @@ def ShortListFASTA(names, fasta, snp_fasta):
         outfile.write(shortfasta[k] + '\n')
     outfile.close()
 
-
+def GapRemover(fasta_dict):
+    '''Find and remove gaps in sequences and change the SNP positions 
+    accordingly.'''
+    new_dict = {}
+    
+    for k, v in fasta_dict.items():
+        positions = k.split("#")[1:]
+        a = ''.join(filter(lambda x: x.isdigit(), "aas30dsa20"))
+        
 def RunModule(variants_file, fasta_file, snp_fasta):
     '''Runs the module:'''
     Names = TCStoDict(variants_file)
