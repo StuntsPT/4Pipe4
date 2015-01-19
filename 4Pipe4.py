@@ -229,12 +229,12 @@ def MiraRun(basefile):
 def SNPcaller(basefile):
     '''Discovers SNPs in the SAM output file of Mira. Use only if trying to
        find SNPs. Output in FASTA format.'''
-    os.chdir(os.path.split(basefile)[0])
-    basepath = os.path.split(basefile)
+    basepath = os.path.split(basefile)[0]
+    os.chdir(basepath)
     os.mkdir(basepath + "/QSNPng")
     cli = [config.get('Program paths', 'QSNPng_path'), '-servermode',
            '-config', config.get('Program paths', 'QSNPngT_path'), '-outdir',
-           basepath + '/QSNPng']
+           basepath + '/QSNPng', basefile + ".sam"]
     print("\nRunning QualitySNPng to find SNPs with he following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
