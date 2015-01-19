@@ -58,14 +58,14 @@ must be given inside quotation marks, and numbers can be joined together or \
 separated by any symbol. The numbers are the pipeline steps that should be \
 run. This is an optional argument and it's omission will run all steps by \
 default. The numbers, from 1 to 9 represent the following steps:\n\t1 - SFF \
-extraction\n\t2 - SeqClean\n\t3 - Mira\n\t4 - SNPcaller\n\t5 - \
+extraction\n\t2 - SeqClean\n\t3 - Mira\n\t4 - SNP caller\n\t5 - \
 SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR finder\n\t9 - 7zip \
 the report")
 arg = parser.parse_args()
 
 
 def loading(current_state, size, prefix, width):
-    """ Function that prints the loading progress of the script! """
+    '''Print the loading progress of the script!'''
     percentage = int(((current_state+1)/size)*100)
     complete = int(width*percentage*0.01)
     if percentage == 100:
@@ -103,7 +103,7 @@ def StartUp():
 
 
 def SysPrep(basefile):
-    '''Function for prepairing the system for the pipeline.'''
+    '''Prepares the system for the pipeline.'''
     if os.path.isdir(basefile):
         print("\nThe path used for the basefile points to a directory! \
               Please use a file.\n")
@@ -118,7 +118,7 @@ def SysPrep(basefile):
 
 
 def RunProgram(cli, requires_output):
-    '''Function for running external programs and dealing with their output.'''
+    '''Runs external programs and deals with their output.'''
     program_stdout = []
     try:
         program = subprocess.Popen(cli, bufsize=64, shell=False,
@@ -137,7 +137,7 @@ def RunProgram(cli, requires_output):
 
 
 def SffExtraction(sff, basefile):
-    '''Function for using the sff_extractor module. It will look for an "ideal"
+    '''Uses the sff_extractor module. It will look for an "ideal"
     clipping value using multiple runs before outputting the final files.'''
     clip_found = 0
 
@@ -172,7 +172,7 @@ def SffExtraction(sff, basefile):
 
 
 def SeqClean(basefile):
-    '''Function for using seqclean and clean2qual.'''
+    '''Uses seqclean and clean2qual.'''
     # seqclean
     cli = [config.get('Program paths', 'seqclean_path'),
            basefile + '.fasta', '-r', basefile + '.clean.rpt', '-l',
@@ -193,7 +193,7 @@ def SeqClean(basefile):
 
 
 def MiraRun(basefile):
-    '''Assemble the sequences and write the menifest file'''
+    '''Writes the mira manifest file and assembles the sequences.'''
     basename = os.path.basename(basefile)
     manifest = open(basefile + ".manifest", 'w')
     manifest.write("project = " + basename + "\n")
@@ -253,8 +253,8 @@ def SNPgrabber(basefile):
 
 
 def ORFliner(basefile):
-    '''This will run EMBOSS 'getorf' and use 2 scripts to filter the results
-       and write a report. The paramters for 'getorf' are changed here.'''
+    '''Runs EMBOSS 'getorf', uses 2 scripts to filter the results
+       and writes a report. The paramters for 'getorf' are changed here.'''
     os.chdir(os.path.split(basefile)[0])
     cli = [config.get('Program paths', 'GetORF_path'), '-sequence',
            basefile + '.SNPs.fasta', '-outseq', basefile + '.allORFs.fasta',
@@ -300,9 +300,9 @@ def ORFliner(basefile):
 
 
 def B2G(basefile):
-    '''This will make all necessary runs to get a B2go anottation ready for the
-       GUI aplication. Bummer... We start by blasting all the contigs with SNPs
-       against the NCBI's 'nr'.'''
+    '''Makes all necessary runs to get a B2go annotation ready for the
+       GUI aplication. Starts by blasting all the contigs with SNPs
+       against NCBI's 'nr' database.'''
     os.chdir(os.path.split(basefile)[0])
     if config.get('Program paths', 'BLAST_path').endswith('blast2'):
         cli = [config.get('Program paths', 'BLAST_path'), '-p', 'blastx', '-d',
@@ -335,7 +335,7 @@ def B2G(basefile):
 
 def SSRfinder(basefile):
     '''Runs the SSR finder in batch mode and generates an HTML. It's mostly
-    disk I/O stress and not CPU intensive:'''
+    disk I/O stress and not CPU intensive.'''
     print("\nRunning SSR finder module...")
     ssr.RunModule(basefile + '_assembly/' + miraproject + '_d_results/'
                   + miraproject + '_out.unpadded.fasta', basefile
@@ -346,7 +346,7 @@ def SSRfinder(basefile):
 
 
 def TidyUP(basefile):
-    '''Tidy up the report folder:'''
+    '''Tidies up the report directory:'''
     os.chdir(os.path.split(basefile)[0])
     try:
         os.mkdir('Report')
@@ -392,7 +392,7 @@ def TidyUP(basefile):
 
 
 def RunMe(arguments):
-    '''Function to parse which parts of 4Pipe4 will run.'''
+    '''Parses which parts of 4Pipe4 will be run.'''
     for option, number in zip(list(arguments), range(len(arguments))):
         if option == "1":
             SffExtraction(sff, basefile)
