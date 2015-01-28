@@ -43,7 +43,9 @@ univec=$(find $datadir -name UniVec -type f); echo "."
 #nr
 nr=$(find $datadir -name nr.pal -type f |sed 's/.pal//'); echo "."
 #Templates
-templates=$(find $workdir -name Templates -type d |grep 4Pipe4/Templates);echo "."
+#templates=$(find $workdir -name Templates -type d |grep 4Pipe4/Templates);echo "."
+PWD=`pwd`
+templates=${PWD:0:(${#PWD}-14)}"Templates";echo "."
 
 echo "Done!"
 echo "You may add these lines to your 4Pipe4rc file:"
