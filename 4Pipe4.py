@@ -235,7 +235,7 @@ def SNPcaller(basefile):
     cli = [config.get('Program paths', 'QSNPng_path'), '-servermode',
            '-config', config.get('Program paths', 'QSNPngT_path'), '-outdir',
            basepath + '/QSNPng', basefile + ".sam"]
-    print("\nRunning QualitySNPng to find SNPs with he following command:")
+    print("\nRunning QualitySNPng to find SNPs with the following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
 
