@@ -14,12 +14,13 @@
 # You should have received a copy of the GNU General Public License
 # along with 4Pipe4.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
 from pipeutils import FASTA_parser
 
 
-def TCStoDict(variants_file):
-    '''Parse the variants.csv list and return a Dictionary with
-    names:positionsBases'''
+def variationstoDict(variants_file):
+    '''Parse the variations.csv list and return a Dictionary with
+    names:positionsBases.'''
     variants = open(variants_file, 'r')
     names = {}
     
@@ -39,8 +40,9 @@ def TCStoDict(variants_file):
 
 
 def ShortListFASTA(names, fasta, snp_fasta):
-    '''Grabs the contig names and SNP positions from the TCS file and trims the
-     fasta to match only these.'''
+    '''Use the contig names and SNP positions from the variations file and
+    trim the fasta to match only these, changing the sequence names to reveal
+    the SNP and positions.'''
     shortfasta = {}
     for name in names:
         if name in fasta.keys():
@@ -52,19 +54,28 @@ def ShortListFASTA(names, fasta, snp_fasta):
         outfile.write(shortfasta[k] + '\n')
     outfile.close()
 
+
 def GapRemover(fasta_dict):
     '''Find and remove gaps in sequences and change the SNP positions 
     accordingly.'''
     new_dict = {}
     
     for k, v in fasta_dict.items():
-        positions = k.split("#")[1:]
-        a = ''.join(filter(lambda x: x.isdigit(), "aas30dsa20"))
+        positions = re.sub("[A-z]", "", k[1:]).split("#")[1:]
+        new_k = k
+        for i in positions:
+            gaps = v[:int(i)].count("*")
+            new_k = new_k.replace(i, str(int(i) - gaps))
         
+        new_dict[new_k] = v.replace("*", "")
+    
+    return new_dict
+
+
 def RunModule(variants_file, fasta_file, snp_fasta):
     '''Runs the module:'''
-    Names = TCStoDict(variants_file)
-    Sequences = FASTA_parser(fasta_file)
+    Names = variationstoDict(variants_file)
+    Sequences = GapRemover(FASTA_parser(fasta_file))
     ShortListFASTA(Names, Sequences, snp_fasta)
 
 if __name__ == "__main__":
