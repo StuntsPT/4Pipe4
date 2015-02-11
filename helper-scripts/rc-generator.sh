@@ -46,7 +46,7 @@ nr=$(find $datadir -name nr.pal -type f |sed 's/.pal//'); echo "."
 templates=$(find $workdir -name Templates -type d |grep 4Pipe4/Templates);echo "."
 
 echo "Done!"
-echo "You may add these lines to your 4Pipe4rc file:"
+echo "Please replace these lines in your 4Pipe4rc file:"
 echo "-----Copy from here-----"
 echo "[Program paths]"
 echo "#Path to seqclean:"
