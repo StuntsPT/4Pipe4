@@ -2,4 +2,4 @@
 *.pyc
 #Eric5 ignores:
 *.e4p
-.eric5project/*
+.eric6project/*
