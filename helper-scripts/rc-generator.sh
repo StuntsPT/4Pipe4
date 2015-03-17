@@ -19,6 +19,8 @@
 #the other helper scripts and generate a template for your 4Pipe4rc file.
 #You still have to fill things like the Univec database and the assmebly
 #parameters!
+set -e
+set -o pipefail
 
 workdir=~/Software
 datadir=~/Databases

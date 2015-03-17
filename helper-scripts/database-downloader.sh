@@ -21,6 +21,8 @@
 #4Pipe4 that require these databases.
 
 #Define some variables:
+set -e
+set -o pipefail
 univec_url="ftp://ftp.ncbi.nih.gov/pub/UniVec/UniVec"
 nr_url="ftp://ftp.ncbi.nlm.nih.gov/blast/db/"
 
