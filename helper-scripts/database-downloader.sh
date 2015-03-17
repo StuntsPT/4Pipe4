@@ -21,6 +21,8 @@
 #4Pipe4 that require these databases.
 
 #Define some variables:
+set -e
+set -o pipefail
 univec_url="ftp://ftp.ncbi.nih.gov/pub/UniVec/UniVec"
 nr_url="ftp://ftp.ncbi.nlm.nih.gov/blast/db/"
 
@@ -41,7 +43,7 @@ wget -c $nr_url/nr* -P $datadir/nr/
 chmod 744 $datadir/nr -R
 for i in $datadir/nr/*
 do
-	tar xfvz $i -C $datadir/nr
+    tar xfvz $i -C $datadir/nr
 done
 
 echo ""

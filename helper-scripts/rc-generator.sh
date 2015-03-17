@@ -20,6 +20,9 @@
 #You still have to fill things like the Univec database and the assmebly
 #parameters!
 
+set -e
+set -o pipefail
+
 workdir=~/Software
 datadir=~/Databases
 
