@@ -1,5 +1,6 @@
 *.swp
 *.pyc
-#Eric5 ignores:
+#Eric IDE ignores:
 *.e4p
-.eric5project/*
+*.e6p
+.eric*
