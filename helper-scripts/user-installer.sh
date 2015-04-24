@@ -28,20 +28,20 @@ set -o pipefail
 pyver=$(python3 --version |& sed 's/Python //')
 #required cython version
 if [ $(echo $pyver |grep -o "\.4\.") ]
-	then
-	cyver=0.20.2
-	else
-	cyver=0.18
+    then
+    cyver=0.22
+    else
+    cyver=0.18
 fi
 #URLs:
 seqclean_url="http://sourceforge.net/projects/seqclean/files/seqclean-x86_64.tgz/download"
 mira_url="http://sourceforge.net/projects/mira-assembler/files/MIRA/stable/mira_4.0.2_linux-gnu_x86_64_static.tar.bz2/download"
 blast_url="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.2.28/ncbi-blast-2.2.28+-x64-linux.tar.gz"
 p7zip_url="http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1_x86_linux_bin.tar.bz2/download"
-#Temporary for pysam:
+#URLs for pysam and it's dependencies:
 setuptools_url="https://bootstrap.pypa.io/ez_setup.py"
 cython_url="https://github.com/cython/cython/archive/$cyver.tar.gz"
-pysam_url="https://github.com/pysam-developers/pysam.git"
+pysam_url="https://github.com/pysam-developers/pysam/archive/v0.8.2.tar.gz"
 
 
 #Create a dir for your new programs (change this to your preference):
@@ -58,6 +58,7 @@ wget -c -t inf $mira_url -O $dldir/mira_4.0rc4_linux-gnu_x86_64_static.tar.bz2
 wget -c -t inf $blast_url -P $dldir/
 wget -c -t inf $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2
 wget -c -t inf $cython_url -P $dldir/
+wget -c -t inf $pysam_url -O $dldir/pysam-0.8.2.tar.gz
 
 
 #Extract and prepare the downloaded programs:
@@ -74,7 +75,7 @@ tar xfj $dldir/$i -C $workdir
 done
 
 
-#Temporary for pysam
+#Handling pysam and dependencies
 #Build setuptools
 cd $dldir
 wget --no-check-certificate $setuptools_url -O - | python3 - --user
@@ -83,9 +84,8 @@ wget --no-check-certificate $setuptools_url -O - | python3 - --user
 cd $workdir/cython-$cyver
 python3 setup.py install --user
 
-#Download and build pysam
-git clone $pysam_url $workdir/pysam
-cd $workdir/pysam
+#Build pysam
+cd $workdir/pysam-0.8.2
 #Patch to disable automated cython
 sed -i '/cython/d' setup.py
 #install
@@ -93,9 +93,9 @@ python3 setup.py install --user
 
 
 echo ""
-echo "If no errors occurred, (dead links, etc..) all of the software required \
-to run 4Pipe4 is now installed in userspace (except Blast2GO and emboss). \
-Please add the correct paths to your 4Pipe4rc file."
+echo "If you are reading this, than no errors occurred and all of the software \
+required to run 4Pipe4 is now installed in userspace (except Blast2GO and \
+emboss). Please add the correct paths to your 4Pipe4rc file."
 echo "You may now run emboss-user-installer.sh to download, compile and \
 install the required emboss programs."
 echo ""
