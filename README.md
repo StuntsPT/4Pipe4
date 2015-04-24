@@ -49,6 +49,7 @@ to run 4Pipe4. If you are using linux you can get python 3 from you
 distribution's package manager (sudo apt-get install python3 for Ubuntu) or get
 it from the website (http://python.org/download/). Also required are the python3
 header files (the package name in Ubuntu is python3-dev).
+Due to the latest release of pysam, python >= 3.4 is now required.
 Not strictly required, but highly recommended to for best results are the
 external programs that 4Pipe4 uses in it's processes. By default, these are:
 
@@ -56,7 +57,7 @@ external programs that 4Pipe4 uses in it's processes. By default, these are:
 * mira 4.x series (http://mira-assembler.sourceforge.net/) 
 * getorf (http://emboss.sourceforge.net/apps/cvs/emboss/apps/getorf.html)
 * blast (ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
-* blast2go4pipe (http://www.blast2go.com/b2glaunch/resources)
+* blast2go4pipe (http://www.blast2go.com/b2glaunch/resources)  - *Seems to have been discontinued*
 * etandem (http://helixweb.nih.gov/emboss/html/etandem.html)
 * 7zip (http://www.7-zip.org/)
 * pysam (https://github.com/pysam-developers/pysam)
