@@ -37,7 +37,7 @@ fi
 seqclean_url="http://sourceforge.net/projects/seqclean/files/seqclean-x86_64.tgz/download"
 mira_url="http://sourceforge.net/projects/mira-assembler/files/MIRA/stable/mira_4.0.2_linux-gnu_x86_64_static.tar.bz2/download"
 blast_url="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.2.28/ncbi-blast-2.2.28+-x64-linux.tar.gz"
-p7zip_url="http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1_x86_linux_bin.tar.bz2/download"
+p7zip_url="https://downloads.sourceforge.net/project/p7zip/p7zip/9.38.1/p7zip_9.38.1_src_all.tar.bz2"
 #URLs for pysam and it's dependencies:
 setuptools_url="https://bootstrap.pypa.io/ez_setup.py"
 cython_url="https://github.com/cython/cython/archive/$cyver.tar.gz"
@@ -56,7 +56,7 @@ echo "Downloading programs from their respective websites... Please wait."
 wget -c -t inf $seqclean_url -O $dldir/seqclean-x86_64.tgz
 wget -c -t inf $mira_url -O $dldir/mira_4.0rc4_linux-gnu_x86_64_static.tar.bz2
 wget -c -t inf $blast_url -P $dldir/
-wget -c -t inf $p7zip_url -O $dldir/p7zip_9.20.1_x86_linux_bin.tar.bz2
+wget -c -t inf $p7zip_url -P $dldir/
 wget -c -t inf $cython_url -P $dldir/
 wget -c -t inf $pysam_url -O $dldir/pysam-0.8.2.tar.gz
 
@@ -90,6 +90,10 @@ cd $workdir/pysam-0.8.2
 sed -i '/cython/d' setup.py
 #install
 python3 setup.py install --user
+
+#Build p7zip
+cd $workdir/p7zip_9.38.1
+make all3
 
 
 echo ""
