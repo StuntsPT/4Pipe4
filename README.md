@@ -12,7 +12,7 @@ you can run from anywhere you want. Although it is recommended
 or add 4Pipe4's directory to your $PATH.
 
 ```
-PATH=/path/to/4Pipe4/:$PATH
+PATH=$PATH:/path/to/4Pipe4/
 ```
 
 Please check the README.md section on the helper scripts for a semi-automatic
@@ -54,7 +54,7 @@ Not strictly required, but highly recommended to for best results are the
 external programs that 4Pipe4 uses in it's processes. By default, these are:
 
 * seqclean (http://compbio.dfci.harvard.edu/tgi/software/)
-* mira 4.x series (http://mira-assembler.sourceforge.net/) 
+* mira 4.x series (http://mira-assembler.sourceforge.net/)
 * getorf (http://emboss.sourceforge.net/apps/cvs/emboss/apps/getorf.html)
 * blast (ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
 * blast2go4pipe (http://www.blast2go.com/b2glaunch/resources)  - *Seems to have been discontinued*
