@@ -44,8 +44,8 @@ def Ambiguifier(bases):
 
 def ASCII_to_num(qual):
     """Translate a fastq qual value from ASCII to decimal and return it."""
-    values = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^\
-_`abcdefghijklmnopqrstuvwxyz{|}~"
+    values = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^\
+              _`abcdefghijklmnopqrstuvwxyz{|}~"
     num_qual = values.index(qual)
 
     return num_qual
