@@ -21,7 +21,7 @@
 #Define some variables:
 set -e
 set -o pipefail
-emboss_url="ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.6.0.tar.gz"
+emboss_url="https://github.com/kimrutherford/EMBOSS/archive/EMBOSS-6.6.0.tar.gz"
 
 #Create a working dir
 workdir=~/Software
