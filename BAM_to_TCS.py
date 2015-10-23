@@ -18,7 +18,7 @@ import pysam
 from pipeutils import ASCII_to_num, FASTA_parser
 
 
-def TCSwriter(bamfile_name, fasta_d):
+def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
     """Convert the bamfile into the TCS format. The writing and the parsing
     are done simultaneously."""
 
@@ -45,6 +45,7 @@ def TCSwriter(bamfile_name, fasta_d):
             # Define usefull variables that need to be reset
             bases = {"A": [], "C": [], "G": [], "T": [], "*": []}
             position = pileupcolumn.pos
+            keepline = True
             tcov = 0  # Workaround
             # Define total coverage (AKA "Tcov")
             # tcov = pileupcolumn.n #TODO - submit bug for wrong counting
@@ -53,8 +54,8 @@ def TCSwriter(bamfile_name, fasta_d):
             for pileupread in pileupcolumn.pileups:
                 if str(pileupread).startswith("*"):
                     continue
-                if str(pileupread.alignment.seq
-                       [pileupread.query_position]) not in basetrans:
+                if str(pileupread.alignment.
+                       seq[pileupread.query_position]) not in basetrans:
                     tcov += 1  # Workaround
                     continue
 
@@ -62,7 +63,8 @@ def TCSwriter(bamfile_name, fasta_d):
                     bases["*"].append(1)
 
                 else:
-                    base = pileupread.alignment.seq[pileupread.query_position].upper()
+                    base = pileupread.alignment.seq[pileupread.
+                                                    query_position].upper()
                     qual = pileupread.alignment.qual[pileupread.query_position]
                     if pileupread.alignment.is_reverse:
                         bases[base].append(ASCII_to_num(qual) * -1)
@@ -72,6 +74,9 @@ def TCSwriter(bamfile_name, fasta_d):
             covs, quals = covs_and_quals(bases)
 
             tcov += sum(covs)  # Workaround
+
+            if tcov < mincov: # Discard position from TCS in this case
+                keepline = False
 
             # Define reference base (AKA "B") and qual (AKA "Q")
 
@@ -88,35 +93,36 @@ def TCSwriter(bamfile_name, fasta_d):
             padPos = position
 
             # Write TCS lines #
-            # Contig name
-            TCS_line = refs
-            TCS_line += " " * (24 - len(refs))
-            # padPos
-            TCS_line += " " * (5 - len(str(padPos)))
-            TCS_line += str(padPos)
-            # unpadPos
-            TCS_line += " " * (8 - len(str(unpadPos)))
-            TCS_line += str(unpadPos)
-            # "B" and "Q"
-            TCS_line += " | "
-            TCS_line += refbase
-            TCS_line += " " * (3 - len(str(refqual)))
-            TCS_line += str(refqual)
-            # Coverages
-            TCS_line += " | "
-            TCS_line += " " * (6 - len(str(tcov)))
-            TCS_line += str(tcov)
-            for c in covs:
-                TCS_line += " " * (6 - len(str(c)))
-                TCS_line += str(c)
-            # Qualities
-            TCS_line += " | "
-            for q in quals:
-                TCS_line += " " * (2 - len(str(q)))
-                TCS_line += str(q) + " "
-            # Discard all tags (not necessary for 4Pipe4 anyway)
-            TCS_line += "|  : |\n"
-            TCS.write(TCS_line)
+            if keepline == True:
+                # Contig name
+                TCS_line = refs
+                TCS_line += " " * (24 - len(refs))
+                # padPos
+                TCS_line += " " * (5 - len(str(padPos)))
+                TCS_line += str(padPos)
+                # unpadPos
+                TCS_line += " " * (8 - len(str(unpadPos)))
+                TCS_line += str(unpadPos)
+                # "B" and "Q"
+                TCS_line += " | "
+                TCS_line += refbase
+                TCS_line += " " * (3 - len(str(refqual)))
+                TCS_line += str(refqual)
+                # Coverages
+                TCS_line += " | "
+                TCS_line += " " * (6 - len(str(tcov)))
+                TCS_line += str(tcov)
+                for c in covs:
+                    TCS_line += " " * (6 - len(str(c)))
+                    TCS_line += str(c)
+                # Qualities
+                TCS_line += " | "
+                for q in quals:
+                    TCS_line += " " * (2 - len(str(q)))
+                    TCS_line += str(q) + " "
+                # Discard all tags (not necessary for 4Pipe4 anyway)
+                TCS_line += "|  : |\n"
+                TCS.write(TCS_line)
 
     TCS.close()
     bamfile.close()
