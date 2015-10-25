@@ -16,6 +16,7 @@
 
 import pysam
 from pipeutils import ASCII_to_num, FASTA_parser
+from math import ceil
 
 
 def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
@@ -75,7 +76,12 @@ def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
 
             tcov += sum(covs)  # Workaround
 
-            if tcov < mincov: # Discard position from TCS in this case
+            # Discard position if below mincov:
+            if tcov < mincov:
+                keepline = False
+
+            # Discard low freq. second variant:
+            elif sorted([int(x) for x in covs])[-2] <= (ceil(tcov * 0.2)):
                 keepline = False
 
             # Define reference base (AKA "B") and qual (AKA "Q")
