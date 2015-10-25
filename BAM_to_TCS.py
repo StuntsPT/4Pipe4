@@ -84,6 +84,15 @@ def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
             elif sorted([int(x) for x in covs])[-2] <= (ceil(tcov * 0.2)):
                 keepline = False
 
+            # Discard low quality variants:
+            elif sorted(quals)[-2] < minqual:
+                keepline = False
+
+            #Discard positions with excess gaps:
+            elif covs[-1]//2 >= tcov:
+                keepline = False
+
+
             # Define reference base (AKA "B") and qual (AKA "Q")
 
             refbase = fasta_d[refs][position]
@@ -124,6 +133,8 @@ def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
                 # Qualities
                 TCS_line += " | "
                 for q in quals:
+                    if q == 0:
+                        q = "--"
                     TCS_line += " " * (2 - len(str(q)))
                     TCS_line += str(q) + " "
                 # Discard all tags (not necessary for 4Pipe4 anyway)
@@ -145,7 +156,7 @@ def covs_and_quals(bases):
         if len(bases[i]) > 0:
             quals.append(QualityCalc(bases[i]))
         else:
-            quals.append("--")
+            quals.append(0)
 
     return covs, quals
 
@@ -177,11 +188,11 @@ def QualityCalc(quals):
     return qual
 
 
-def RunModule(bamfile_name, padded_fasta_name):
+def RunModule(bamfile_name, padded_fasta_name, minqual, mincov):
     """Run the module."""
-    TCSwriter(bamfile_name, FASTA_parser(padded_fasta_name))
+    TCSwriter(bamfile_name, FASTA_parser(padded_fasta_name), minqual, mincov)
 
 if __name__ == "__main__":
-    # Usage: python3 BAM_to_TCS.py file.bam file_out.padded.fasta
+    # Usage: python3 BAM_to_TCS.py file.bam file_out.padded.fasta minqual mincov
     from sys import argv
-    RunModule(argv[1], argv[2])
+    RunModule(argv[1], argv[2], argv[3], argv[4])
