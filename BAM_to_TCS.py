@@ -20,8 +20,10 @@ from math import ceil
 
 
 def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
-    """Convert the bamfile into the TCS format. The writing and the parsing
-    are done simultaneously."""
+    """
+    Convert the bamfile into the TCS format. SNP filtering is done here.
+    The TCS writing and BAM parsing are done simultaneously.
+    """
 
     # Set TCS file 'settings'
     tcsfile_name = bamfile_name[:bamfile_name.rindex(".")] + "_out.short.tcs"
@@ -146,8 +148,10 @@ def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
 
 
 def covs_and_quals(bases):
-    """Take the "bases" dict and returns two lists - one with the
-    coverage and one with the average quals of each base (in order)."""
+    """
+    Take the "bases" dict and returns two lists - one with the
+    coverage and one with the average quals of each base (in order).
+    """
     ordered = ["A", "C", "G", "T", "*"]
     covs = []
     quals = []
@@ -162,9 +166,11 @@ def covs_and_quals(bases):
 
 
 def QualityCalc(quals):
-    """Calculate and return individual bases qualities, just like mira does,
+    """
+    Calculate and return individual bases qualities, just like mira does,
     as seen here:
-    http://www.freelists.org/post/mira_talk/Quality-Values,4 ."""
+    http://www.freelists.org/post/mira_talk/Quality-Values,4 .
+    """
     quals.sort()
     min1 = quals[0]
     if min1 > 0:
@@ -189,7 +195,9 @@ def QualityCalc(quals):
 
 
 def RunModule(bamfile_name, padded_fasta_name, minqual, mincov):
-    """Run the module."""
+    """
+    Run the module.
+    """
     TCSwriter(bamfile_name, FASTA_parser(padded_fasta_name), minqual, mincov)
 
 if __name__ == "__main__":
