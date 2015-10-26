@@ -20,7 +20,6 @@ import sys
 import shutil
 import time
 import configparser
-import TCSfilter as TCS
 import SNPgrabber as SNPg
 import ORFmaker
 import Reporter
@@ -235,10 +234,9 @@ def DiscoveryTCS(basefile):
                          basefile + '.bam')
     BAM_to_TCS.RunModule(basefile + '.bam', basefile + '_assembly/' +
                          miraproject + '_d_results/' + miraproject +
-                         '_out.padded.fasta')
-    TCS.RunModule(basefile + '.tcs', basefile + '_out.short.tcs',
-                  int(config.get('Variables', 'minqual')),
-                  int(config.get('Variables', 'mincov')))
+                         '_out.padded.fasta',
+                         int(config.get('Variables', 'minqual')),
+                         int(config.get('Variables', 'mincov')))
 
 
 def SNPgrabber(basefile):
