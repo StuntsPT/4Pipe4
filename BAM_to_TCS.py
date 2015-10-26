@@ -24,7 +24,7 @@ def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
     are done simultaneously."""
 
     # Set TCS file 'settings'
-    tcsfile_name = bamfile_name[:bamfile_name.rindex(".")] + ".tcs"
+    tcsfile_name = bamfile_name[:bamfile_name.rindex(".")] + "_out.short.tcs"
     TCS = open(tcsfile_name, 'w')
 
     # Set bamfile 'settings'
