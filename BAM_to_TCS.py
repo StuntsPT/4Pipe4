@@ -19,7 +19,7 @@ from pipeutils import ASCII_to_num, FASTA_parser
 from math import ceil
 
 
-def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
+def tcs_writer(bamfile_name, fasta_d, minqual, mincov):
     """
     Convert the bamfile into the TCS format. SNP filtering is done here.
     The TCS writing and BAM parsing are done simultaneously.
@@ -27,7 +27,7 @@ def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
 
     # Set TCS file 'settings'
     tcsfile_name = bamfile_name[:bamfile_name.rindex(".")] + "_out.short.tcs"
-    TCS = open(tcsfile_name, 'w')
+    tcs = open(tcsfile_name, 'w')
 
     # Set bamfile 'settings'
     bamfile = pysam.Samfile(bamfile_name, 'rb')
@@ -36,11 +36,11 @@ def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
     basetrans = "ACGT*"
 
     # Write TCS Header
-    TCS.write("#TCS V1.0\n")
-    TCS.write("#\n")
-    TCS.write("# contig name            padPos  upadPos| B  Q | tcov covA ")
-    TCS.write("covC covG covT cov* | qA qC qG qT q* |  S |   Tags\n")
-    TCS.write("#\n")
+    tcs.write("#TCS V1.0\n")
+    tcs.write("#\n")
+    tcs.write("# contig name            padPos  upadPos| B  Q | tcov covA ")
+    tcs.write("covC covG covT cov* | qA qC qG qT q* |  S |   Tags\n")
+    tcs.write("#\n")
 
     for refs in bamfile.references:
         numpads = 0
@@ -104,46 +104,19 @@ def TCSwriter(bamfile_name, fasta_d, minqual, mincov):
             # Define padded and unpadded positions (AKA "padPos" and "upadPos")
             if refbase == "*":
                 numpads += 1
-                unpadPos = -1
+                unpad_pos = -1
             else:
-                unpadPos = position - numpads
-            padPos = position
+                unpad_pos = position - numpads
+            pad_pos = position
 
             # Write TCS lines #
-            if keepline == True:
-                # Contig name
-                TCS_line = refs
-                TCS_line += " " * (24 - len(refs))
-                # padPos
-                TCS_line += " " * (5 - len(str(padPos)))
-                TCS_line += str(padPos)
-                # unpadPos
-                TCS_line += " " * (8 - len(str(unpadPos)))
-                TCS_line += str(unpadPos)
-                # "B" and "Q"
-                TCS_line += " | "
-                TCS_line += refbase
-                TCS_line += " " * (3 - len(str(refqual)))
-                TCS_line += str(refqual)
-                # Coverages
-                TCS_line += " | "
-                TCS_line += " " * (6 - len(str(tcov)))
-                TCS_line += str(tcov)
-                for c in covs:
-                    TCS_line += " " * (6 - len(str(c)))
-                    TCS_line += str(c)
-                # Qualities
-                TCS_line += " | "
-                for q in quals:
-                    if q == 0:
-                        q = "--"
-                    TCS_line += " " * (2 - len(str(q)))
-                    TCS_line += str(q) + " "
-                # Discard all tags (not necessary for 4Pipe4 anyway)
-                TCS_line += "|  : |\n"
-                TCS.write(TCS_line)
+            if keepline is True:
+                tcs_line = tcs_line_composer(refs, pad_pos, unpad_pos, refbase,
+                                             refqual, tcov, covs, quals)
 
-    TCS.close()
+                tcs.write(tcs_line)
+
+    tcs.close()
     bamfile.close()
 
 
@@ -158,14 +131,14 @@ def covs_and_quals(bases):
     for i in ordered:
         covs.append(len(bases[i]))
         if len(bases[i]) > 0:
-            quals.append(QualityCalc(bases[i]))
+            quals.append(quality_calc(bases[i]))
         else:
             quals.append(0)
 
     return covs, quals
 
 
-def QualityCalc(quals):
+def quality_calc(quals):
     """
     Calculate and return individual bases qualities, just like mira does,
     as seen here:
@@ -193,14 +166,53 @@ def QualityCalc(quals):
 
     return qual
 
+def tcs_line_composer(refs, pad_pos, unpad_pos, refbase,
+                      refqual, tcov, covs, quals):
+    """
+    Composes and returns a TCS line based on the data harvested from the BAM
+    file.
+    """
+    # Contig name
+    tcs_line = refs
+    tcs_line += " " * (24 - len(refs))
+    # pad_pos
+    tcs_line += " " * (5 - len(str(pad_pos)))
+    tcs_line += str(pad_pos)
+    # unpad_pos
+    tcs_line += " " * (8 - len(str(unpad_pos)))
+    tcs_line += str(unpad_pos)
+    # "B" and "Q"
+    tcs_line += " | "
+    tcs_line += refbase
+    tcs_line += " " * (3 - len(str(refqual)))
+    tcs_line += str(refqual)
+    # Coverages
+    tcs_line += " | "
+    tcs_line += " " * (6 - len(str(tcov)))
+    tcs_line += str(tcov)
+    for cov in covs:
+        tcs_line += " " * (6 - len(str(cov)))
+        tcs_line += str(cov)
+    # Qualities
+    tcs_line += " | "
+    for basequal in quals:
+        if basequal == 0:
+            basequal = "--"
+        tcs_line += " " * (2 - len(str(basequal)))
+        tcs_line += str(basequal) + " "
+    # Discard all tags (not necessary for 4Pipe4 anyway)
+    tcs_line += "|  : |\n"
+
+    return tcs_line
+
 
 def RunModule(bamfile_name, padded_fasta_name, minqual, mincov):
     """
     Run the module.
     """
-    TCSwriter(bamfile_name, FASTA_parser(padded_fasta_name), minqual, mincov)
+    tcs_writer(bamfile_name, FASTA_parser(padded_fasta_name), minqual, mincov)
 
 if __name__ == "__main__":
-    # Usage: python3 BAM_to_TCS.py file.bam file_out.padded.fasta minqual mincov
+    # Usage: python3 BAM_to_tcs.py file.bam file_out.padded.fasta minqual mincov
     from sys import argv
-    RunModule(argv[1], argv[2], argv[3], argv[4])
+    RunModule(argv[1], argv[2], int(argv[3]), int(argv[4]))
