@@ -25,7 +25,6 @@ way to install all of 4Pipe4's dependencies.
 * 4Pipe4.py - Main file: this is the script you want to run;
 * 4Pipe4rc - Configuration file;
 * BAM_to_TCS.py - Module to convert .bam files into the TCS format.
-* TCSfilter.py - Module for SNP filtering in TCS files;
 * LICENSE - License file;
 * Metrics.py - Module for generating dataset metrics;
 * ORFmaker.py - Module for finding ORFs;
