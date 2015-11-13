@@ -57,7 +57,7 @@ external programs that 4Pipe4 uses in it's processes. By default, these are:
 * mira 4.x series (http://mira-assembler.sourceforge.net/)
 * getorf (http://emboss.sourceforge.net/apps/cvs/emboss/apps/getorf.html)
 * blast (ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
-* blast2go4pipe (http://www.blast2go.com/b2glaunch/resources)  - *Seems to have been discontinued*
+* blast2go4pipe (http://www.blast2go.com/data/blast2go/b2g4pipe_v2.5.zip)  - *Seems to have been discontinued*
 * etandem (http://helixweb.nih.gov/emboss/html/etandem.html)
 * 7zip (http://www.7-zip.org/)
 * pysam (https://github.com/pysam-developers/pysam)
@@ -93,7 +93,7 @@ If they are run in the order they are shown here, they will:
 "blast", "p7zip", "pysam", "cython" and "setuptools".
 2. Download, compile and locally install emboss' "getorf" and "etandem". (This
 script requires build tools such as "make" and "gcc". They should be readily
-available on any *nix machine you have access to but don't have root access.)
+available on any \*nix machine you have access to but don't have root access.)
 3. Download local copies of NCBI's "Univec" and "nr" databases.
 4. Generate pre-configured entries for all of the above ready to be copied &
 pasted into 4Pipe4rc.
