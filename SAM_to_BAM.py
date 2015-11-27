@@ -26,6 +26,7 @@ def SAM_to_BAM(samfile_name, bamfile_name):
 
     bamfile = open(unsortedbamfile_name, "wb")
     bamfile.write(pysam.view("-b", "-S", samfile_name))
+    bamfile.close()
 
     if bamfile_name.endswith(".bam"):
         bamfile_name = bamfile_name[:-4]
