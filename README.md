@@ -97,7 +97,7 @@ available on any \*nix machine you have access to but don't have root access.)
 4. Generate pre-configured entries for all of the above ready to be copied &
 pasted into 4Pipe4rc.
 
-These scripts should significantlly speed up the instalation process of these
+These scripts should significantly speed up the installation process of these
 external 4Pipe4 programs.
 
 By default these scripts will install all the software to "~/Software", but this
@@ -116,7 +116,7 @@ usage: 4Pipe4 [-h] -i sff_file -o basefile [-c configfile] [-s [RUN_LIST]]
 
 optional arguments:
   -h, --help     show this help message and exit
-  -i sff_file    Provide the full path to your target sff file
+  -i input_file    Provide the full path to your target input file
   -o basefile    Provide the full path to your results directory, plus the name you want to give your results
   -c configfile  Provide the full path to your configuration file. If none is provided, the program will look in the current working directory and  then in ~/.config/4Pipe4rc (in this order) for one. If none is found the  program will stop
   -s [RUN_LIST]  Specify the numbers corresponding to the pipeline steps that will be run. The string after -s must be given inside quotation marks, and numbers can be joined together or separated by any symbol. The numbers are the pipeline steps that should be run. This is an optional argument and it's omission will run all steps by default'. The numbers, from 1 to 9 represent the following steps:
@@ -130,15 +130,26 @@ optional arguments:
                         8 - SSR finder
                         9 - 7zip the report
 
+  -d 454/solexa    Declare the type of data being used. Currentlly suported are 454 (454) and Illumina (solexa). Default is 454.
+  -p [True/False]  Is the data paired end? True/False, default is                     False.
+
 The idea here is that to resume an analysis that was interrupted for example after the assembling process you should issue -s '4,5,6,7,8,9' or -s '456789'. Note that some steps depend on the output of previous steps, so using some combinations can cause errors. The arguments can be given in any order.
 ```
 
 --------------------------------------------
 
-If you wish to run the entire pipeline, just issue something like
+If you wish to run the entire pipeline on 454 data, just issue something like
 
 ```
 python3 4Pipe4.py -i /path/to/file.sff -o /path/to/results/basefilename
+```
+
+However, if you wish to run the pipeline with Illumina data, skip steps 1 and 2,
+and add the "-d solexa" switch:
+
+```
+python3 4Pipe4.py -i /path/to/reads.fastq -o /path/to/results/basefilename\
+-d solexa -s 3,4,5,6,7,8,9
 ```
 
 Use the -s option to specify only the steps you wish to run from the analysis
@@ -151,6 +162,8 @@ purposes, as well as documentation on how to do an example run of 4Pipe4.
 
 The configuration file contains information on every option. You should change
 those options to reflect your own system and SNP detection preferences.
+Do not forget that the helper scripts will generate most of the config file
+for you if you wish.
 
 ### CONTACT
 
