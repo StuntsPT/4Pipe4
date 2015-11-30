@@ -42,8 +42,8 @@ The arguments can be given in any order.",
                                  prog="4Pipe4",
                                  formatter_class=RawTextHelpFormatter)
 parser.add_argument("-i", dest="infile", nargs=1, required=True,
-                    help="Provide the full path to your target sff file\n",
-                    metavar="sff_file")
+                    help="Provide the full path to your target input file\n",
+                    metavar="input_file")
 parser.add_argument("-o", dest="outfile", nargs=1, required=True,
                     help="Provide the full path to your results directory, \
 plus the name you want to give your results\n",
@@ -93,7 +93,7 @@ def StartUp():
     input_file = os.path.abspath("".join(arg.infile))
 
     # Solexa checks
-    if arg.datafile == "solexa":
+    if arg.datatype == "solexa":
         if "1" in arg.run_list or "2" in arg.run_list:
             quit("Please skip steps 1 and 2 for illumina data. They are not required.")
         if arg.infile.endswith("fastq") is False or arg.infile.endswith("fasq.gz") is False:
