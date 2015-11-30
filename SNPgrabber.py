@@ -27,8 +27,8 @@ def TCStoDict(tcs_file, minqual):
 
     for lines in tcs:
         name = re.match('^\w*', lines).group(0)  # Contig name
-        quals = re.split(' *', re.search('\|.{16}\|', lines).
-                         group(0)[2:-2].strip())
+        quals = lines.split("|")[3].split()
+
         SNP = ''
         for q, b in zip(quals[:-1], ['A', 'C', 'G', 'T']):
             try:
