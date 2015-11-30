@@ -63,6 +63,12 @@ default. The numbers, from 1 to 9 represent the following steps:\n\t1 - SFF \
 extraction\n\t2 - SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - \
 SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR finder\n\t9 - 7zip \
 the report")
+parser.add_argument("-d", dest="datatype", nargs=1, help="Declare the type of \
+data being used. Currentlly suported are 454 (454) and Illumina (solexa). \
+Default is 454.", required=False, metavar="454/solexa", default="454")
+parser.add_argument("-p", dest="paired", nargs="?", default=False, type=bool,
+                    help="Is the data paired end? True/False, default is \
+                    False.", required=False, metavar="True/False")
 arg = parser.parse_args()
 
 
@@ -80,8 +86,28 @@ def loading(current_state, size, prefix, width):
 
 
 def StartUp():
+    """
+    Make some basic checks regarding user input.
+    """
     basefile = os.path.abspath("".join(arg.outfile))
-    sff = os.path.abspath("".join(arg.infile))
+    input_file = os.path.abspath("".join(arg.infile))
+
+    # Solexa checks
+    if arg.datafile == "solexa":
+        if "1" in arg.run_list or "2" in arg.run_list:
+            quit("Please skip steps 1 and 2 for illumina data. They are not required.")
+        if arg.infile.endswith("fastq") is False or arg.infile.endswith("fasq.gz") is False:
+            quit("Infile must be in 'fastq' format for illumina data.")
+        if os.path.isfile(basefile + ".fastq"):
+            if basefile + ".fastq" == input_file:
+                pass
+            else:
+                quit(basefile + " already exists. Please deal with it before \
+                     proceeding.")
+        else:
+            os.symlink(input_file, outfile + ".fastq")
+
+
     if arg.configFile is not None:
         rcfile = os.path.abspath("".join(arg.configFile))
     elif os.path.isfile('4Pipe4rc'):
@@ -101,7 +127,7 @@ def StartUp():
     except:
         print("\nERROR: Invalid configuration file\n")
         quit("Please run 4Pipe4.py -h for help with running the pipeline.")
-    return basefile, sff, config
+    return basefile, input_file, config
 
 
 def SysPrep(basefile):
@@ -205,7 +231,10 @@ def MiraRun(basefile):
     manifest.write(config.get('Mira Parameters', 'mira454') + "\n\n")
     manifest.write(config.get('Mira Parameters', 'mirareadgroup') + "\n")
     manifest.write(config.get('Mira Parameters', 'miratech') + "\n")
-    manifest.write("data = " + basename + ".clean.fasta\n")
+    if arg.datatype == "solexa":
+        manifest.write("data = " + basename + ".fastq\n")
+    else:
+        manifest.write("data = " + basename + ".clean.fasta\n")
     manifest.close()
 
     # Run mira
@@ -280,6 +309,7 @@ def ORFliner(basefile):
     print("\nRunning NCBI 'blastx' using the following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
+
     # Then we write the metrics report:
     print("\nRunning the metrics calculator module...")
     seqclean_log_path = "%s/seqcl_%s.fasta.log" % (os.path.split(basefile)[0],
