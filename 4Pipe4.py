@@ -105,7 +105,7 @@ def StartUp():
                 quit(basefile + " already exists. Please deal with it before \
                      proceeding.")
         else:
-            os.symlink(input_file, outfile + ".fastq")
+            os.symlink(input_file, arg.outfile + ".fastq")
 
 
     if arg.configFile is not None:
@@ -314,13 +314,19 @@ def ORFliner(basefile):
     print("\nRunning the metrics calculator module...")
     seqclean_log_path = "%s/seqcl_%s.fasta.log" % (os.path.split(basefile)[0],
                                                    miraproject)
-    Metrics.Run_module(seqclean_log_path, basefile + '.fasta',
-                       basefile + '.clean.fasta', basefile + '.fasta.qual',
-                       basefile + '.clean.fasta.qual',
-                       basefile + '_assembly/' + miraproject + '_d_info/'
-                       + miraproject + '_info_assembly.txt', basefile
-                       + '.SNPs.fasta', basefile + '.BestORF.fasta',
-                       basefile + '.Metrics.html')
+    if arg.datatype == "454":
+        Metrics.Run_module(seqclean_log_path, basefile + '.fasta',
+                           basefile + '.clean.fasta', basefile + '.fasta.qual',
+                           basefile + '.clean.fasta.qual',
+                           basefile + '_assembly/' + miraproject + '_d_info/'
+                           + miraproject + '_info_assembly.txt', basefile
+                           + '.SNPs.fasta', basefile + '.BestORF.fasta',
+                           basefile + '.Metrics.html')
+    else:
+        Metrics.Run_as_solexa(basefile + '_assembly/' + miraproject + '_d_info/'
+                             + miraproject + '_info_assembly.txt', basefile
+                             + '.SNPs.fasta', basefile + '.BestORF.fasta',
+                             basefile + '.Metrics.html')
     # Finally we write down our report using the data gathered so far:
     print("\nRunning Reporter module...")
     Reporter.RunModule(basefile + '.BestORF.fasta', basefile + '.SNPs.fasta',
