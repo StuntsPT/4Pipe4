@@ -41,9 +41,15 @@ the output of previous steps, so using some combinations can cause errors. \
 The arguments can be given in any order.",
                                  prog="4Pipe4",
                                  formatter_class=RawTextHelpFormatter)
-parser.add_argument("-i", dest="infile", nargs=1, required=True,
+
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument("-i", dest="infile", nargs=1, required=False,
                     help="Provide the full path to your target input file\n",
                     metavar="input_file")
+group.add_argument("-p", dest="infile", nargs=2, required=False,
+                    help="Provide the full path to your target input pair files\n",
+                    metavar="input_pair")
+
 parser.add_argument("-o", dest="outfile", nargs=1, required=True,
                     help="Provide the full path to your results directory, \
 plus the name you want to give your results\n",
@@ -66,9 +72,9 @@ the report")
 parser.add_argument("-d", dest="datatype", nargs=1, help="Declare the type of \
 data being used. Currentlly suported are 454 (454) and Illumina (solexa). \
 Default is 454.", required=False, metavar="454/solexa", default="454")
-parser.add_argument("-p", dest="paired", nargs="?", default=False, type=bool,
-                    help="Is the data paired end? True/False, default is \
-                    False.", required=False, metavar="True/False")
+# parser.add_argument("-p", dest="paired", nargs="?", default=False, type=bool,
+#                     help="Is the data paired end? True/False, default is \
+#                     False.", required=False, metavar="True/False")
 arg = parser.parse_args()
 
 
@@ -96,7 +102,7 @@ def StartUp():
     if arg.datatype == "solexa":
         if "1" in arg.run_list or "2" in arg.run_list:
             quit("Please skip steps 1 and 2 for illumina data. They are not required.")
-        if arg.infile.endswith("fastq") is False or arg.infile.endswith("fasq.gz") is False:
+        if arg.infile.endswith("fastq") is False or arg.infile.endswith("fastq.gz") is False:
             quit("Infile must be in 'fastq' format for illumina data.")
         if os.path.isfile(basefile + ".fastq"):
             if basefile + ".fastq" == input_file:
@@ -452,4 +458,5 @@ def RunMe(arguments):
 
 basefile, sff, config = StartUp()
 miraproject = SysPrep(basefile)
+print(arg.infile)
 RunMe(arg.run_list)
