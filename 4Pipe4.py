@@ -112,7 +112,7 @@ def StartUp():
                 else:
                     quit(basefile + " already exists. Please deal with it \
                          before proceeding.")
-            else:
+            elif len(input_file) == 1:
                 os.symlink(inputs, arg.outfile + ".fastq")
 
 
