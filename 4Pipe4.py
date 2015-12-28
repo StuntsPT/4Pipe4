@@ -47,7 +47,8 @@ group.add_argument("-i", dest="infile", nargs=1, required=False,
                     help="Provide the full path to your target input file\n",
                     metavar="input_file")
 group.add_argument("-p", dest="infile", nargs=2, required=False,
-                    help="Provide the full path to your target input pair files\n",
+                    help="Provide the full path to your target input pair \
+                    files. Currentlly only woring for solexa data type.\n",
                     metavar="input_pair")
 
 parser.add_argument("-o", dest="outfile", nargs=1, required=True,
@@ -96,22 +97,23 @@ def StartUp():
     Make some basic checks regarding user input.
     """
     basefile = os.path.abspath("".join(arg.outfile))
-    input_file = os.path.abspath("".join(arg.infile))
+    input_file = [os.path.abspath("".join(x)) for x in arg.infile]
 
     # Solexa checks
     if arg.datatype == "solexa":
         if "1" in arg.run_list or "2" in arg.run_list:
             quit("Please skip steps 1 and 2 for illumina data. They are not required.")
-        if arg.infile.endswith("fastq") is False or arg.infile.endswith("fastq.gz") is False:
-            quit("Infile must be in 'fastq' format for illumina data.")
-        if os.path.isfile(basefile + ".fastq"):
-            if basefile + ".fastq" == input_file:
-                pass
+        for inputs in input_file:
+            if inputs.endswith(("fastq", "fastq.gz")) is False:
+                quit("Infile must be in 'fastq' format for illumina data.")
+            if os.path.isfile(basefile + ".fastq"):
+                if basefile + ".fastq" == inputs:
+                    pass
+                else:
+                    quit(basefile + " already exists. Please deal with it \
+                         before proceeding.")
             else:
-                quit(basefile + " already exists. Please deal with it before \
-                     proceeding.")
-        else:
-            os.symlink(input_file, arg.outfile + ".fastq")
+                os.symlink(inputs, arg.outfile + ".fastq")
 
 
     if arg.configFile is not None:
@@ -171,8 +173,10 @@ def RunProgram(cli, requires_output):
 
 
 def SffExtraction(sff, basefile):
-    '''Function for using the sff_extractor module. It will look for an "ideal"
-    clipping value using multiple runs before outputting the final files.'''
+    """
+    Function for using the sff_extractor module. It will look for an "ideal"
+    clipping value using multiple runs before outputting the final files.
+    """
     clip_found = 0
 
     # Sff_extractor parameters:
@@ -192,7 +196,7 @@ def SffExtraction(sff, basefile):
     sff_config["seq_fname"] = basefile + ".fasta"
 
     while clip_found < 2:
-        extra_clip = sff_extractor.extract_reads_from_sff(sff_config, [sff])
+        extra_clip = sff_extractor.extract_reads_from_sff(sff_config, sff[0])
         sff_config["min_leftclip"] += extra_clip
         if extra_clip == 0:
             clip_found += 1
@@ -227,20 +231,31 @@ def SeqClean(basefile):
 
 
 def MiraRun(basefile):
-    '''Assemble the sequences and write the menifest file'''
+    """
+    Write the manifest file and assemble the sequences.
+    """
     basename = os.path.basename(basefile)
     manifest = open(basefile + ".manifest", 'w')
     manifest.write("project = " + basename + "\n")
     manifest.write(config.get('Mira Parameters', 'mirajob') + "\n")
     manifest.write(config.get('Mira Parameters', 'miracommon') + " -GE:not="
                    + config.get('Variables', 'seqcores') + " \\\n")
-    manifest.write(config.get('Mira Parameters', 'mira454') + "\n\n")
+    if arg.datatype == "454":
+        manifest.write(config.get('Mira Parameters', 'mira454') + "\n\n")
+    elif arg.datatype == "solexa":
+        manifest.write(config.get('Mira Parameters', 'mirasolexa') + "\n\n")
     manifest.write(config.get('Mira Parameters', 'mirareadgroup') + "\n")
+    if len(arg.infile) == 2:
+        manifest.write("autopairing\n")
     manifest.write(config.get('Mira Parameters', 'miratech') + "\n")
-    if arg.datatype == "solexa":
-        manifest.write("data = " + basename + ".fastq\n")
-    else:
+    if arg.datatype == "454":
         manifest.write("data = " + basename + ".clean.fasta\n")
+    elif arg.datatype == "solexa":
+        if len(arg.infile) == 1:
+            manifest.write("data = " + os.path.abspath(arg.infile[0]) + "\n")
+        else:
+            manifest.write("data = " + os.path.abspath(arg.infile[0]) + " " +
+                           os.path.abspath(arg.infile[1]) + "\n")
     manifest.close()
 
     # Run mira
@@ -458,5 +473,4 @@ def RunMe(arguments):
 
 basefile, sff, config = StartUp()
 miraproject = SysPrep(basefile)
-print(arg.infile)
 RunMe(arg.run_list)
