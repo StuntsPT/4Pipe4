@@ -70,7 +70,7 @@ default. The numbers, from 1 to 9 represent the following steps:\n\t1 - SFF \
 extraction\n\t2 - SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - \
 SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR finder\n\t9 - 7zip \
 the report")
-parser.add_argument("-d", dest="datatype", nargs=1, help="Declare the type of \
+parser.add_argument("-d", dest="datatype", help="Declare the type of \
 data being used. Currentlly suported are 454 (454) and Illumina (solexa). \
 Default is 454.", required=False, metavar="454/solexa", default="454")
 # parser.add_argument("-p", dest="paired", nargs="?", default=False, type=bool,
