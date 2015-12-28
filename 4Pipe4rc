@@ -54,11 +54,13 @@ min_ssr_qual = 70
 #mirajob = job = est,denovo,accurate
 #miracommon = parameters = COMMON_SETTINGS -AS:nop=5:ugpf=off -CO:mr=on:asir=on -OUT:output_result_caf=off:output_result_maf=on
 #mira454 = 454_SETTINGS -AL:egp=off -CL:cpat=on
+#mirasolexa = SOLEXA_SETTINGS -CO:asir=yes AL:egp=off
 #mirareadgroup = readgroup = Test data
 #miratech = technology = 454
 
 mirajob =
 miracommon =
 mira454 =
+mirasolexa = 
 mirareadgroup =
 miratech =
