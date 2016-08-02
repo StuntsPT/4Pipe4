@@ -3,6 +3,11 @@
 First of all, thank for downloading CoBiG² 4Pipe4 analysis pipeline. We hope you
 find it useful. 4Pipe4 allows you to automate NGS data analysis process into a
 simple script run. It is designed to be as simple to use as possible.
+4Pipe4 can now be used with illumina data, however, keep in mind that 4Pipe4 was
+designed for 454 data, and although everything should run using illumina data,
+it's performance was not nearly was tested as the performance with 454 data.
+Therefore, the software is usable, but YMMV with the default values for illumina
+data. In fact, any feedback with this sort of data is **very** appreciated.
 
 ### INSTALLING
 
