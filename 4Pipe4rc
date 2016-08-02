@@ -41,9 +41,9 @@ min_len = 50
 #Number of CPU cores to be used by seqclean, BLAST and mira:
 seqcores = 10
 #Minumim base coverage to accept as a putative SNP:
-mincov = 15
+mincov = 15 # 20 or 25 are better suited for illumina data
 #Minimum average base quality to accept as a putative SNP:
-minqual = 70
+minqual = 70 # 60 will suffice for illumina data
 #Minimum contig quality to accept SSR:
 min_ssr_qual = 70
 
