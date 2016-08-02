@@ -41,9 +41,16 @@ the output of previous steps, so using some combinations can cause errors. \
 The arguments can be given in any order.",
                                  prog="4Pipe4",
                                  formatter_class=RawTextHelpFormatter)
-parser.add_argument("-i", dest="infile", nargs=1, required=True,
-                    help="Provide the full path to your target sff file\n",
-                    metavar="sff_file")
+
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument("-i", dest="infile", nargs=1, required=False,
+                    help="Provide the full path to your target input file\n",
+                    metavar="input_file")
+group.add_argument("-p", dest="infile", nargs=2, required=False,
+                    help="Provide the full path to your target input pair \
+                    files. Currentlly only woring for solexa data type.\n",
+                    metavar="input_pair")
+
 parser.add_argument("-o", dest="outfile", nargs=1, required=True,
                     help="Provide the full path to your results directory, \
 plus the name you want to give your results\n",
@@ -63,6 +70,12 @@ default. The numbers, from 1 to 9 represent the following steps:\n\t1 - SFF \
 extraction\n\t2 - SeqClean\n\t3 - Mira\n\t4 - DiscoveryTCS\n\t5 - \
 SNP grabber\n\t6 - ORF finder\n\t7 - Blast2go\n\t8 - SSR finder\n\t9 - 7zip \
 the report")
+parser.add_argument("-d", dest="datatype", help="Declare the type of \
+data being used. Currentlly suported are 454 (454) and Illumina (solexa). \
+Default is 454.", required=False, metavar="454/solexa", default="454")
+# parser.add_argument("-p", dest="paired", nargs="?", default=False, type=bool,
+#                     help="Is the data paired end? True/False, default is \
+#                     False.", required=False, metavar="True/False")
 arg = parser.parse_args()
 
 
@@ -80,8 +93,29 @@ def loading(current_state, size, prefix, width):
 
 
 def StartUp():
+    """
+    Make some basic checks regarding user input.
+    """
     basefile = os.path.abspath("".join(arg.outfile))
-    sff = os.path.abspath("".join(arg.infile))
+    input_file = [os.path.abspath("".join(x)) for x in arg.infile]
+
+    # Solexa checks
+    if arg.datatype == "solexa":
+        if "1" in arg.run_list or "2" in arg.run_list:
+            quit("Please skip steps 1 and 2 for illumina data. They are not required.")
+        for inputs in input_file:
+            if inputs.endswith(("fastq", "fastq.gz")) is False:
+                quit("Infile must be in 'fastq' format for illumina data.")
+            if os.path.isfile(basefile + ".fastq"):
+                if basefile + ".fastq" == inputs:
+                    pass
+                else:
+                    quit(basefile + " already exists. Please deal with it \
+                         before proceeding.")
+            elif len(input_file) == 1:
+                os.symlink(inputs, arg.outfile + ".fastq")
+
+
     if arg.configFile is not None:
         rcfile = os.path.abspath("".join(arg.configFile))
     elif os.path.isfile('4Pipe4rc'):
@@ -101,7 +135,7 @@ def StartUp():
     except:
         print("\nERROR: Invalid configuration file\n")
         quit("Please run 4Pipe4.py -h for help with running the pipeline.")
-    return basefile, sff, config
+    return basefile, input_file, config
 
 
 def SysPrep(basefile):
@@ -139,8 +173,10 @@ def RunProgram(cli, requires_output):
 
 
 def SffExtraction(sff, basefile):
-    '''Function for using the sff_extractor module. It will look for an "ideal"
-    clipping value using multiple runs before outputting the final files.'''
+    """
+    Function for using the sff_extractor module. It will look for an "ideal"
+    clipping value using multiple runs before outputting the final files.
+    """
     clip_found = 0
 
     # Sff_extractor parameters:
@@ -160,7 +196,7 @@ def SffExtraction(sff, basefile):
     sff_config["seq_fname"] = basefile + ".fasta"
 
     while clip_found < 2:
-        extra_clip = sff_extractor.extract_reads_from_sff(sff_config, [sff])
+        extra_clip = sff_extractor.extract_reads_from_sff(sff_config, sff[0])
         sff_config["min_leftclip"] += extra_clip
         if extra_clip == 0:
             clip_found += 1
@@ -195,17 +231,31 @@ def SeqClean(basefile):
 
 
 def MiraRun(basefile):
-    '''Assemble the sequences and write the menifest file'''
+    """
+    Write the manifest file and assemble the sequences.
+    """
     basename = os.path.basename(basefile)
     manifest = open(basefile + ".manifest", 'w')
     manifest.write("project = " + basename + "\n")
     manifest.write(config.get('Mira Parameters', 'mirajob') + "\n")
     manifest.write(config.get('Mira Parameters', 'miracommon') + " -GE:not="
                    + config.get('Variables', 'seqcores') + " \\\n")
-    manifest.write(config.get('Mira Parameters', 'mira454') + "\n\n")
+    if arg.datatype == "454":
+        manifest.write(config.get('Mira Parameters', 'mira454') + "\n\n")
+    elif arg.datatype == "solexa":
+        manifest.write(config.get('Mira Parameters', 'mirasolexa') + "\n\n")
     manifest.write(config.get('Mira Parameters', 'mirareadgroup') + "\n")
+    if len(arg.infile) == 2:
+        manifest.write("autopairing\n")
     manifest.write(config.get('Mira Parameters', 'miratech') + "\n")
-    manifest.write("data = " + basename + ".clean.fasta\n")
+    if arg.datatype == "454":
+        manifest.write("data = " + basename + ".clean.fasta\n")
+    elif arg.datatype == "solexa":
+        if len(arg.infile) == 1:
+            manifest.write("data = " + os.path.abspath(arg.infile[0]) + "\n")
+        else:
+            manifest.write("data = " + os.path.abspath(arg.infile[0]) + " " +
+                           os.path.abspath(arg.infile[1]) + "\n")
     manifest.close()
 
     # Run mira
@@ -280,17 +330,24 @@ def ORFliner(basefile):
     print("\nRunning NCBI 'blastx' using the following command:")
     print(' '.join(cli))
     RunProgram(cli, 0)
+
     # Then we write the metrics report:
     print("\nRunning the metrics calculator module...")
     seqclean_log_path = "%s/seqcl_%s.fasta.log" % (os.path.split(basefile)[0],
                                                    miraproject)
-    Metrics.Run_module(seqclean_log_path, basefile + '.fasta',
-                       basefile + '.clean.fasta', basefile + '.fasta.qual',
-                       basefile + '.clean.fasta.qual',
-                       basefile + '_assembly/' + miraproject + '_d_info/'
-                       + miraproject + '_info_assembly.txt', basefile
-                       + '.SNPs.fasta', basefile + '.BestORF.fasta',
-                       basefile + '.Metrics.html')
+    if arg.datatype == "454":
+        Metrics.Run_module(seqclean_log_path, basefile + '.fasta',
+                           basefile + '.clean.fasta', basefile + '.fasta.qual',
+                           basefile + '.clean.fasta.qual',
+                           basefile + '_assembly/' + miraproject + '_d_info/'
+                           + miraproject + '_info_assembly.txt', basefile
+                           + '.SNPs.fasta', basefile + '.BestORF.fasta',
+                           basefile + '.Metrics.html')
+    else:
+        Metrics.Run_as_solexa(basefile + '_assembly/' + miraproject + '_d_info/'
+                             + miraproject + '_info_assembly.txt', basefile
+                             + '.SNPs.fasta', basefile + '.BestORF.fasta',
+                             basefile + '.Metrics.html')
     # Finally we write down our report using the data gathered so far:
     print("\nRunning Reporter module...")
     Reporter.RunModule(basefile + '.BestORF.fasta', basefile + '.SNPs.fasta',

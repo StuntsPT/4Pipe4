@@ -44,7 +44,7 @@ def Read_qual_metrics(qual_file):
             quals += lines
     qual.close()
     qual_avg = "%.2f" % (sum(quals)/len(quals))
-    
+
     return(qual_avg)
 
 
@@ -159,26 +159,28 @@ Report</TITLE>            \n        <STYLE>\n        <!-- \n        BODY,DIV,\
 TABLE,THEAD,TBODY,TFOOT,TR,TH,TD,P { font-family:"Arial"; font-size:small }\
 \n        -->\n        </STYLE>\n    </HEAD>\n<BODY>\n')
     metrics_file.write("<H1>4Pipe4 metrics report:</H1>\n")
-    metrics_file.write("<H2>Dataset metrics:</H2>\n")
-    metrics_file.write("<p>Average read length (before cleaning): "
-                       + str(dataset_info[1][0]) + "</p>\n")
-    metrics_file.write("<p>Maximum read length (before cleaning): "
-                       + str(dataset_info[1][1]) + "</p>\n")
-    metrics_file.write("<p>Median of read length (before cleaning): "
-                       + str(dataset_info[1][2]) + "</p>\n")
-    metrics_file.write("<p>Average base quality (before cleaning): "
-                       + str(dataset_info[3]) + "</p>\n")
-    metrics_file.write("<H3>SeqClean report:</H3>")
-    for lines in dataset_info[0]:
-        metrics_file.write("<p>" + lines + "</p>")
-    metrics_file.write("<p>Average read length (after cleaning): "
-                       + str(dataset_info[2][0]) + "</p>\n")
-    metrics_file.write("<p>Maximum read length (after cleaning): "
-                       + str(dataset_info[2][1]) + "</p>\n")
-    metrics_file.write("<p>Median of read length (after cleaning): "
-                       + str(dataset_info[2][2]) + "</p>\n")
-    metrics_file.write("<p>Average base quality (after cleaning): "
-                       + str(dataset_info[4]) + "</p>\n")
+    # Write these metrics for 454 only.
+    if dataset_info != "solxa":
+        metrics_file.write("<H2>Dataset metrics:</H2>\n")
+        metrics_file.write("<p>Average read length (before cleaning): "
+                           + str(dataset_info[1][0]) + "</p>\n")
+        metrics_file.write("<p>Maximum read length (before cleaning): "
+                           + str(dataset_info[1][1]) + "</p>\n")
+        metrics_file.write("<p>Median of read length (before cleaning): "
+                           + str(dataset_info[1][2]) + "</p>\n")
+        metrics_file.write("<p>Average base quality (before cleaning): "
+                           + str(dataset_info[3]) + "</p>\n")
+        metrics_file.write("<H3>SeqClean report:</H3>")
+        for lines in dataset_info[0]:
+            metrics_file.write("<p>" + lines + "</p>")
+        metrics_file.write("<p>Average read length (after cleaning): "
+                           + str(dataset_info[2][0]) + "</p>\n")
+        metrics_file.write("<p>Maximum read length (after cleaning): "
+                           + str(dataset_info[2][1]) + "</p>\n")
+        metrics_file.write("<p>Median of read length (after cleaning): "
+                           + str(dataset_info[2][2]) + "</p>\n")
+        metrics_file.write("<p>Average base quality (after cleaning): "
+                           + str(dataset_info[4]) + "</p>\n")
 
     metrics_file.write("<H2>Contig metrics:</H2>\n")
     metrics_file.write("<p>Number of reads assembled: "
@@ -234,13 +236,27 @@ def Run_module(seqclean_log_file, original_fasta_file, clean_fasta_file,
                original_fasta_qual_file, clean_fasta_qual_file,
                info_assembly_file, snps_fasta_file, bestorf_fasta_file,
                metrics_file):
-    '''Run the module'''
+    """
+    Run the module
+    """
     dataset_info = Dataset_gather(seqclean_log_file, original_fasta_file,
                                   clean_fasta_file, original_fasta_qual_file,
                                   clean_fasta_qual_file)
     contig_info = Contig_gather(info_assembly_file)
     snp_info = SNP_gather(snps_fasta_file, bestorf_fasta_file)
     Metrics_writer(dataset_info, contig_info, snp_info, metrics_file)
+
+
+def Run_as_solexa(info_assembly_file, snps_fasta_file, bestorf_fasta_file,
+                  metrics_file):
+    """
+    Run the module with solexa data.
+    """
+    contig_info = Contig_gather(info_assembly_file)
+    snp_info = SNP_gather(snps_fasta_file, bestorf_fasta_file)
+    dataset_info = "solexa"
+    Metrics_writer(dataset_info, contig_info, snp_info, metrics_file)
+
 
 if __name__ == "__main__":
     # Usage: python3 Metrics.py (view Run_module() for a list of arguments)
