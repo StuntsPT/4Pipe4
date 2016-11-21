@@ -183,4 +183,5 @@ http://cobig2.com
 
 [Francisco Pina-Martins, Bruno M. Vieira, Sofia G. Seabra, Dora Batista and Octávio S. Paulo 2016. 4Pipe4 – A 454 data analysis pipeline for SNP detection in datasets with no reference sequence or strain information. BMC Bioinformatics, 17:46.](http://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-0892-1)
 
-~~[Old Zenodo DOI](http://dx.doi.org/10.5281/zenodo.13948)~~
+Old citation method:
+Zenodo  - [![DOI](https://zenodo.org/badge/3305207.svg)](https://zenodo.org/badge/latestdoi/3305207)
